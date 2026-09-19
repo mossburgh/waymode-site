@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "waymode-site",
+  "compatibility_date": "2026-09-18",
+  "assets": {
+    "directory": "./public",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "routes": [
+    {
+      "pattern": "waymode.ai",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.waymode.ai",
+      "custom_domain": true
+    }
+  ]
+}

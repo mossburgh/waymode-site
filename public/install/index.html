@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Install Waymode with your coding agent." />
+    <meta name="theme-color" content="#f7f8fc" />
+    <link rel="canonical" href="https://waymode.ai/install" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Install Waymode</title>
+    <style>
+      :root { color-scheme:light; font-family:Inter,ui-sans-serif,system-ui,sans-serif; background:#f7f8fc; color:#0c0d12; }
+      * { box-sizing:border-box; }
+      body { margin:0; min-width:320px; }
+      main { width:min(820px,calc(100% - 40px)); margin:0 auto; padding:32px 0 80px; }
+      nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:clamp(72px,12vw,150px); }
+      .brand { display:inline-flex; align-items:center; gap:9px; color:#0c0d12; font-size:21px; font-weight:750; letter-spacing:-.04em; text-decoration:none; }
+      .brand svg { width:30px; color:#4054f6; }
+      nav > a:last-child { color:#0c0d12; font-weight:650; text-decoration:none; }
+      h1 { max-width:700px; margin:0 0 18px; font-size:clamp(54px,10vw,92px); letter-spacing:-.065em; line-height:.94; }
+      .lead { max-width:620px; margin:0 0 48px; color:#646775; font-size:clamp(19px,3vw,24px); line-height:1.4; }
+      section { padding:clamp(24px,5vw,42px); border:1px solid #d9dbe5; border-radius:24px; background:#fff; box-shadow:0 18px 50px rgba(12,13,18,.07); }
+      h2 { margin:0 0 10px; font-size:22px; letter-spacing:-.03em; }
+      .hint { margin:0 0 20px; color:#646775; }
+      pre { overflow:auto; margin:0; padding:22px; border-radius:16px; background:#0c0d12; color:#f7f8fc; font:14px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:pre-wrap; }
+      button { min-height:46px; margin-top:16px; padding:0 20px; border:0; border-radius:999px; background:#4054f6; color:#fff; font:700 15px/1 system-ui,sans-serif; cursor:pointer; }
+      button:focus-visible,a:focus-visible { outline:3px solid #4054f6; outline-offset:3px; }
+      .status { min-height:24px; margin:10px 0 0; color:#4054f6; font-weight:700; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav>
+        <a class="brand" href="/" aria-label="Waymode home">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M5 15c4 0 3 18 10 18s3-18 10-18 3 18 11 18c3.2 0 5-3.2 5.8-6.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.6" />
+            <circle cx="44" cy="20.2" r="3.1" fill="currentColor" />
+          </svg>
+          <span>waymode</span>
+        </a>
+        <a href="/">Home</a>
+      </nav>
+      <h1>Install Waymode.</h1>
+      <p class="lead">Give this prompt to your coding agent from the root of your product.</p>
+      <section>
+        <h2>Coding-agent prompt</h2>
+        <p class="hint">It finds the product’s actions, fills what is missing, and proves the result.</p>
+        <pre id="prompt">Install Waymode in this repository. Detect every client and server boundary in this product. Connect Waymode to the product’s existing actions, permissions, and interface. When a safe action is not exposed, add the smallest reusable primitive that makes it available without copying business logic. Run Waymode’s setup checks and self-driving evals, keep working until they pass, then summarize what users can now ask the product to do.</pre>
+        <button id="copy" type="button">Copy prompt</button>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+    <script>
+      document.querySelector("#copy").addEventListener("click", async () => {
+        await navigator.clipboard.writeText(document.querySelector("#prompt").textContent);
+        document.querySelector("#status").textContent = "Copied.";
+      });
+    </script>
+  </body>
+</html>
