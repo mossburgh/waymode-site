@@ -19,6 +19,7 @@ const failures = [
   [home.includes("Waymode design prototype"), "prototype label is still public"],
   [home.includes("https://github.com/\""), "placeholder GitHub link is still public"],
   [!home.includes("Install Waymode in this repository"), "agent prompt is missing"],
+  [!home.includes("https://github.com/mossburgh/waymode"), "Waymode GitHub source is missing from the agent prompt"],
 ].filter(([failed]) => failed);
 
 if (failures.length) {
