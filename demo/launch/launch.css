@@ -1,0 +1,164 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #202b36;
+  background: #f3f5f8;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+main {
+  width: min(1440px, 100%);
+  margin: auto;
+  padding: 24px;
+}
+.launch-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+a {
+  color: #174ba8;
+  text-underline-offset: 4px;
+}
+.launch-heading > a:first-child {
+  color: inherit;
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: 750;
+}
+h1 {
+  font-size: clamp(32px, 4vw, 60px);
+  letter-spacing: -0.04em;
+  margin: 48px 0 12px;
+}
+.intro {
+  font-size: 20px;
+  margin-bottom: 28px;
+}
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid #c4ceda;
+  border-radius: 12px;
+  background: #f3f5f8;
+}
+.canvas {
+  position: absolute;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+}
+iframe,
+#film-overlay,
+video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+#film-overlay {
+  background: #f3f5f8;
+  opacity: 1;
+  transition: opacity 150ms linear;
+}
+#film-overlay.is-live {
+  opacity: 0;
+  pointer-events: none;
+}
+video {
+  object-fit: contain;
+}
+#pending {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: 48px;
+  font-size: 28px;
+}
+#pending p {
+  max-width: 720px;
+  text-align: center;
+}
+.launch-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+button {
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid #174ba8;
+  color: white;
+  background: #174ba8;
+  font: inherit;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+:focus-visible {
+  outline: 3px solid #225cdd;
+  outline-offset: 4px;
+}
+.scope,
+#handoff-status {
+  font-size: 14px;
+  color: #495769;
+}
+details {
+  margin: 24px 0;
+  line-height: 1.6;
+}
+summary {
+  cursor: pointer;
+  min-height: 44px;
+}
+[hidden] {
+  display: none !important;
+}
+@media (max-width: 1023px) {
+  .stage {
+    aspect-ratio: 768 / 900;
+  }
+  .canvas {
+    width: 768px;
+    height: 900px;
+  }
+}
+@media (max-width: 599px) {
+  main {
+    padding: 12px;
+  }
+  h1 {
+    margin-top: 32px;
+  }
+  .stage {
+    aspect-ratio: 390 / 760;
+  }
+  .canvas {
+    width: 390px;
+    height: 760px;
+  }
+  #pending {
+    font-size: 18px;
+    padding: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #film-overlay {
+    transition: none;
+  }
+}

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f3f5f8" />
+    <title>waymode · A live app, used by Model</title>
+  </head>
+  <body>
+    <div class="studio">
+      <header class="masthead">
+        <a class="wordmark" href="/" aria-label="waymode home">waymode</a>
+        <p>The app is the interface.</p>
+        <span class="demo-label" id="authenticator-note" hidden
+          >WebAuthn test authenticator</span
+        >
+        <span class="demo-label">Live proof</span>
+      </header>
+      <main class="split">
+        <section class="interaction" aria-labelledby="interaction-title">
+          <header class="pane-heading">
+            <div>
+              <span class="section-mark">Use</span>
+              <h1 id="interaction-title">Ask the app.</h1>
+            </div>
+            <span class="model-tag"><span class="model-dot"></span>Model</span>
+          </header>
+          <div
+            class="conversation"
+            id="conversation"
+            role="log"
+            aria-label="Conversation"
+          >
+            <div class="intro" id="intro">
+              <p>Give your app a new feature.<br />Then ask it to use it.</p>
+              <span>Model reads the controls in the live app.</span>
+            </div>
+          </div>
+          <div class="app-slot" id="app-slot">
+            <section
+              class="live-app"
+              id="live-app"
+              aria-label="Account application"
+            >
+              <header class="app-header">
+                <span class="app-title"
+                  ><span class="app-symbol" aria-hidden="true">a</span
+                  >Account</span
+                >
+                <button class="text-button" id="embed-button" type="button">
+                  Embed in chat
+                </button>
+              </header>
+              <div id="app-content" class="app-content"></div>
+              <footer class="app-footer">
+                <span class="live-dot"></span>Live application
+                <span id="view-location">In workspace</span>
+              </footer>
+            </section>
+          </div>
+          <form id="prompt-form" class="composer">
+            <label class="sr-only" for="prompt"
+              >Ask the app to do something</label
+            >
+            <textarea
+              id="prompt"
+              name="prompt"
+              rows="2"
+              maxlength="2000"
+              placeholder="Ask the app to do something…"
+              required
+            ></textarea>
+            <div class="composer-bottom">
+              <span id="run-status" role="status">Ready to use the app</span
+              ><button
+                id="stop-button"
+                class="text-button"
+                type="button"
+                hidden
+              >
+                Stop</button
+              ><button id="send-button" class="primary-button" type="submit">
+                Send <span aria-hidden="true">↵</span>
+              </button>
+            </div>
+          </form>
+          <footer class="usage-strip" aria-label="Model usage">
+            <div><span>Model</span><strong>Model</strong></div>
+            <div>
+              <span>Last call</span><strong id="last-cost">No calls yet</strong>
+            </div>
+            <div>
+              <span>Session cost</span
+              ><strong id="total-cost">No calls yet</strong>
+            </div>
+          </footer>
+        </section>
+        <section class="implementation" aria-labelledby="implementation-title">
+          <header class="pane-heading">
+            <div>
+              <span class="section-mark">Build</span>
+              <h2 id="implementation-title">Codex edits the app.</h2>
+            </div>
+            <span class="source-state" id="source-state">Connecting</span>
+          </header>
+          <div class="source-bar">
+            <span id="source-path">Feature source</span
+            ><span id="source-time">Waiting for source</span>
+          </div>
+          <div
+            class="source-view"
+            tabindex="0"
+            aria-label="Live feature source"
+          >
+            <pre><code id="source-code">Connecting to the local source file…</code></pre>
+          </div>
+          <div class="source-note">
+            <span class="connection-dot" id="connection-dot"></span>
+            <p id="source-note">Waiting for source edits</p>
+          </div>
+          <section class="receipts" aria-labelledby="receipts-title">
+            <header>
+              <h3 id="receipts-title">Interaction receipts</h3>
+              <span id="call-count">No model calls</span>
+            </header>
+            <div id="receipts-list">
+              <p class="receipt-empty">
+                Tokens, time, and cost appear after each Model call.
+              </p>
+            </div>
+          </section>
+        </section>
+      </main>
+      <footer class="studio-footer">
+        <span>waymode / same app, new capabilities</span
+        ><span>Source edits and model calls are live.</span>
+      </footer>
+    </div>
+    <div class="agent-cursor" id="agent-cursor" aria-hidden="true" hidden>
+      <svg width="24" height="28" viewBox="0 0 24 28">
+        <path
+          d="M3 2v21l6-6 5 9 4-2-5-9 8-1Z"
+          fill="currentColor"
+          stroke="white"
+          stroke-width="2"
+        /></svg
+      ><span>Model</span>
+    </div>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

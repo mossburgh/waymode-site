@@ -1,0 +1,213 @@
+{
+  "title": "Put your product in Waymode.",
+  "productLabel": "Your Product",
+  "url": "waymode.ai",
+  "targetSeconds": 24,
+  "width": 1920,
+  "height": 1080,
+  "app": {
+    "width": 840,
+    "height": 940,
+    "rowHeight": 48
+  },
+  "inspector": {
+    "width": 1000,
+    "height": 940
+  },
+  "handoff": {
+    "fadeMs": 150,
+    "holdMs": 350,
+    "theme": "light",
+    "preferences": {
+      "dark": false,
+      "compact": true
+    },
+    "viewports": {
+      "desktop": {
+        "width": 1920,
+        "height": 1080
+      },
+      "tablet": {
+        "width": 768,
+        "height": 900
+      },
+      "mobile": {
+        "width": 390,
+        "height": 760
+      }
+    }
+  },
+  "beats": [
+    {
+      "id": "build",
+      "caption": "Add compact layout.",
+      "start": 0,
+      "duration": 7,
+      "evidence": "sourceChanges"
+    },
+    {
+      "id": "use",
+      "caption": "Now ask for it.",
+      "goal": "Make the list compact",
+      "start": 7,
+      "duration": 8,
+      "evidence": "compact"
+    },
+    {
+      "id": "proof",
+      "caption": "New capability. Same runtime.",
+      "start": 15,
+      "duration": 5,
+      "evidence": "coreUnchanged"
+    },
+    {
+      "id": "finish",
+      "caption": "Put your product in Waymode.",
+      "start": 20,
+      "duration": 3.65,
+      "evidence": "verified"
+    },
+    {
+      "id": "handoff",
+      "caption": "",
+      "start": 23.65,
+      "duration": 0.35,
+      "evidence": "finalFrame"
+    }
+  ],
+  "claims": {
+    "compact": "Saved compact=true; first row changes from 48px to 36px and survives reload.",
+    "coreUnchanged": "Installed SDK and host integration hashes match before and after the feature edit.",
+    "sourceChanges": "The actual app contract and view files changed; no feature-specific model tool was added."
+  },
+  "interactive": {
+    "definition": {
+      "field": "compact",
+      "label": "Compact layout",
+      "rowHeight": 36
+    },
+    "goal": "Make the list compact",
+    "sourceLanguage": "JSON feature definition",
+    "stages": [
+      "Write a feature.",
+      "Ask your product to use it.",
+      "Now an external agent uses the same action."
+    ],
+    "scope": "One bounded app feature definition. No arbitrary JavaScript, packages, terminal, or file system.",
+    "claims": {
+      "featureDefinition": "A bounded JSON definition compiles into this demo’s UI and API schema. This is not arbitrary source-code execution.",
+      "discovery": "The unchanged runtime reads the new API field; no feature-specific agent tool is added.",
+      "external": "A separate Node process uses the same authenticated API and app session. This is not a third-party computer-use benchmark."
+    },
+    "interactions": [
+      {
+        "id": "feature",
+        "label": "New feature",
+        "caption": "Add a feature. Then ask for it.",
+        "request": "Make the list compact",
+        "build": true,
+        "chapters": [
+          {
+            "id": "write",
+            "label": "Write"
+          },
+          {
+            "id": "ask",
+            "label": "Ask"
+          },
+          {
+            "id": "act",
+            "label": "Apply"
+          },
+          {
+            "id": "verify",
+            "label": "Verify"
+          }
+        ]
+      },
+      {
+        "id": "theme",
+        "label": "Change theme",
+        "caption": "A change, without the menus.",
+        "request": "Turn on {theme} mode",
+        "build": false,
+        "chapters": [
+          {
+            "id": "ask",
+            "label": "Ask"
+          },
+          {
+            "id": "act",
+            "label": "Apply"
+          },
+          {
+            "id": "verify",
+            "label": "Verify"
+          }
+        ]
+      },
+      {
+        "id": "settings",
+        "label": "Settings here",
+        "caption": "The real controls come to you.",
+        "request": "Open settings in chat",
+        "build": false,
+        "chapters": [
+          {
+            "id": "ask",
+            "label": "Ask"
+          },
+          {
+            "id": "act",
+            "label": "Portal"
+          },
+          {
+            "id": "verify",
+            "label": "Verify"
+          }
+        ]
+      },
+      {
+        "id": "guide",
+        "label": "Show me how",
+        "caption": "Follow the cursor.",
+        "request": "Show me how to turn on {theme} mode",
+        "build": false,
+        "chapters": [
+          {
+            "id": "ask",
+            "label": "Ask"
+          },
+          {
+            "id": "act",
+            "label": "Guide"
+          },
+          {
+            "id": "verify",
+            "label": "Verify"
+          }
+        ]
+      }
+    ],
+    "requestChapters": [
+      {
+        "id": "ask",
+        "label": "Ask"
+      },
+      {
+        "id": "act",
+        "label": "Apply"
+      },
+      {
+        "id": "verify",
+        "label": "Verify"
+      }
+    ],
+    "pacing": {
+      "lineMs": 700,
+      "featureHoldMs": 1400,
+      "requestHoldMs": 1800,
+      "resultHoldMs": 3000
+    }
+  }
+}

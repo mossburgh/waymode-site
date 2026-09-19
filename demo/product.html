@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your Product · Waymode</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <h1 class="brand">Your Product</h1>
+        <button id="open-inspector" class="quiet">Open inspector ↗</button>
+      </header>
+      <div id="workspace" aria-label="Workspace">
+        <aside id="feature-announcement" class="feature-announcement" hidden>
+          <span id="feature-location" role="status"></span>
+          <button id="view-feature" type="button">View setting</button>
+        </aside>
+        <section id="daylist" aria-label="Your Product application"></section>
+      </div>
+      <section class="chat" aria-label="Ask your product">
+        <div id="conversation" role="log" aria-label="Chat">
+          <section id="chat-view" aria-label="Settings" hidden></section>
+        </div>
+        <div class="request-examples" aria-label="Suggested messages">
+          <button
+            type="button"
+            disabled
+            data-theme-request="direct"
+            data-request="Turn on dark mode"
+          >
+            Turn on dark mode
+          </button>
+          <button
+            type="button"
+            disabled
+            data-theme-request="guide"
+            data-request="Show me how to turn on dark mode"
+          >
+            Show me how to turn on dark mode
+          </button>
+          <button
+            type="button"
+            disabled
+            data-request="Complete Review launch notes"
+          >
+            Complete Review launch notes
+          </button>
+          <button type="button" disabled data-request="Open settings in chat">
+            Open settings in chat
+          </button>
+        </div>
+        <form id="prompt-form">
+          <label class="sr-only" for="prompt"
+            >Ask your product to do something</label
+          ><input
+            id="prompt"
+            maxlength="2000"
+            placeholder="Message Your Product…"
+            required
+            autocomplete="off"
+          /><button id="send" disabled type="submit" aria-label="Send request">
+            ↑
+          </button>
+        </form>
+        <div class="chat-status">
+          <span id="status" role="status"></span
+          ><button id="stop" class="quiet" hidden>Stop</button>
+        </div>
+      </section>
+      <footer class="meter">
+        <span>waymode <b>LIVE</b></span
+        ><span id="elapsed">No calls yet</span
+        ><span id="cost">Cost appears after a call</span>
+      </footer>
+    </main>
+    <div id="agent-cursor" class="guide-cursor" aria-hidden="true" hidden>
+      <svg viewBox="0 0 24 24" width="28" height="28">
+        <path d="M4 3v17l5-5 4 7 3-2-4-6h8Z" /></svg
+      ><span>waymode</span>
+    </div>
+    <script type="module" src="/daylist-main.ts"></script>
+  </body>
+</html>

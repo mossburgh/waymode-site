@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Waymode · live showcase</title>
+  </head>
+  <body>
+    <main class="studio" data-panel="product">
+      <div id="mobile-panels" role="group" aria-label="Show panel">
+        <button type="button" data-studio-panel="product" aria-pressed="true">
+          Your Product
+        </button>
+        <button type="button" data-studio-panel="tools" aria-pressed="false">
+          DevTools
+        </button>
+      </div>
+      <div class="studio-grid">
+        <section class="product-panel" aria-label="Live product">
+          <iframe id="product" title="Your Product — live application"></iframe>
+        </section>
+        <section class="code-panel" aria-label="Waymode DevTools">
+          <header class="devtools-title">
+            <strong>Waymode DevTools</strong
+            ><span>Connected to Your Product</span>
+          </header>
+          <div
+            class="devtools-tabs"
+            role="tablist"
+            aria-label="Developer tools"
+          >
+            <button
+              type="button"
+              role="tab"
+              id="source-tab"
+              aria-controls="source-panel"
+              aria-selected="true"
+              data-panel="source-panel"
+            >
+              Sources
+            </button>
+            <button
+              type="button"
+              role="tab"
+              id="trace-tab"
+              aria-controls="trace-panel"
+              aria-selected="false"
+              tabindex="-1"
+              data-panel="trace-panel"
+            >
+              Activity
+            </button>
+          </div>
+          <div
+            id="source-panel"
+            class="devtools-pane"
+            role="tabpanel"
+            aria-labelledby="source-tab"
+          >
+            <h2 id="step-title">Give your product a new setting.</h2>
+            <p class="editor-help" id="step-help">
+              Add Compact layout. Then ask for it in chat.
+            </p>
+            <details id="feature-editor" open>
+              <summary>feature.json <span>app definition</span></summary>
+              <label class="sr-only" for="feature-code"
+                >Edit the feature definition</label
+              >
+              <textarea
+                id="feature-code"
+                spellcheck="false"
+                autocomplete="off"
+              ></textarea>
+              <button id="remove-feature" class="secondary" hidden>
+                Remove setting
+              </button>
+            </details>
+            <button id="apply-feature" class="secondary">
+              Add Compact layout
+            </button>
+            <p id="build-status" role="status"></p>
+            <button id="try-feature" class="try-feature" hidden></button>
+            <details id="external-demo" hidden>
+              <summary>Can an outside agent use it too?</summary>
+              <form id="external-form">
+                <label for="external-goal">Ask an external agent</label>
+                <div class="request-row">
+                  <input id="external-goal" maxlength="2000" required /><button
+                    id="run-external"
+                  >
+                    Run
+                  </button>
+                </div>
+                <p>Agent → authenticated API → the app’s existing action.</p>
+              </form>
+              <p id="external-status" role="status">No external run yet.</p>
+            </details>
+          </div>
+          <div
+            id="trace-panel"
+            class="devtools-pane"
+            role="tabpanel"
+            aria-labelledby="trace-tab"
+            hidden
+          >
+            <p id="trace-empty">Run a request in chat to inspect its calls.</p>
+            <p id="live-proof" role="status" hidden></p>
+            <div class="receipt" id="receipt" hidden>
+              <span id="model">Waiting for a model call</span
+              ><span id="cost">Cost unavailable</span>
+            </div>
+            <ol id="model-calls" aria-label="Model calls"></ol>
+            <details id="evidence" hidden>
+              <summary>Network, decisions &amp; permissions</summary>
+              <ol id="trace" aria-label="Run evidence"></ol>
+            </details>
+          </div>
+        </section>
+      </div>
+      <div
+        class="player-transport"
+        role="group"
+        aria-label="Walkthrough playback"
+      >
+        <button id="play-story" aria-label="Play" data-state="paused" disabled>
+          <svg class="play-icon" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M6 3.5 16 10 6 16.5Z" />
+          </svg>
+          <svg class="pause-icon" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M5 4h3v12H5zM12 4h3v12h-3z" />
+          </svg>
+          <span id="play-label" class="sr-only">Play</span>
+        </button>
+        <span id="elapsed" aria-label="Playback elapsed time">0:00</span>
+        <nav id="chapters" aria-label="Scene chapters"></nav>
+        <button
+          id="open-scenes"
+          class="secondary"
+          aria-haspopup="dialog"
+          aria-controls="scene-picker"
+        >
+          ☷ Scenes
+        </button>
+        <span id="player-phase" role="status">Choose one to watch</span>
+      </div>
+      <div id="story-status" role="status"></div>
+      <dialog id="scene-picker" aria-labelledby="scene-picker-title">
+        <header class="scene-picker-header">
+          <div>
+            <h2 id="scene-picker-title">Scenes</h2>
+            <p>Choose an interaction to watch.</p>
+          </div>
+          <button id="close-scenes" aria-label="Close scenes">✕</button>
+        </header>
+        <nav id="interactions" aria-label="Playable scenes"></nav>
+      </dialog>
+    </main>
+    <script type="module" src="/studio.ts"></script>
+  </body>
+</html>

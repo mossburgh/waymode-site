@@ -1,0 +1,15 @@
+node_modules
+dist
+artifacts
+test-results
+.demo-data
+
+# Vendored authoring skills retain upstream formatting.
+.agents/skills
+
+# Local launch renders and media workspace.
+brag-output*/
+
+# Static marketing assets and generated worker output.
+public/
+.wrangler/

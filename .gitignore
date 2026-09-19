@@ -1,4 +1,16 @@
 node_modules/
 .wrangler/
 .DS_Store
+.env*
+!.env.example
+.dev.vars*
+.demo-data/
+artifacts/
+test-results/
+brag-output*/
+dist/
+public/showcase/
 
+# Local authoring tools and their downloaded assets.
+.agents/
+skills-lock.json

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>waymode · Live inspector</title>
+  </head>
+  <body>
+    <main class="inspector">
+      <header class="topbar">
+        <a class="brand" href="/">waymode</a
+        ><span id="connection" class="connection"
+          >Connecting to local server</span
+        >
+      </header>
+      <div class="trace-heading">
+        <div>
+          <p class="eyebrow">YOUR PRODUCT / LIVE INSPECTOR</p>
+          <h1>Watch the app use itself.</h1>
+          <p id="goal">Send a request from the Your Product window.</p>
+        </div>
+        <div class="run-meter">
+          <strong id="run-time">—</strong
+          ><span id="cost">Model · cost pending</span>
+        </div>
+      </div>
+      <section class="proof-strip" aria-label="Evidence for the claims">
+        <button id="proof-source" data-proof="source">
+          <span>01 / REAL SOURCE</span
+          ><strong id="proof-source-value">Waiting for disk…</strong
+          ><small>Open file + SHA-256 ↗</small>
+        </button>
+        <button id="proof-saved" data-proof="network">
+          <span>02 / REAL APP STATE</span
+          ><strong id="proof-saved-value">Waiting for a save</strong
+          ><small>Open API request + response ↗</small>
+        </button>
+        <button id="proof-evals" data-proof="evals">
+          <span>03 / MEASURED RELIABILITY</span
+          ><strong id="proof-evals-value">Loading prior eval run…</strong
+          ><small id="proof-evals-date"
+            >Open all cases, including failures ↗</small
+          >
+        </button>
+      </section>
+      <div class="pipeline" aria-label="Execution stages">
+        <button class="stage" data-stage="controls">
+          <span>01 / OBSERVE</span><strong>Read live controls</strong>
+        </button>
+        <button class="stage" data-stage="model.receipt">
+          <span>02 / DECIDE</span><strong>Model selects one</strong>
+        </button>
+        <button class="stage" data-stage="handler">
+          <span>03 / INVOKE</span><strong>Use its handler</strong>
+        </button>
+        <button class="stage" data-stage="verified">
+          <span>04 / CHECK</span><strong>Read saved state</strong>
+        </button>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Inspector views">
+        <button
+          role="tab"
+          aria-selected="true"
+          aria-controls="trace-panel"
+          data-tab="trace"
+        >
+          Trace</button
+        ><button
+          role="tab"
+          aria-selected="false"
+          aria-controls="source-panel"
+          data-tab="source"
+        >
+          Feature source</button
+        ><button
+          role="tab"
+          aria-selected="false"
+          aria-controls="network-panel"
+          data-tab="network"
+        >
+          Network</button
+        ><button
+          role="tab"
+          aria-selected="false"
+          aria-controls="evals-panel"
+          data-tab="evals"
+        >
+          Evals
+        </button>
+      </div>
+      <section class="action-trail" aria-label="Current run actions">
+        <strong>Actions in this request</strong>
+        <ol id="action-trail"></ol>
+        <p id="trail-status" role="status">Waiting for a request.</p>
+      </section>
+      <section id="source-panel" role="tabpanel" class="source-panel" hidden>
+        <header>
+          <label class="sr-only" for="source-file">Source file</label>
+          <select id="source-file">
+            <option value="feature">Feature UI</option>
+            <option value="contract">App API schema</option>
+          </select>
+          <span id="source-path">Loading source…</span
+          ><span id="source-state">Live file</span>
+        </header>
+        <pre id="source-readonly"><code id="source-code"></code></pre>
+        <div class="source-foot" id="source-hash"></div>
+      </section>
+      <section id="trace-panel" role="tabpanel" class="trace-body">
+        <div id="events" class="event-list" aria-label="Live events"></div>
+        <div class="payload">
+          <header>
+            <strong id="payload-title">Waiting for a request</strong
+            ><button id="follow" class="quiet">Follow live</button>
+          </header>
+          <p id="event-summary" class="selected-summary">
+            Select an event to see what happened.
+          </p>
+          <ul id="observed-changes" aria-label="Observed rendered changes"></ul>
+          <details class="raw-payload">
+            <summary>Raw event payload</summary>
+            <pre id="payload">
+Events come from the running app and its server.
+
+Click a stage or event to inspect its real payload.</pre>
+          </details>
+        </div>
+      </section>
+      <section id="network-panel" role="tabpanel" class="source-panel" hidden>
+        <header>App API calls · same session</header>
+        <div id="network-events" class="event-list"></div>
+        <details class="raw-payload" open>
+          <summary>Raw request and response</summary>
+          <pre id="network-payload">
+Select an actual request to inspect the saved response.</pre>
+        </details>
+      </section>
+      <section id="evals-panel" role="tabpanel" hidden>
+        <div class="eval-head">
+          <p id="eval-summary">No measured results loaded.</p>
+          <button id="refresh-evals" class="quiet">Refresh results ↻</button>
+        </div>
+        <div id="eval-rows"></div>
+        <details class="raw-payload">
+          <summary>Raw evaluation result</summary>
+          <pre id="eval-payload">
+Run npm run eval:public to measure this app against saved-state assertions.</pre>
+        </details>
+      </section>
+      <footer class="inspector-foot">
+        <span id="source-status">Source stream connecting</span>
+        <span
+          >Sources:
+          <a href="/api/v1/evals" target="_blank" rel="noopener"
+            >our raw eval run</a
+          >
+          ·
+          <a
+            href="https://typesafe.ai/blog/introducing-system-one-models-and-jev"
+            target="_blank"
+            rel="noopener"
+            >Model + demo notes</a
+          >
+          ·
+          <a href="https://evals.typesafe.ai/" target="_blank" rel="noopener"
+            >TypeSafe eval method</a
+          ></span
+        >
+      </footer>
+    </main>
+    <script type="module" src="/inspect-main.ts"></script>
+  </body>
+</html>

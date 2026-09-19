@@ -5,16 +5,54 @@
   "assets": {
     "directory": "./public",
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"],
   },
   "routes": [
     {
       "pattern": "waymode.ai",
-      "custom_domain": true
+      "custom_domain": true,
     },
     {
       "pattern": "www.waymode.ai",
-      "custom_domain": true
-    }
-  ]
+      "custom_domain": true,
+    },
+  ],
+  "main": "hosted/worker.ts",
+  "compatibility_flags": ["nodejs_compat"],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SHOWCASE",
+        "class_name": "Showcase",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["Showcase"],
+    },
+  ],
+  "vars": {
+    "DEMO_ENABLED": "true",
+  },
+  "env": {
+    "preview": {
+      "name": "waymode-site-preview",
+      "workers_dev": true,
+      "routes": [],
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "SHOWCASE",
+            "class_name": "Showcase",
+          },
+        ],
+      },
+      "vars": {
+        "DEMO_ENABLED": "true",
+      },
+    },
+  },
 }

@@ -2,10 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <meta
       name="description"
-      content="Waymode lets users ask your product to act, bring the right interface, or guide them through it."
+      content="Let people and AI agents use your app through Waymode. An open-source SDK connecting chat and live interfaces to your app’s actions and permissions."
     />
     <meta name="theme-color" content="#f7f8fc" />
     <link rel="canonical" href="https://waymode.ai/" />
@@ -13,11 +16,30 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Waymode" />
     <meta property="og:title" content="Put your product in Waymode." />
-    <meta property="og:description" content="Your users ask. Your product does the work." />
+    <meta
+      property="og:description"
+      content="Let people and their AI agents use your product. Real actions, live interfaces, and your app’s permissions."
+    />
     <meta property="og:url" content="https://waymode.ai/" />
     <meta property="og:image" content="https://waymode.ai/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <title>Waymode — Your product does the work</title>
+    <meta
+      property="og:image:alt"
+      content="Waymode — Put your product in Waymode."
+    />
+    <title>Waymode — Your product, ready for people and AI agents</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        "name": "Waymode",
+        "url": "https://waymode.ai/",
+        "description": "An open-source SDK for using an app’s existing actions and live views through a pluggable decision model.",
+        "codeRepository": "https://github.com/mossburgh/waymode",
+        "programmingLanguage": "TypeScript",
+        "license": "https://github.com/mossburgh/waymode/blob/main/LICENSE"
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -27,2592 +49,1356 @@
     <style>
       :root {
         color-scheme: light;
-        --way: #4054f6;
-        --way-dark: #2437d9;
         --ink: #0c0d12;
+        --quiet: #5b6070;
         --paper: #f7f8fc;
-        --white: #ffffff;
-        --mist: #e8ebff;
-        --line: #d9dbe5;
-        --quiet: #646775;
-        --shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 14px 34px rgba(0, 0, 0, 0.07);
-        font-family: "Onest", "Helvetica Neue", Arial, sans-serif;
+        --line: #d9dce8;
+        --way: #4054f6;
+        font-family: "Onest", system-ui, sans-serif;
+        color: var(--ink);
+        background: var(--paper);
       }
-
       * {
         box-sizing: border-box;
       }
-
       html {
         scroll-behavior: smooth;
-        scroll-padding-bottom: 80px;
       }
-
       body {
         margin: 0;
-        min-width: 320px;
-        overflow-x: hidden;
-        background: var(--paper);
-        color: var(--ink);
-        -webkit-tap-highlight-color: rgba(64, 84, 246, 0.12);
       }
-
-      ::selection {
-        background: var(--way);
-        color: white;
-      }
-
-      * {
-        scrollbar-color: var(--way) transparent;
-        scrollbar-width: thin;
-      }
-
-      button,
-      a {
-        font: inherit;
-      }
-
-      button {
-        cursor: pointer;
-      }
-
       a {
         color: inherit;
+        text-underline-offset: 4px;
+      }
+      button,
+      summary {
+        font: inherit;
+        cursor: pointer;
+      }
+      button {
+        color: inherit;
+      }
+      button:disabled {
+        cursor: wait;
+      }
+      :focus-visible {
+        outline: 3px solid var(--way);
+        outline-offset: 5px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .shell {
+        max-width: 1440px;
+        margin: auto;
+        padding: 0 32px;
+      }
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        left: 24px;
+        z-index: 5;
+        padding: 12px;
+        background: white;
+      }
+      .skip-link:focus {
+        top: 12px;
+      }
+      .nav,
+      .nav-links,
+      .brand,
+      .actions,
+      .install-head,
+      .footer {
+        display: flex;
+        align-items: center;
+      }
+      .nav {
+        justify-content: space-between;
+        min-height: 88px;
+      }
+      .brand {
+        gap: 10px;
+        font-size: 23px;
+        font-weight: 650;
+        text-decoration: none;
+        letter-spacing: -1px;
+      }
+      .brand svg {
+        width: 38px;
+        height: 38px;
+        color: var(--way);
+      }
+      .nav-links {
+        gap: 28px;
+        font-size: 14px;
+        font-weight: 550;
+      }
+      .nav-links a {
         text-decoration: none;
       }
-
-      .skip-link {
-        position: fixed;
-        top: 12px;
-        left: 12px;
-        z-index: 100;
-        padding: 10px 14px;
-        border-radius: 10px;
-        background: var(--ink);
-        color: var(--white);
-        font-weight: 620;
-        transform: translateY(-160%);
-        transition: transform 160ms ease;
-      }
-
-      .skip-link:focus-visible {
-        transform: translateY(0);
-      }
-
-      [id] {
-        scroll-margin-top: 24px;
-      }
-
-      a:focus-visible,
-      button:focus-visible {
-        outline: 3px solid var(--way);
-        outline-offset: 3px;
-      }
-
-      .prototype-note {
-        position: fixed;
-        top: 12px;
-        left: 50%;
-        z-index: 50;
-        transform: translateX(-50%);
-        padding: 7px 11px;
-        border: 1px solid rgba(255, 255, 255, 0.24);
-        border-radius: 999px;
-        background: rgba(12, 13, 18, 0.78);
-        color: white;
-        font-size: 12px;
-        backdrop-filter: blur(14px);
-      }
-
-      .variant {
-        display: none;
-        min-height: 100vh;
-      }
-
-      .variant.is-active {
-        display: block;
-      }
-
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 21px;
-        font-weight: 650;
-        letter-spacing: -0.04em;
-      }
-
-      .brand-mark {
-        width: 31px;
-        height: 31px;
-        flex: none;
-        color: var(--way);
-      }
-
-      .brand-mark path {
-        fill: none;
-        stroke: currentColor;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-width: 3.6;
-      }
-
-      .brand-mark circle {
-        fill: currentColor;
-      }
-
-      .nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 76px;
-      }
-
-      .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 27px;
-        font-size: 14px;
-        font-weight: 540;
-      }
-
       .button {
         display: inline-flex;
-        min-height: 46px;
         align-items: center;
         justify-content: center;
-        padding: 0 21px;
-        border: 0;
-        border-radius: 999px;
+        padding: 13px 21px;
+        border: 1px solid var(--ink);
+        border-radius: 100px;
         background: var(--ink);
-        color: var(--white);
-        font-weight: 620;
-        transition: background 160ms ease, color 160ms ease, transform 120ms ease;
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 550;
       }
-
-      .button:hover {
-        background: var(--way);
-      }
-
-      .button:active {
-        transform: scale(0.975);
-      }
-
       .button.secondary {
-        border: 1px solid var(--line);
         background: transparent;
-        color: inherit;
-      }
-
-      .button.secondary:hover {
-        border-color: var(--way);
-        background: var(--mist);
-        color: var(--way-dark);
-      }
-
-      .display {
-        margin: 0;
-        max-width: 980px;
-        font-size: clamp(56px, 6.8vw, 88px);
-        font-weight: 610;
-        letter-spacing: -0.035em;
-        line-height: 0.96;
-        text-wrap: balance;
-      }
-
-      .lead {
-        margin: 0;
-        color: var(--quiet);
-        font-size: clamp(18px, 2vw, 25px);
-        letter-spacing: -0.025em;
-        line-height: 1.35;
-      }
-
-      .demo-shell {
-        position: relative;
-        overflow: hidden;
-        border: 1px solid #d9dbe4;
-        background: white;
-        box-shadow: var(--shadow);
-        isolation: isolate;
-      }
-
-      .demo-toolbar {
-        display: flex;
-        height: 54px;
-        align-items: center;
-        gap: 8px;
-        padding: 0 18px;
-        border-bottom: 1px solid #ececf1;
-        background: #fbfbfd;
-      }
-
-      .dot {
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        background: #d4d5dc;
-      }
-
-      .toolbar-title {
-        margin-left: 8px;
-        color: #777987;
-        font-size: 12px;
-      }
-
-      .demo-grid {
-        display: grid;
-        min-height: 520px;
-        grid-template-columns: minmax(0, 1fr) 330px;
-      }
-
-      .way-path {
-        position: absolute;
-        inset: 54px 0 0;
-        z-index: 8;
-        width: 100%;
-        height: calc(100% - 54px);
-        overflow: visible;
-        pointer-events: none;
-      }
-
-      .way-path-base,
-      .way-path-live,
-      .way-path-point {
-        fill: none;
-        stroke: transparent;
-      }
-
-      .action-pulse {
-        position: absolute;
-        z-index: 11;
-        width: 14px;
-        height: 14px;
-        border: 2px solid var(--way);
-        border-radius: 50%;
-        opacity: 0;
-        pointer-events: none;
-        transform: translate(-50%, -50%) scale(0.5);
-      }
-
-      .action-pulse.visible {
-        animation: action-arrive 780ms cubic-bezier(0.16, 1, 0.3, 1) both;
-      }
-
-      @keyframes action-arrive {
-        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.45); }
-        34% { opacity: 1; }
-        70% { opacity: 0.7; transform: translate(-50%, -50%) scale(2.4); }
-        100% { opacity: 0; transform: translate(-50%, -50%) scale(3); }
-      }
-
-      .ghost-cursor {
-        position: absolute;
-        z-index: 12;
-        display: none;
-        width: 27px;
-        height: 32px;
-        color: var(--way);
-        filter: drop-shadow(0 5px 8px rgba(17, 22, 57, 0.25));
-        pointer-events: none;
-        transform: translate(-3px, -3px);
-      }
-
-      .ghost-cursor.visible {
-        display: block;
-      }
-
-      .app-pane {
-        position: relative;
-        min-width: 0;
-        padding: 26px;
-        background: #f7f8fb;
-        transition: background 400ms ease, color 400ms ease;
-      }
-
-      .app-pane.dark {
-        background: #15161c;
-        color: white;
-      }
-
-      .app-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 28px;
-      }
-
-      .app-title {
-        font-size: 19px;
-        font-weight: 650;
-        letter-spacing: -0.03em;
-      }
-
-      .app-settings {
-        display: grid;
-        width: 34px;
-        height: 34px;
-        place-items: center;
-        border: 1px solid currentColor;
-        border-radius: 50%;
-        background: transparent;
-        color: inherit;
-        opacity: 0.58;
-        transition: background 180ms ease, color 180ms ease, opacity 180ms ease;
-      }
-
-      .app-settings.guided {
-        border-color: var(--way);
-        background: var(--way);
-        color: white;
-        opacity: 1;
-      }
-
-      .task-list {
-        display: grid;
-        gap: 10px;
-      }
-
-      .task {
-        display: grid;
-        grid-template-columns: 22px 1fr auto;
-        align-items: center;
-        gap: 12px;
-        padding: 17px;
-        border: 1px solid rgba(130, 133, 150, 0.18);
-        border-radius: 13px;
-        background: rgba(255, 255, 255, 0.78);
-        color: #242630;
-      }
-
-      .dark .task {
-        border-color: rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.06);
-        color: #f3f4fa;
-      }
-
-      .check {
-        width: 18px;
-        height: 18px;
-        border: 1.5px solid #a7a9b7;
-        border-radius: 50%;
-      }
-
-      .task.done .check {
-        border-color: var(--way);
-        background: var(--way);
-        box-shadow: inset 0 0 0 4px white;
-      }
-
-      .task.done .task-name {
-        text-decoration: line-through;
-        opacity: 0.5;
-      }
-
-      .task-time {
-        color: #858794;
-        font-size: 12px;
-      }
-
-      .chat-pane {
-        display: flex;
-        min-width: 0;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 23px;
-        border-left: 1px solid #ececf1;
-        background: white;
-      }
-
-      .chat-kicker {
-        color: #8a8c98;
-        font-size: 12px;
-      }
-
-      .action-stage {
-        display: grid;
-        gap: 14px;
-        align-self: center;
-      }
-
-      .user-bubble {
-        max-width: 245px;
-        justify-self: end;
-        padding: 14px 16px;
-        border-radius: 17px 17px 4px 17px;
-        background: var(--ink);
-        color: white;
-        font-size: 15px;
-        line-height: 1.35;
-      }
-
-      .result {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        color: #383a45;
-        font-size: 14px;
-        opacity: 0;
-        transform: translateY(8px);
-        transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1), transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
-      }
-
-      .result.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      .result-mark {
-        display: grid;
-        width: 24px;
-        height: 24px;
-        flex: none;
-        place-items: center;
-        border-radius: 50%;
-        background: var(--way);
-        color: white;
-        font-size: 13px;
-      }
-
-      .portal {
-        display: grid;
-        max-height: 0;
-        overflow: hidden;
-        padding: 0 16px;
-        border: 1px solid transparent;
-        border-radius: 14px;
-        background: #f8f9fc;
-        opacity: 0;
-        transform: translateY(8px) scale(0.985);
-        visibility: hidden;
-        transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1), transform 360ms cubic-bezier(0.16, 1, 0.3, 1);
-      }
-
-      .portal.visible {
-        max-height: 190px;
-        gap: 12px;
-        padding: 16px;
-        border-color: #dfe1eb;
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        visibility: visible;
-      }
-
-      .portal strong {
-        font-size: 14px;
-      }
-
-      .portal span {
-        color: #777986;
-        font-size: 12px;
-        line-height: 1.4;
-      }
-
-      .portal button {
-        min-height: 36px;
-        border: 0;
-        border-radius: 9px;
-        background: var(--way);
-        color: white;
-        font-weight: 620;
-      }
-
-      .request-buttons {
-        display: grid;
-        gap: 8px;
-      }
-
-      .request-buttons button {
-        min-height: 39px;
-        padding: 0 12px;
-        border: 1px solid #e2e3e9;
-        border-radius: 10px;
-        background: white;
-        color: #5c5f6c;
-        text-align: left;
-        font-size: 12px;
-        transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
-      }
-
-      .request-buttons button:hover,
-      .request-buttons button.active {
-        border-color: var(--way);
-        background: rgba(64, 84, 246, 0.035);
-        color: var(--way-dark);
-      }
-
-      .guide-ring {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        width: 46px;
-        height: 46px;
-        border: 2px solid var(--way);
-        border-radius: 50%;
-        opacity: 0;
-        transform: scale(0.65);
-      }
-
-      .guide-ring.visible {
-        animation: guide 1.6s ease infinite;
-      }
-
-      @keyframes guide {
-        0%, 100% {
-          opacity: 0.2;
-          transform: scale(0.75);
-        }
-        50% {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      .statement {
-        display: grid;
-        align-items: start;
-        gap: 36px;
-      }
-
-      .statement h2 {
-        margin: 0;
-        font-size: clamp(42px, 5.4vw, 76px);
-        font-weight: 600;
-        letter-spacing: -0.04em;
-        line-height: 1;
-        text-wrap: balance;
-      }
-
-      .statement p {
-        max-width: 620px;
-        margin: 0;
-        color: var(--quiet);
-        font-size: 20px;
-        line-height: 1.45;
-      }
-
-      .proof-line {
-        position: relative;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        padding-top: 0;
-      }
-
-      .proof-line::before,
-      .proof-line::after {
-        position: absolute;
-        top: 7px;
-        right: 7px;
-        left: 7px;
-        height: 1px;
-        content: "";
-      }
-
-      .proof-line::before {
-        background: var(--line);
-      }
-
-      .proof-line::after {
-        background: linear-gradient(90deg, var(--way), #8793ff);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
-      }
-
-      .proof-line.in-view::after {
-        transform: scaleX(1);
-      }
-
-      .proof-line > div {
-        position: relative;
-        padding: 40px 0 24px;
-        border-right: 1px solid var(--line);
-        font-size: 16px;
-      }
-
-      .proof-line > div::before {
-        position: absolute;
-        top: 0;
-        z-index: 1;
-        width: 15px;
-        height: 15px;
-        border: 2px solid var(--way);
-        border-radius: 50%;
-        background: var(--paper);
-        content: "";
-        transform: scale(0);
-        transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
-      }
-
-      .proof-line > div:first-child::before {
-        left: 0;
-      }
-
-      .proof-line > div:nth-child(2)::before {
-        left: 50%;
-        transform: translateX(-50%) scale(0);
-      }
-
-      .proof-line > div:last-child::before {
-        right: 0;
-      }
-
-      .proof-line.in-view > div::before {
-        transform: scale(1);
-      }
-
-      .proof-line.in-view > div:nth-child(2)::before {
-        transform: translateX(-50%) scale(1);
-        transition-delay: 260ms;
-      }
-
-      .proof-line.in-view > div:last-child::before {
-        transition-delay: 520ms;
-      }
-
-      .proof-line > div:last-child {
-        border-right: 0;
-        padding-left: 24px;
-      }
-
-      .proof-line > div:nth-child(2) {
-        padding-left: 24px;
-      }
-
-      .footer-cta {
-        display: grid;
-        grid-template-columns: minmax(260px, 0.72fr) minmax(460px, 1.28fr);
-        align-items: start;
-        gap: clamp(48px, 7vw, 112px);
-      }
-
-      .footer-cta h2 {
-        max-width: 560px;
-        margin: 0;
-        font-size: clamp(52px, 6vw, 84px);
-        font-weight: 610;
-        letter-spacing: -0.04em;
-        line-height: 0.95;
-        text-wrap: balance;
-      }
-
-      /* Variant A — centered stage */
-      .variant-a {
-        padding: 0 max(24px, calc((100vw - 1320px) / 2));
-        background: var(--paper);
-        transition: background 420ms ease, color 420ms ease;
-      }
-
-      .variant-a.site-dark {
-        --ink: #f7f8ff;
-        --paper: #0b0c12;
-        --white: #141620;
-        --mist: #1a1d36;
-        --line: #2a2d3a;
-        --quiet: #aeb1bf;
-        background: var(--paper);
         color: var(--ink);
-        color-scheme: dark;
-      }
-
-      .variant-a.site-dark .demo-shell,
-      .variant-a.site-dark .demo-toolbar,
-      .variant-a.site-dark .chat-pane,
-      .variant-a.site-dark .request-buttons button {
         border-color: var(--line);
-        background: var(--white);
-        color: #f7f8ff;
       }
-
-      .variant-a.site-dark .app-pane {
-        background: #10121a;
-        color: #f7f8ff;
-      }
-
-      .variant-a.site-dark .task {
-        border-color: rgba(255, 255, 255, 0.09);
-        background: rgba(255, 255, 255, 0.045);
-        color: #f1f2f8;
-      }
-
-      .variant-a.site-dark .portal {
-        border-color: var(--line);
-        background: #191b26;
-        color: #f7f8ff;
-      }
-
-      .variant-a.site-dark .portal span,
-      .variant-a.site-dark .task-time {
-        color: #aeb1bf;
-      }
-
-      .variant-a.site-dark .user-bubble {
-        background: var(--way);
-        color: white;
-      }
-
-      .variant-a.site-dark .request-buttons button:hover,
-      .variant-a.site-dark .request-buttons button.active {
-        border-color: #6f7dff;
-        background: rgba(64, 84, 246, 0.13);
-        color: #cdd2ff;
-      }
-
-      .variant-a.site-dark .toolbar-title,
-      .variant-a.site-dark .chat-kicker,
-      .variant-a.site-dark .result {
-        color: #a8abb8;
-      }
-
-      .variant-a.site-dark .proof-line > div::before {
-        background: var(--paper);
-      }
-
-      .variant-a .hero {
+      .hero {
         position: relative;
-        display: grid;
-        min-height: 640px;
-        place-items: center;
-        padding: 124px 0 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         isolation: isolate;
         text-align: center;
+        gap: 24px;
+        min-height: clamp(370px, calc(70svh - 64px), 580px);
+        padding: 48px 0 72px;
       }
-
-      .variant-a .hero::after {
-        content: none;
+      h1 {
+        max-width: 1160px;
+        margin: 0;
+        font-size: clamp(42px, 5.8vw, 84px);
+        font-weight: 600;
+        line-height: 1.04;
+        letter-spacing: -0.065em;
+        text-wrap: balance;
       }
-
-      .force-field {
+      .hero p {
+        max-width: 740px;
+        margin: 0 auto 26px;
+        color: var(--quiet);
+        font-size: clamp(18px, 1.8vw, 24px);
+        line-height: 1.45;
+        letter-spacing: -0.025em;
+        text-wrap: balance;
+      }
+      .hero .actions {
+        justify-content: center;
+      }
+      .hero-field {
         position: absolute;
-        top: 0;
-        bottom: -72px;
-        left: 50%;
-        z-index: -1;
-        width: 100vw;
-        overflow: hidden;
-        opacity: 0.82;
-        pointer-events: none;
-        transform: translateX(-50%);
-        transition: opacity 320ms ease;
-      }
-
-      .force-field svg {
-        display: block;
-        width: 100%;
+        inset: 0 -32px;
+        width: calc(100% + 64px);
         height: 100%;
-      }
-
-      .force-rails use,
-      .force-cuts use {
-        fill: none;
-        stroke-linecap: round;
-        vector-effect: non-scaling-stroke;
-      }
-
-      .force-rails use {
-        stroke: url(#force-line);
-        stroke-width: 4;
-      }
-
-      .force-cuts use {
-        stroke: var(--paper);
-        stroke-width: 2;
-      }
-
-      .force-current use {
-        fill: none;
-        stroke: var(--way);
-        stroke-dasharray: 118 980;
-        stroke-dashoffset: 1098;
-        stroke-linecap: round;
-        stroke-width: 1.35;
-        opacity: 0.58;
-        vector-effect: non-scaling-stroke;
-        animation: force-flow 4.8s linear infinite;
-      }
-
-      .force-current use:nth-child(2) { animation-delay: -1.8s; }
-      .force-current use:nth-child(3) { animation-delay: -3.4s; }
-      .force-current use:nth-child(4) { animation-delay: -0.9s; }
-      .force-current use:nth-child(5) { animation-delay: -2.7s; }
-      .force-current use:nth-child(6) { animation-delay: -4.1s; }
-      .force-current use:nth-child(7) { animation-delay: -1.2s; }
-      .force-current use:nth-child(8) { animation-delay: -3.1s; }
-
-      .variant-a.force-engaged .force-field {
-        opacity: 1;
-      }
-
-      .variant-a.force-engaged .force-current use {
-        animation-duration: 2.7s;
-        opacity: 0.82;
-      }
-
-      @keyframes force-flow {
-        to { stroke-dashoffset: 0; }
-      }
-
-      .variant-a .hero-copy {
-        position: relative;
-        z-index: 1;
-        display: grid;
-        max-width: 1080px;
-        justify-items: center;
-        gap: 30px;
-      }
-
-      .variant-a .lead {
-        max-width: 730px;
-      }
-
-      .variant-a .actions {
-        display: flex;
-        gap: 10px;
-      }
-
-      .variant-a .demo-shell {
-        z-index: 2;
-        border-radius: 22px;
-      }
-
-      .variant-a [data-demo-slot] {
-        position: relative;
-      }
-
-      .variant-a [data-demo-slot]::before {
-        content: none;
-      }
-
-      .variant-a .statement {
-        min-height: 0;
-        grid-template-columns: 1.35fr 0.65fr;
-        padding: 132px 0 88px;
-      }
-
-      .variant-a .proof-wrap {
-        padding: 36px 0 116px;
-      }
-
-      .variant-a .footer-cta {
-        padding: 96px 0 148px;
-      }
-
-      .site-bezel {
-        position: fixed;
-        inset: 9px;
-        z-index: 52;
-        overflow: hidden;
-        border: 1px solid rgba(23, 25, 35, 0.24);
-        border-radius: 26px;
-        box-shadow: inset 0 0 0 5px rgba(12, 13, 18, 0.025), 0 0 0 1px rgba(255, 255, 255, 0.42);
-        opacity: 0;
         pointer-events: none;
-        transform: scale(1.004);
-        transition: opacity 380ms ease, transform 600ms cubic-bezier(0.16, 1, 0.3, 1), border-color 180ms ease;
+        z-index: -1;
       }
-
-      .site-bezel::after {
-        position: absolute;
-        top: -1px;
-        left: 10%;
-        width: 120px;
-        height: 2px;
-        border-radius: 999px;
-        background: var(--way);
-        content: "";
-        opacity: 0;
-      }
-
-      .site-bezel.is-active {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      .site-bezel.is-active::after {
-        opacity: 1;
-        animation: bezel-scan 4.8s ease-in-out infinite alternate;
-      }
-
-      .site-bezel.is-previewing {
-        border-color: rgba(64, 84, 246, 0.46);
-      }
-
-      @keyframes bezel-scan {
-        to { left: calc(90% - 120px); }
-      }
-
-      .story-driver {
-        position: fixed;
-        bottom: max(12px, env(safe-area-inset-bottom));
-        left: 50%;
-        z-index: 55;
-        display: grid;
-        width: 138px;
-        min-height: 50px;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        align-items: center;
-        gap: 9px;
-        overflow: hidden;
-        padding: 7px 11px 7px 7px;
-        border: 1px solid rgba(255, 255, 255, 0.13);
-        border-radius: 999px;
-        background: rgba(10, 11, 16, 0.98);
-        box-shadow: 0 1px 2px rgba(9, 11, 25, 0.4), 0 8px 22px rgba(9, 11, 25, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-        color: white;
-        backdrop-filter: blur(12px);
-        transform: translateX(-50%);
-        transition: width 520ms cubic-bezier(0.16, 1, 0.3, 1), border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
-      }
-
-      .story-driver.is-open {
-        width: min(520px, calc(100vw - 40px));
-      }
-
-      .story-driver.is-previewing {
-        border-color: rgba(113, 128, 255, 0.7);
-        background: rgba(15, 17, 27, 0.97);
-        box-shadow: 0 1px 2px rgba(9, 11, 25, 0.42), 0 10px 26px rgba(9, 11, 25, 0.24);
-      }
-
-      .story-driver-signal {
-        display: grid;
-        width: 34px;
-        height: 34px;
-        flex: none;
-        place-items: center;
-        border-radius: 50%;
-        background: rgba(64, 84, 246, 0.18);
-        box-shadow: inset 0 0 0 1px rgba(113, 128, 255, 0.24);
-        color: #8290ff;
-      }
-
-      .story-driver-signal svg {
-        width: 22px;
-        height: 22px;
-      }
-
-      .story-driver-signal path {
+      .hero-field use {
         fill: none;
-        stroke: currentColor;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-width: 2.6;
+        vector-effect: non-scaling-stroke;
+        stroke: url(#hero-force-gradient);
+        stroke-width: 1;
       }
-
-      .story-driver-signal circle {
-        fill: currentColor;
+      .hero-field .force-twin {
+        stroke-opacity: 0.4;
+        transform: translateY(5px);
       }
-
-      .story-driver-copy {
+      .hero-field .force-current {
+        stroke: #6575ff;
+        stroke-width: 1.5;
+        stroke-dasharray: 60 1200;
+        stroke-dashoffset: 260;
+        opacity: 0.75;
+      }
+      .hero:focus-within .force-current,
+      .hero:hover .force-current {
+        animation: hero-current 2300ms ease-out;
+      }
+      @keyframes hero-current {
+        from {
+          stroke-dashoffset: 1000;
+        }
+        to {
+          stroke-dashoffset: 260;
+        }
+      }
+      .header-rail {
+        position: sticky;
+        top: 8px;
+        z-index: 10;
+        height: 88px;
+        pointer-events: none;
+      }
+      .header-rail .nav {
+        width: 100%;
+        max-width: 1440px;
+        min-height: 72px;
+        margin: auto;
+        padding: 8px 0;
+        border: 1px solid transparent;
+        border-radius: 40px;
+        pointer-events: auto;
+        transition:
+          max-width 320ms ease,
+          padding 320ms ease,
+          background-color 240ms ease,
+          border-color 240ms ease,
+          box-shadow 240ms ease;
+      }
+      .nav-prompt {
+        display: none;
+        margin: 0;
+        flex: 1;
         min-width: 0;
-        overflow: hidden;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+      }
+      .nav-action {
+        border: 1px solid transparent;
+        border-radius: 24px;
+        padding: 12px 16px;
         white-space: nowrap;
       }
-
-      .story-driver-label {
+      .command-copy {
+        display: none;
+        flex: 1;
+        min-width: 0;
+      }
+      .is-compact .command-copy {
         display: block;
-        color: rgba(255, 255, 255, 0.66);
-        font-size: 11px;
-        font-weight: 650;
-        letter-spacing: -0.01em;
-        line-height: 1;
-        transition: color 160ms ease, font-size 220ms ease;
       }
-
-      .story-driver.is-previewing .story-driver-label {
-        color: #96a0ff;
-      }
-
-      .story-driver-request {
-        max-height: 0;
-        overflow: hidden;
-        color: white;
-        font-size: 14px;
-        font-weight: 560;
-        letter-spacing: -0.015em;
-        line-height: 1.35;
-        opacity: 0;
-        transform: translateY(4px);
-        transition: max-height 260ms ease, opacity 180ms ease, transform 260ms ease;
-      }
-
-      .story-driver.is-open .story-driver-label {
-        margin-bottom: 3px;
-        font-size: 9px;
-        letter-spacing: 0.06em;
-      }
-
-      .story-driver.is-open .story-driver-request {
-        max-height: 22px;
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      .story-driver-request::after {
+      .nav-prompt::after {
+        content: "";
         display: inline-block;
-        width: 1px;
         height: 1em;
-        margin-left: 2px;
-        background: var(--way);
-        content: "";
-        opacity: 0;
-        vertical-align: -0.12em;
-        animation: story-caret 800ms steps(1) infinite;
+        margin-left: 3px;
+        border-right: 1px solid #8e98ff;
+        vertical-align: -0.1em;
       }
-
-      .story-driver.is-busy .story-driver-request::after {
-        opacity: 1;
+      .waymode-target {
+        outline: 2px solid #666fff;
+        outline-offset: 6px;
       }
-
-      .story-driver-indicator {
-        position: relative;
-        display: block;
-        width: 8px;
-        height: 8px;
-        flex: none;
-        border-radius: 999px;
-        background: #7180ff;
-        box-shadow: none;
-        transition: width 180ms ease, height 180ms ease, background 180ms ease, box-shadow 180ms ease;
-      }
-
-      .story-driver-indicator::after {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 5px;
-        height: 5px;
-        border-top: 1.5px solid #aeb6ff;
-        border-right: 1.5px solid #aeb6ff;
-        content: "";
-        opacity: 0;
-        transform: translate(-65%, -50%) rotate(45deg);
-      }
-
-      .story-driver.is-previewing .story-driver-indicator {
-        width: 22px;
-        height: 22px;
-        border: 1px solid rgba(113, 128, 255, 0.48);
-        background: rgba(64, 84, 246, 0.12);
-        box-shadow: none;
-      }
-
-      .story-driver.is-previewing .story-driver-indicator::after {
-        opacity: 1;
-      }
-
-      .story-driver.is-busy .story-driver-indicator {
-        animation: island-pulse 1s ease-in-out infinite;
-      }
-
-      .waymode-hover-target {
-        color: var(--way) !important;
-        outline: 2px solid rgba(64, 84, 246, 0.72);
-        outline-offset: 3px;
-      }
-
-      .button.waymode-hover-target,
-      button.waymode-hover-target {
-        border-color: var(--way) !important;
-        background: var(--way) !important;
-        color: white !important;
-        transform: translateY(-1px);
-      }
-
-      @keyframes island-pulse {
-        50% { opacity: 0.55; transform: scale(0.74); }
-      }
-
-      .story-install-card {
-        position: relative;
-        display: grid;
-        width: min(720px, 100%);
-        overflow: hidden;
-        border: 1px solid rgba(123, 137, 255, 0.32);
-        border-radius: 26px;
-        background: #0c0d12;
-        color: #f7f8fc;
-        box-shadow: 0 28px 80px rgba(8, 10, 24, 0.24);
-        opacity: 1;
-        transform: translateY(0);
-        transition: opacity 360ms ease, transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
-      }
-
-      .story-install-card::before {
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: radial-gradient(circle at 75% 0%, rgba(64, 84, 246, 0.25), transparent 42%);
-        content: "";
-        pointer-events: none;
-      }
-
-      .story-install-card.visible {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-
-      .install-card-head {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 24px;
-        padding: 28px;
-      }
-
-      .agent-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .agent-list span {
-        display: inline-flex;
-        min-height: 34px;
-        align-items: center;
-        padding: 0 12px;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        border-radius: 999px;
-        color: #c9cbd4;
-        font-size: 12px;
-        font-weight: 620;
-      }
-
-      .install-copy {
-        position: relative;
-        display: inline-flex;
-        min-height: 44px;
-        flex: none;
-        align-items: center;
-        gap: 9px;
-        padding: 0 18px;
-        border: 1px solid #6979ff;
-        border-radius: 999px;
-        background: var(--way);
+      .header-rail.is-compact .nav {
+        max-width: 780px;
+        min-height: 64px;
+        padding: 8px 12px;
+        gap: 16px;
+        background: #101115;
         color: white;
-        font-size: 14px;
-        font-weight: 680;
+        border-color: #35363e;
+        box-shadow:
+          0 4px 18px #0c0d1217,
+          inset 0 1px 0 #ffffff16;
       }
-
-      .install-copy:hover {
-        border-color: #8793ff;
-        background: #5063ff;
-        color: white;
-      }
-
-      .install-copy-dot {
-        width: 7px;
-        height: 7px;
+      .is-compact .brand {
+        flex: 0 0 40px;
+        justify-content: center;
+        height: 40px;
         border-radius: 50%;
-        background: white;
-        box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.12);
+        background: #191d3c;
       }
-
-      .prompt-disclosure {
-        position: relative;
-        border-top: 1px solid rgba(255, 255, 255, 0.11);
+      .is-compact .brand svg {
+        width: 30px;
+        color: #8e98ff;
       }
-
-      .prompt-disclosure summary {
-        padding: 16px 28px;
-        color: #b7bac6;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 620;
-        list-style: none;
-      }
-
-      .prompt-disclosure summary::-webkit-details-marker {
+      .is-compact .brand-name {
         display: none;
       }
-
-      .prompt-disclosure summary::after {
-        float: right;
-        color: #7d89ff;
-        content: "+";
-        font-size: 18px;
-        line-height: 0.8;
-      }
-
-      .prompt-disclosure[open] summary::after {
-        content: "−";
-      }
-
-      .install-prompt {
-        margin: 0;
-        padding: 4px 28px 28px;
-        color: #d9dbe4;
-        font: 500 14px/1.65 "Onest", "Helvetica Neue", Arial, sans-serif;
-        text-wrap: pretty;
-      }
-
-      .install-options {
-        position: relative;
-        padding: 16px 28px 19px;
-        border-top: 1px solid rgba(255, 255, 255, 0.11);
-        color: #858896;
-        font-size: 12px;
-        line-height: 1.45;
-      }
-
-      .install-intro {
-        display: grid;
-        gap: 22px;
-      }
-
-      .install-intro p {
-        max-width: 430px;
-        margin: 0;
-        color: var(--quiet);
-        font-size: 18px;
-        line-height: 1.5;
-        text-wrap: pretty;
-      }
-
-      @keyframes story-caret {
-        50% { opacity: 0; }
-      }
-
-      .site-route-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 54;
-        width: 100vw;
-        height: 100vh;
-        overflow: visible;
-        pointer-events: none;
-      }
-
-      .site-route-overlay path {
-        fill: none;
-        stroke: transparent;
-      }
-
-      .site-ghost-cursor {
-        position: fixed;
-        z-index: 56;
-        display: none;
-        width: 28px;
-        height: 34px;
-        color: var(--way);
-        filter: drop-shadow(0 5px 8px rgba(17, 22, 57, 0.25));
-        pointer-events: none;
-      }
-
-      .site-ghost-cursor.visible {
+      .is-compact .nav-prompt {
         display: block;
       }
-
-      .site-target-highlight {
-        outline: 2px solid transparent;
-        outline-offset: 4px;
-        animation: target-highlight 1.5s ease both;
+      .is-compact .nav-links {
+        flex-shrink: 0;
+        gap: 8px;
+        font-size: 12px;
       }
-
-      @keyframes target-highlight {
-        0%, 100% {
-          outline-color: transparent;
-        }
-        35% {
-          outline-color: var(--way);
-        }
+      .is-compact .nav-action {
+        border-color: #414659;
+        color: #dee2ff;
       }
-
-      /* Variant B — split field */
-      .variant-b {
+      .is-compact .nav-action.button {
         background: white;
+        border-color: white;
+        color: #101115;
       }
-
-      .variant-b .nav {
-        padding: 0 32px;
-        border-bottom: 1px solid var(--line);
+      .is-compact .nav-action:hover,
+      .is-compact .nav-action:focus-visible {
+        background: #24283d;
+        color: white;
       }
-
-      .variant-b .hero-split {
+      .header-rail.is-obscured .nav {
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .actions {
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      #demo-a,
+      #use-cases,
+      #questions,
+      #install-a {
+        scroll-margin-top: 100px;
+      }
+      .live-showcase {
+        display: block;
+        width: 100%;
+        height: min(720px, calc(100svh - 112px));
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: #f3f5f8;
+      }
+      .capabilities {
+        padding: 80px 0 60px;
+      }
+      .field-heading {
+        text-align: center;
+      }
+      .field-heading h2 {
+        max-width: 720px;
+        margin: 0 auto 14px;
+        font-size: clamp(32px, 4vw, 54px);
+        line-height: 1.06;
+        font-weight: 600;
+        letter-spacing: -0.05em;
+        text-wrap: balance;
+      }
+      .field-heading p,
+      .field-caption {
+        color: var(--quiet);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+      .force-map {
+        position: relative;
         display: grid;
-        min-height: calc(100vh - 76px);
-        grid-template-columns: minmax(390px, 0.74fr) minmax(600px, 1.26fr);
+        grid-template-columns: 1fr 240px 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 48px 32px;
+        min-height: 490px;
+        max-width: 1140px;
+        margin: 32px auto 0;
+        padding: 40px 0;
+        isolation: isolate;
       }
-
-      .variant-b .hero-copy {
+      .force-lines {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+      .force-map::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: radial-gradient(
+          ellipse at center,
+          #e4e8ff99 0,
+          #eef0ff55 24%,
+          transparent 54%
+        );
+        pointer-events: none;
+      }
+      .force-lines path {
+        fill: none;
+        stroke: url(#map-force-gradient);
+        stroke-width: 1;
+        vector-effect: non-scaling-stroke;
+        transition:
+          stroke 180ms,
+          stroke-width 180ms;
+      }
+      .force-lines .field-ring {
+        stroke-opacity: 0.42;
+      }
+      .force-lines .field-twin {
+        stroke-opacity: 0.5;
+        transform: translateY(4px);
+      }
+      .force-node {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        padding: 84px 54px 52px;
-        border-right: 1px solid var(--line);
+        justify-content: center;
+        align-items: flex-start;
+        max-width: 320px;
+        padding: 22px 24px;
+        border: 1px solid transparent;
+        border-radius: 20px;
+        text-decoration: none;
+        background: transparent;
+        transition:
+          transform 180ms,
+          border-color 180ms,
+          background 180ms;
       }
-
-      .variant-b .display {
-        max-width: 620px;
-        font-size: clamp(64px, 7.1vw, 122px);
+      .force-node:hover,
+      .force-node:focus-visible {
+        transform: translateY(-3px);
+        border-color: #b2baff;
+        background: #fff;
       }
-
-      .variant-b .lead {
-        max-width: 500px;
-        font-size: 19px;
+      .force-node strong {
+        font-size: 23px;
+        font-weight: 550;
+        letter-spacing: -0.035em;
       }
-
-      .variant-b .split-bottom {
+      .force-node span {
+        margin-top: 9px;
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--quiet);
+      }
+      .force-node .node-icon {
+        width: 30px;
+        height: 30px;
+        margin: 0 0 14px;
+        color: var(--way);
+      }
+      .node-icon {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .node-act {
+        grid-area: 1 / 1;
+      }
+      .node-bring {
+        grid-area: 1 / 3;
+        justify-self: end;
+      }
+      .node-guide {
+        grid-area: 2 / 1;
+      }
+      .node-connect {
+        grid-area: 2 / 3;
+        justify-self: end;
+      }
+      .product-core {
+        grid-area: 1 / 2 / 3 / 3;
+        align-self: center;
+        justify-self: center;
         display: grid;
-        gap: 28px;
+        justify-items: center;
+        gap: 12px;
+        width: 210px;
+        padding: 26px 16px;
+        border: 1px solid #c3cafa;
+        border-radius: 34px;
+        background: linear-gradient(155deg, #fff 60%, #f4f5ff);
+        box-shadow:
+          0 0 0 7px #ffffff90,
+          0 0 0 8px #dfe3ff,
+          0 18px 50px #4054f614;
+        transition:
+          box-shadow 220ms,
+          transform 220ms;
       }
-
-      .variant-b .actions {
-        display: flex;
-        gap: 10px;
+      .product-core svg {
+        width: 58px;
+        height: 58px;
+        color: var(--way);
       }
-
-      .variant-b .stage-wrap {
-        display: grid;
-        overflow: hidden;
-        padding: 52px;
-        place-items: center;
-        background: var(--mist);
+      .product-core strong {
+        font-size: 24px;
+        letter-spacing: -0.04em;
+        font-weight: 600;
       }
-
-      .variant-b .demo-shell {
-        width: min(100%, 940px);
-        border-radius: 8px;
-        box-shadow: 18px 18px 0 rgba(64, 84, 246, 0.16);
+      .product-core span {
+        color: var(--quiet);
+        font-size: 13px;
       }
-
-      .variant-b .statement-band {
+      .force-map:has(.force-node:hover, .force-node:focus-visible)
+        .product-core {
+        transform: scale(1.025);
+        box-shadow:
+          0 0 0 10px #ffffffaa,
+          0 0 0 11px #cbd2ff,
+          0 18px 60px #4054f62b;
+      }
+      .force-map:has(.node-act:hover, .node-act:focus-visible) .route-act,
+      .force-map:has(.node-bring:hover, .node-bring:focus-visible) .route-bring,
+      .force-map:has(.node-guide:hover, .node-guide:focus-visible) .route-guide,
+      .force-map:has(.node-connect:hover, .node-connect:focus-visible)
+        .route-connect {
+        stroke: var(--way);
+        stroke-width: 1.7;
+        stroke-dasharray: 72 600;
+        animation: field-flow 1500ms ease-out;
+      }
+      @keyframes field-flow {
+        from {
+          stroke-dashoffset: 360;
+        }
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      .force-node .planned {
+        display: inline-flex;
+        gap: 7px;
+        align-items: center;
+        margin-top: 12px;
+        font-size: 12px;
+        color: #39428d;
+      }
+      .planned em {
+        font-style: normal;
+        padding: 3px 7px;
+        border: 1px dashed #969fdc;
+        border-radius: 6px;
+      }
+      .field-caption {
+        margin: 12px 0 0;
+        text-align: center;
+      }
+      .faq-mark {
+        width: 120px;
+        height: 120px;
+        color: var(--way);
+        margin-top: 18px;
+        padding: 26px;
+        border: 1px solid #dce1ff;
+        border-radius: 50%;
+        box-shadow: 0 0 0 12px #eef0ff;
+      }
+      .details-section details {
+        scroll-margin-top: 100px;
+      }
+      .details-section details[open] {
+        border-bottom-color: #a1adff;
+      }
+      .details-section {
         display: grid;
         grid-template-columns: 1fr 1fr;
+        gap: 72px;
         border-top: 1px solid var(--line);
+        padding: 56px 0;
+      }
+      .details-section h2,
+      .install h2 {
+        margin: 0 0 16px;
+        max-width: 600px;
+        font-size: clamp(30px, 3.2vw, 46px);
+        font-weight: 600;
+        line-height: 1.08;
+        letter-spacing: -0.045em;
+        text-wrap: balance;
+      }
+      .details-section > div > p,
+      .install-intro p {
+        max-width: 420px;
+        color: var(--quiet);
+        font-size: 17px;
+        line-height: 1.6;
+      }
+      details {
         border-bottom: 1px solid var(--line);
       }
-
-      .variant-b .statement-band > div {
-        min-height: 520px;
-        padding: 76px 54px;
+      summary {
+        padding: 18px 0;
+        font-size: 16px;
+        font-weight: 550;
       }
-
-      .variant-b .statement-band > div:first-child {
-        border-right: 1px solid var(--line);
-      }
-
-      .variant-b .statement-band h2 {
-        max-width: 610px;
-        margin: 0;
-        font-size: clamp(50px, 6vw, 92px);
-        font-weight: 560;
-        letter-spacing: -0.065em;
-        line-height: 0.96;
-      }
-
-      .variant-b .statement-band p {
-        max-width: 520px;
-        margin: 230px 0 0;
+      details p {
+        margin: 0 0 20px;
+        max-width: 65ch;
         color: var(--quiet);
-        font-size: 20px;
-        line-height: 1.45;
+        font-size: 15px;
+        line-height: 1.7;
       }
-
-      .variant-b .footer-cta {
-        padding: 150px 54px 190px;
+      details a {
+        color: #2437d9;
       }
-
-      /* Variant C — cinematic dark */
-      .variant-c {
-        background: #090a0e;
-        color: #f6f7fb;
-      }
-
-      .variant-c .nav {
-        padding: 0 36px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.11);
-      }
-
-      .variant-c .button {
-        background: white;
-        color: #090a0e;
-      }
-
-      .variant-c .button.secondary {
-        border-color: rgba(255, 255, 255, 0.2);
-        background: transparent;
-        color: white;
-      }
-
-      .variant-c .cinema-hero {
-        position: relative;
+      .install {
         display: grid;
-        min-height: 670px;
-        place-items: center;
-        overflow: hidden;
-        padding: 140px 28px 90px;
-        text-align: center;
+        grid-template-columns: 1fr 1fr;
+        gap: 72px;
+        padding: 60px 0 72px;
+        border-top: 1px solid var(--line);
       }
-
-      .variant-c .cinema-hero::before {
-        position: absolute;
-        width: min(80vw, 1080px);
-        height: min(80vw, 1080px);
-        border: 1px solid rgba(91, 108, 255, 0.28);
-        border-radius: 50%;
-        box-shadow:
-          0 0 0 14vw rgba(70, 87, 245, 0.045),
-          0 0 150px rgba(64, 84, 246, 0.18);
-        content: "";
+      .install-card {
+        padding: 26px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: #fff;
       }
-
-      .variant-c .hero-copy {
-        position: relative;
-        z-index: 1;
-        display: grid;
-        max-width: 1120px;
-        justify-items: center;
-        gap: 31px;
+      .install-head {
+        justify-content: space-between;
+        gap: 16px;
       }
-
-      .variant-c .display {
-        color: white;
+      .install-head strong {
+        font-size: 17px;
+        font-weight: 550;
       }
-
-      .variant-c .lead {
-        max-width: 760px;
-        color: #aaaebb;
-      }
-
-      .variant-c .actions {
-        display: flex;
-        gap: 10px;
-      }
-
-      .variant-c .stage-crop {
-        padding: 0 max(24px, calc((100vw - 1240px) / 2));
-      }
-
-      .variant-c .demo-shell {
-        border-color: rgba(255, 255, 255, 0.17);
-        border-radius: 26px 26px 0 0;
-        box-shadow: 0 -18px 110px rgba(64, 84, 246, 0.22);
-      }
-
-      .variant-c .dark-statement {
-        padding: 200px max(28px, calc((100vw - 1240px) / 2));
-      }
-
-      .variant-c .dark-statement h2 {
-        max-width: 1050px;
-        margin: 0;
-        font-size: clamp(52px, 8vw, 120px);
-        font-weight: 520;
-        letter-spacing: -0.075em;
-        line-height: 0.92;
-      }
-
-      .variant-c .dark-statement p {
-        max-width: 580px;
-        margin: 55px 0 0 auto;
-        color: #9fa3b1;
-        font-size: 21px;
-        line-height: 1.45;
-      }
-
-      .variant-c .dark-proof {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        margin: 0 max(28px, calc((100vw - 1240px) / 2));
-        border-top: 1px solid rgba(255, 255, 255, 0.14);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-      }
-
-      .variant-c .dark-proof div {
-        min-height: 180px;
-        padding: 34px 20px 34px 0;
-        border-right: 1px solid rgba(255, 255, 255, 0.14);
-        font-size: 24px;
-      }
-
-      .variant-c .dark-proof div:not(:first-child) {
-        padding-left: 28px;
-      }
-
-      .variant-c .dark-proof div:last-child {
-        border-right: 0;
-      }
-
-      .variant-c .footer-cta {
-        padding: 180px max(28px, calc((100vw - 1240px) / 2)) 230px;
-      }
-
-      .prototype-switcher {
-        position: fixed;
-        bottom: 18px;
-        left: 18px;
-        z-index: 60;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 7px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 999px;
-        background: rgba(12, 13, 18, 0.9);
-        color: white;
-        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.22);
-        backdrop-filter: blur(16px);
-        transform: none;
-      }
-
-      .prototype-switcher button {
-        display: grid;
-        width: 34px;
-        height: 34px;
-        place-items: center;
+      .install-card details {
+        margin-top: 16px;
         border: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
       }
-
-      .prototype-label {
-        min-width: 178px;
-        padding: 0 8px;
-        text-align: center;
-        font-size: 12px;
+      .install-card summary {
+        color: var(--quiet);
+        font-size: 14px;
       }
-
-      .prototype-note,
-      .prototype-switcher {
-        display: none;
+      .install-prompt {
+        user-select: text;
+        overflow-wrap: anywhere;
       }
-
-      @media (max-width: 900px) {
-        .nav-links a:not(.button) {
-          display: none;
-        }
-
-        .display {
-          font-size: clamp(52px, 15vw, 84px);
-        }
-
-        .demo-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .chat-pane {
-          min-height: 380px;
-          border-top: 1px solid #ececf1;
-          border-left: 0;
-        }
-
-        .variant-a .statement,
-        .variant-b .hero-split,
-        .variant-b .statement-band {
-          grid-template-columns: 1fr;
-        }
-
-        .variant-a .statement {
-          min-height: 0;
-          padding: 96px 0 72px;
-        }
-
-        .variant-a .proof-wrap {
-          padding: 28px 0 92px;
-        }
-
-        .variant-a .footer-cta {
-          padding: 72px 0 112px;
-        }
-
-        .variant-b .hero-copy,
-        .variant-b .stage-wrap {
-          min-height: 650px;
-        }
-
-        .variant-b .hero-copy,
-        .variant-b .statement-band > div {
-          padding-right: 28px;
-          padding-left: 28px;
-        }
-
-        .variant-b .hero-copy,
-        .variant-b .statement-band > div:first-child {
-          border-right: 0;
-        }
-
-        .variant-b .statement-band > div:first-child {
-          border-bottom: 1px solid var(--line);
-        }
-
-        .variant-b .statement-band p {
-          margin-top: 120px;
-        }
-
-        .proof-line,
-        .variant-c .dark-proof {
-          grid-template-columns: 1fr;
-        }
-
-        .proof-line {
-          padding-left: 28px;
-        }
-
-        .proof-line::before,
-        .proof-line::after {
-          top: 7px;
-          bottom: 7px;
-          left: 7px;
-          width: 1px;
-          height: auto;
-        }
-
-        .proof-line::after {
-          transform: scaleY(0);
-          transform-origin: top;
-        }
-
-        .proof-line.in-view::after {
-          transform: scaleY(1);
-        }
-
-        .proof-line > div,
-        .proof-line > div:nth-child(2),
-        .proof-line > div:last-child,
-        .variant-c .dark-proof div,
-        .variant-c .dark-proof div:not(:first-child) {
-          min-height: 0;
-          padding: 0 0 26px;
-          border-right: 0;
-          border-bottom: 1px solid var(--line);
-        }
-
-        .proof-line > div::before,
-        .proof-line > div:first-child::before,
-        .proof-line > div:nth-child(2)::before,
-        .proof-line > div:last-child::before {
-          top: 0;
-          right: auto;
-          left: -28px;
-          transform: scale(0);
-        }
-
-        .proof-line.in-view > div::before,
-        .proof-line.in-view > div:first-child::before,
-        .proof-line.in-view > div:nth-child(2)::before,
-        .proof-line.in-view > div:last-child::before {
-          transform: scale(1);
-        }
-
-        .variant-c .dark-proof div,
-        .variant-c .dark-proof div:not(:first-child) {
-          padding: 24px 0;
-          border-bottom-color: rgba(255, 255, 255, 0.14);
-        }
-
-        .footer-cta {
-          grid-template-columns: minmax(0, 1fr);
-          gap: 36px;
-        }
+      .install-status {
+        min-height: 1.5em;
+        margin: 8px 0 0;
+        color: var(--quiet);
+        font-size: 13px;
       }
-
-      @media (max-width: 560px) {
-        .prototype-note {
-          display: none;
+      .footer {
+        justify-content: space-between;
+        gap: 20px;
+        border-top: 1px solid var(--line);
+        padding: 24px 0 36px;
+        color: var(--quiet);
+        font-size: 13px;
+      }
+      .footer a {
+        margin-left: 20px;
+      }
+      @media (max-width: 800px) {
+        .shell {
+          padding: 0 20px;
         }
-
-        .prototype-switcher {
-          display: none;
-        }
-
-        .story-driver {
-          bottom: max(8px, env(safe-area-inset-bottom));
-          width: 132px;
-        }
-
-        .story-driver.is-open {
-          width: calc(100vw - 24px);
-        }
-
-        .site-bezel {
-          inset: 5px;
-          border-radius: 20px;
-        }
-
         .nav {
-          min-height: 66px;
+          min-height: 76px;
         }
-
-        .variant-a .hero {
-          min-height: 520px;
-          padding: 88px 0 56px;
+        .nav-links {
+          gap: 16px;
         }
-
-        .force-field {
-          bottom: -28px;
-          opacity: 0.68;
+        .hero {
+          min-height: 400px;
+          gap: 20px;
+          padding: 42px 0 64px;
         }
-
-        .force-rails use:nth-child(even),
-        .force-cuts use:nth-child(even),
-        .force-current use:nth-child(even) {
+        .hero p {
+          margin-bottom: 22px;
+          max-width: 520px;
+        }
+        .hero-field {
+          inset-inline: -20px;
+          width: calc(100% + 40px);
+        }
+        .header-rail {
+          height: 96px;
+        }
+        .header-rail.is-compact .nav {
+          display: grid;
+          grid-template-columns: 36px 1fr;
+          gap: 6px 10px;
+          padding: 10px 12px;
+          border-radius: 26px;
+        }
+        .is-compact .brand {
+          grid-row: 1 / 3;
+          height: 36px;
+        }
+        .is-compact .nav-prompt {
+          font-size: 13px;
+        }
+        .is-compact .nav-links {
+          grid-column: 2;
+          gap: 6px;
+        }
+        .is-compact .nav-action {
+          padding: 7px 10px;
+          font-size: 11px;
+        }
+        .live-showcase {
+          border-radius: 18px;
+        }
+        .capabilities {
+          padding: 48px 0 36px;
+        }
+        .force-map {
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: auto auto auto;
+          gap: 18px;
+          padding: 18px 0 0;
+          min-height: 0;
+        }
+        .force-lines {
           display: none;
         }
-
-        .variant-a .actions,
-        .variant-b .actions,
-        .variant-c .actions {
+        .product-core {
+          grid-area: 1 / 1 / 2 / 3;
+          width: 180px;
+          margin: 12px 0 26px;
+        }
+        .node-act {
+          grid-area: 2 / 1;
+        }
+        .node-bring {
+          grid-area: 2 / 2;
+        }
+        .node-guide {
+          grid-area: 3 / 1;
+        }
+        .node-connect {
+          grid-area: 3 / 2;
+        }
+        .force-node {
           width: 100%;
-          flex-direction: column;
+          padding: 16px 8px;
+          border-top-color: #c9d0fd;
+          border-radius: 0;
         }
-
-        .button {
-          width: 100%;
+        .force-node strong {
+          font-size: 19px;
         }
-
-        .statement p,
-        .install-intro p {
-          font-size: 17px;
-        }
-
-        .install-card-head {
-          align-items: stretch;
-          flex-direction: column;
-          padding: 22px;
-        }
-
-        .install-copy {
-          width: 100%;
-        }
-
-        .install-prompt {
-          padding: 4px 22px 22px;
+        .force-node span {
           font-size: 14px;
-          line-height: 1.6;
         }
-
-        .prompt-disclosure summary {
-          padding: 16px 22px;
+        .force-node .planned {
+          flex-wrap: wrap;
+          font-size: 11px;
         }
-
-        .install-options {
-          padding: 14px 22px 17px;
+        .faq-mark {
+          display: none;
         }
-
-        .variant-b .hero-copy,
-        .variant-b .stage-wrap {
-          min-height: 590px;
-          padding: 52px 22px;
+        .details-section,
+        .install {
+          grid-template-columns: 1fr;
+          gap: 24px;
+          padding: 36px 0;
         }
-
-        .app-pane {
-          padding: 18px;
+        .install-card {
+          padding: 20px;
         }
-
-        .chat-pane {
-          padding: 18px;
-        }
-
-        .statement h2,
-        .footer-cta h2,
-        .variant-c .dark-statement h2 {
-          font-size: 48px;
+        .footer {
+          flex-wrap: wrap;
         }
       }
-
       @media (prefers-reduced-motion: reduce) {
         html {
           scroll-behavior: auto;
         }
-
-        *,
-        *::before,
-        *::after {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
+        .hero-field *,
+        .header-rail *,
+        .force-map *,
+        .force-map:has(.force-node:hover, .force-node:focus-visible) * {
+          animation: none !important;
+          transition: none !important;
+          transform: none !important;
         }
-
-        .ghost-cursor {
-          display: none !important;
-        }
-
-        .site-ghost-cursor {
-          display: none !important;
-        }
-
-        .force-current {
-          display: none;
-        }
-
       }
     </style>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
-    <svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+    <svg
+      width="0"
+      height="0"
+      style="position: absolute"
+      aria-hidden="true"
+      focusable="false"
+    >
       <symbol id="waymode-mark" viewBox="0 0 48 48">
-        <path d="M5 15c4 0 3 18 10 18s3-18 10-18 3 18 11 18c3.2 0 5-3.2 5.8-6.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.6" />
+        <path
+          d="M5 15c4 0 3 18 10 18s3-18 10-18 3 18 11 18c3.2 0 5-3.2 5.8-6.8"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="3.6"
+        />
         <circle cx="44" cy="20.2" r="3.1" fill="currentColor" />
       </symbol>
     </svg>
-
-    <main id="main-content">
-      <section class="variant variant-a" data-variant="a">
+    <div class="shell">
+      <header class="header-rail">
         <nav class="nav" aria-label="Main navigation">
           <a class="brand" href="#top-a" aria-label="Waymode home">
-            <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
               <use href="#waymode-mark" />
             </svg>
-            <span>waymode</span>
+            <span class="brand-name">waymode</span>
           </a>
+          <div class="command-copy">
+            <p class="nav-prompt" id="guide-caption">
+              Where would you like to go?
+            </p>
+          </div>
           <div class="nav-links">
-            <a href="#proof-a">Proof</a>
-            <a href="#install-a">Install</a>
-            <a class="button" href="#demo-a">Watch it work</a>
+            <a class="nav-action" href="https://github.com/mossburgh/waymode">
+              GitHub
+            </a>
+            <a
+              class="nav-action button"
+              href="#install-a"
+              data-prompt="Install"
+            >
+              Install
+            </a>
           </div>
         </nav>
-
-        <header class="hero" id="top-a" data-story="Put this page in Waymode.">
-          <div class="force-field" aria-hidden="true">
-            <svg viewBox="0 0 1440 720" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="force-line" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#4054f6" stop-opacity="0" />
-                  <stop offset="0.46" stop-color="#8190ff" stop-opacity="0.28" />
-                  <stop offset="1" stop-color="#4054f6" stop-opacity="0.72" />
-                </linearGradient>
-                <radialGradient id="force-copy-fade">
-                  <stop offset="0" stop-color="black" />
-                  <stop offset="0.58" stop-color="black" />
-                  <stop offset="0.82" stop-color="#a0a0a0" />
-                  <stop offset="1" stop-color="white" />
-                </radialGradient>
-                <mask id="force-copy-mask" mask-type="luminance">
-                  <rect width="1440" height="720" fill="white" />
-                  <ellipse cx="720" cy="360" rx="500" ry="286" fill="url(#force-copy-fade)" />
-                </mask>
-                <path id="force-1" d="M-120 82C176 78 396 202 694 704" />
-                <path id="force-2" d="M-120 238C218 226 446 360 708 704" />
-                <path id="force-3" d="M-120 472C248 468 510 558 720 704" />
-                <path id="force-4" d="M1560 82C1264 78 1044 202 746 704" />
-                <path id="force-5" d="M1560 238C1222 226 994 360 732 704" />
-                <path id="force-6" d="M1560 472C1192 468 930 558 720 704" />
-              </defs>
-              <g mask="url(#force-copy-mask)">
-                <g class="force-rails">
-                  <use href="#force-1" /><use href="#force-2" /><use href="#force-3" />
-                  <use href="#force-4" /><use href="#force-5" /><use href="#force-6" />
-                </g>
-                <g class="force-cuts">
-                  <use href="#force-1" /><use href="#force-2" /><use href="#force-3" />
-                  <use href="#force-4" /><use href="#force-5" /><use href="#force-6" />
-                </g>
-                <g class="force-current">
-                  <use href="#force-1" /><use href="#force-2" /><use href="#force-3" />
-                  <use href="#force-4" /><use href="#force-5" /><use href="#force-6" />
-                </g>
+      </header>
+      <main id="main-content">
+        <header class="hero" id="top-a" data-guide="Put this page in Waymode.">
+          <svg
+            class="hero-field"
+            viewBox="0 0 1440 600"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <defs>
+              <linearGradient
+                id="hero-force-gradient"
+                x1="0"
+                y1="0"
+                x2="0.6"
+                y2="1"
+              >
+                <stop offset="0" stop-color="#c7ceff" stop-opacity=".18" />
+                <stop offset=".6" stop-color="#9aa6ff" stop-opacity=".6" />
+                <stop offset="1" stop-color="#6676ff" stop-opacity=".8" />
+              </linearGradient>
+              <radialGradient id="hero-copy-fade">
+                <stop offset="0" stop-color="black" />
+                <stop offset=".68" stop-color="black" />
+                <stop offset="1" stop-color="white" />
+              </radialGradient>
+              <mask id="hero-copy-mask">
+                <rect width="1440" height="600" fill="white" />
+                <ellipse
+                  cx="720"
+                  cy="250"
+                  rx="610"
+                  ry="210"
+                  fill="url(#hero-copy-fade)"
+                />
+              </mask>
+              <path
+                id="hero-rail-1"
+                d="M -150 0 C 245 30 365 190 670 620"
+                pathLength="1000"
+              />
+              <path
+                id="hero-rail-2"
+                d="M -150 240 C 255 245 460 365 700 620"
+                pathLength="1000"
+              />
+              <path
+                id="hero-rail-3"
+                d="M -150 480 C 210 455 545 515 730 620"
+                pathLength="1000"
+              />
+              <path
+                id="hero-rail-4"
+                d="M 1590 0 C 1195 30 1075 190 770 620"
+                pathLength="1000"
+              />
+              <path
+                id="hero-rail-5"
+                d="M 1590 240 C 1185 245 980 365 740 620"
+                pathLength="1000"
+              />
+              <path
+                id="hero-rail-6"
+                d="M 1590 480 C 1230 455 895 515 710 620"
+                pathLength="1000"
+              />
+            </defs>
+            <g mask="url(#hero-copy-mask)">
+              <g>
+                <use href="#hero-rail-1" />
+                <use href="#hero-rail-2" />
+                <use href="#hero-rail-3" />
+                <use href="#hero-rail-4" />
+                <use href="#hero-rail-5" />
+                <use href="#hero-rail-6" />
               </g>
-            </svg>
-          </div>
-          <div class="hero-copy">
-            <h1 class="display">Put your product in Waymode.</h1>
-            <p class="lead">Your users ask. Your product does the work.</p>
+              <g class="force-twin">
+                <use href="#hero-rail-1" />
+                <use href="#hero-rail-2" />
+                <use href="#hero-rail-3" />
+                <use href="#hero-rail-4" />
+                <use href="#hero-rail-5" />
+                <use href="#hero-rail-6" />
+              </g>
+              <g>
+                <use class="force-current" href="#hero-rail-1" />
+                <use class="force-current" href="#hero-rail-2" />
+                <use class="force-current" href="#hero-rail-3" />
+                <use class="force-current" href="#hero-rail-4" />
+                <use class="force-current" href="#hero-rail-5" />
+                <use class="force-current" href="#hero-rail-6" />
+              </g>
+            </g>
+          </svg>
+          <h1>Put your product in Waymode.</h1>
+          <div>
+            <p>Let people and their AI agents use your product.</p>
             <div class="actions">
-              <a class="button" href="#demo-a">Watch it work</a>
-              <a class="button secondary" href="#install-a">Install</a>
+              <a class="button" href="#demo-a">Try the demo</a>
             </div>
           </div>
         </header>
 
-        <div id="demo-a" data-demo-slot data-story="Set up a passkey."></div>
-
-        <section class="statement" id="how-a" data-story="Turn on dark mode.">
-          <h2>Your product already knows how.</h2>
-          <p>Waymode uses its real actions, permissions, and interface.</p>
+        <section
+          id="demo-a"
+          aria-label="Try Waymode in a real app"
+          data-guide="Try a request in Your Product."
+        >
+          <iframe
+            class="live-showcase"
+            src="/showcase/studio.html"
+            title="Waymode live showcase — edit a feature and let people or agents use it"
+          ></iframe>
         </section>
 
-        <section class="proof-wrap" id="proof-a" data-story="Show me the proof.">
-          <div class="proof-line">
-            <div>Acts directly.</div>
-            <div>Brings the interface.</div>
-            <div>Guides when needed.</div>
+        <section
+          class="capabilities"
+          id="use-cases"
+          aria-labelledby="field-title"
+          data-guide="One product. More ways in."
+        >
+          <div class="field-heading">
+            <h2 id="field-title">Your product. Now in Waymode.</h2>
+            <p>One app, with more ways in. Explore a connection.</p>
           </div>
-        </section>
-
-        <section class="footer-cta" id="install-a" data-story="Install Waymode.">
-          <div class="install-intro">
-            <h2>Install with your agent.</h2>
-            <p>Paste one prompt into Codex, Claude Code, Cursor, or the coding agent you already use.</p>
-          </div>
-          <div class="story-install-card visible" aria-hidden="false">
-            <div class="install-card-head">
-              <div class="agent-list" aria-label="Supported coding agents">
-                <span>Codex</span>
-                <span>Claude Code</span>
-                <span>Cursor</span>
-              </div>
-              <button class="install-copy" type="button" data-copy-install><span class="install-copy-dot" aria-hidden="true"></span>Copy prompt</button>
+          <div class="force-map">
+            <svg
+              class="force-lines"
+              viewBox="0 0 1000 490"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <defs>
+                <linearGradient id="map-force-gradient">
+                  <stop offset="0" stop-color="#aebaff" stop-opacity="0" />
+                  <stop offset=".34" stop-color="#a3afff" stop-opacity=".65" />
+                  <stop offset=".5" stop-color="#6c7dff" stop-opacity=".8" />
+                  <stop offset=".66" stop-color="#a3afff" stop-opacity=".65" />
+                  <stop offset="1" stop-color="#aebaff" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <path
+                class="field-ring"
+                d="M -80 0 C 150 10 330 55 500 245 C 670 435 850 480 1080 490"
+              />
+              <path
+                class="field-ring"
+                d="M 1080 0 C 850 10 670 55 500 245 C 330 435 150 480 -80 490"
+              />
+              <path
+                class="field-ring"
+                d="M -80 50 C 225 30 350 190 500 245 C 650 300 775 460 1080 440"
+              />
+              <path
+                class="field-ring"
+                d="M 1080 50 C 775 30 650 190 500 245 C 350 300 225 460 -80 440"
+              />
+              <path class="route-act" d="M 180 110 C 330 90 330 190 500 245" />
+              <path
+                class="field-twin route-act"
+                d="M 180 110 C 330 90 330 190 500 245"
+              />
+              <path
+                class="route-bring"
+                d="M 820 110 C 670 90 670 190 500 245"
+              />
+              <path
+                class="field-twin route-bring"
+                d="M 820 110 C 670 90 670 190 500 245"
+              />
+              <path
+                class="route-guide"
+                d="M 180 385 C 330 405 330 300 500 245"
+              />
+              <path
+                class="field-twin route-guide"
+                d="M 180 385 C 330 405 330 300 500 245"
+              />
+              <path
+                class="route-connect"
+                d="M 820 385 C 670 405 670 300 500 245"
+              />
+              <path
+                class="field-twin route-connect"
+                d="M 820 385 C 670 405 670 300 500 245"
+              />
+            </svg>
+            <a class="force-node node-act" href="#faq-actions">
+              <svg class="node-icon" viewBox="0 0 32 32" aria-hidden="true">
+                <path
+                  d="M 7 5 H 25 A 3 3 0 0 1 28 8 V 21 A 3 3 0 0 1 25 24 H 13 L 6 29 V 24 A 3 3 0 0 1 3 21 V 8 A 3 3 0 0 1 7 5 Z"
+                />
+                <path d="m 17 9 -5 7 h 7 l -4 5" />
+              </svg>
+              <strong>Ask. It acts.</strong
+              ><span>“Turn on dark mode.”<br />Your app does it.</span>
+            </a>
+            <a class="force-node node-bring" href="#faq-interface">
+              <svg class="node-icon" viewBox="0 0 32 32" aria-hidden="true">
+                <rect x="3" y="4" width="20" height="18" rx="3" />
+                <path d="M 3 10 H 23" />
+                <rect x="12" y="16" width="17" height="13" rx="3" />
+                <path d="M 17 21 H 24 M 17 25 H 21" />
+              </svg>
+              <strong>The UI comes to you.</strong
+              ><span
+                >“Open settings here.”<br />Real controls, inside chat.</span
+              >
+            </a>
+            <div class="product-core">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <use href="#waymode-mark" /></svg
+              ><strong>Your product</strong><span>In Waymode</span>
             </div>
-            <details class="prompt-disclosure">
-              <summary>Read the prompt</summary>
-              <p class="install-prompt">Install Waymode in this repository. Start by reading the source and installation instructions at https://github.com/mossburgh/waymode. Detect every client and server boundary in this product. Connect Waymode to the product’s existing actions, permissions, and interface. When a safe action is not exposed, add the smallest reusable primitive that makes it available without copying business logic. Run Waymode’s setup checks and self-driving evals, keep working until they pass, then summarize what users can now ask the product to do.</p>
+            <a class="force-node node-guide" href="#faq-interface">
+              <svg class="node-icon" viewBox="0 0 32 32" aria-hidden="true">
+                <path d="m 9 3 17 17 -9 -1 -4 9 Z" />
+                <path d="M 4 17 C 0 24 5 30 9 29 M 22 5 H 28 M 25 2 V 8" />
+              </svg>
+              <strong>Follow its lead.</strong
+              ><span>“Show me where.”<br />A cursor guides the way.</span>
+            </a>
+            <a
+              class="force-node node-connect"
+              id="computer-use"
+              href="#faq-agents"
+            >
+              <svg class="node-icon" viewBox="0 0 32 32" aria-hidden="true">
+                <rect x="3" y="5" width="10" height="10" rx="3" />
+                <rect x="19" y="17" width="10" height="10" rx="3" />
+                <path
+                  d="M 13 10 H 20 Q 24 10 24 14 V 17 M 19 22 H 12 Q 8 22 8 18 V 15"
+                />
+              </svg>
+              <strong>Bring your agent.</strong
+              ><span
+                >Use your app from a connected assistant or computer-use
+                workflow.</span
+              ><span class="planned">MCP + MCP Apps <em>Planned</em></span>
+            </a>
+          </div>
+          <p class="field-caption">
+            Your actions. Your permissions. Your state. Waymode connects the
+            paths.
+          </p>
+        </section>
+
+        <section
+          class="details-section"
+          id="questions"
+          aria-labelledby="details-title"
+          data-guide="A little more under the hood."
+        >
+          <div>
+            <h2 id="details-title">A little more under the hood.</h2>
+            <p>
+              Already agentic or just getting started. Waymode connects AI to
+              the actions and interfaces you already own.
+            </p>
+            <svg class="faq-mark" viewBox="0 0 48 48" aria-hidden="true">
+              <use href="#waymode-mark" />
+            </svg>
+          </div>
+          <div>
+            <details id="faq-actions">
+              <summary>What stays yours?</summary>
+              <p>
+                Your handlers, state, permissions, and choice of decision model.
+                Waymode selects from connected actions and checks scope and
+                freshness. Your app still authorizes each operation and verifies
+                saved changes.
+              </p>
             </details>
-            <div class="install-options">Run from the root of your product. One prompt works across supported coding agents.</div>
+            <details>
+              <summary>What happens when I add a feature?</summary>
+              <p>
+                A new control enters the connected web surface’s next snapshot.
+                Backend actions use your connected contracts. Those features
+                need no matching feature-specific model tool. Hidden functions
+                and unconnected APIs still need integration.
+              </p>
+            </details>
+            <details id="faq-interface">
+              <summary>How do live views and guidance work?</summary>
+              <p>
+                Connect an app view so its real controls can appear in chat.
+                Waymode can also navigate the connected interface and guide a
+                user with a cursor. Both use the app’s existing behavior;
+                security prompts and actions that need the user remain in their
+                hands.
+              </p>
+            </details>
+            <details id="faq-agents">
+              <summary>What about external agents and MCP?</summary>
+              <p>
+                Connect an external agent through an authenticated transport to
+                discover supported actions and read results. It can use those
+                actions alongside its browser controls, without navigating menus
+                for each exposed task.
+                <a
+                  href="https://github.com/mossburgh/waymode/blob/main/docs/SURFACES.md#external-agents-and-computer-use"
+                  >Read the integration contract.</a
+                >
+              </p>
+              <p>
+                The remote adapter is available. Ready-made MCP, WebMCP, and
+                desktop controllers are not included. MCP and MCP Apps are
+                future integration paths, not shipped support.
+              </p>
+            </details>
+            <details>
+              <summary>What can I use today?</summary>
+              <p>
+                The open-source SDK supports same-document web apps and React
+                DOM hosts. Dedicated Next.js, TanStack Start, React Native, and
+                native adapters are planned.
+                <a href="https://github.com/mossburgh/waymode"
+                  >Check the current setup instructions.</a
+                >
+              </p>
+            </details>
+            <details id="proof-a">
+              <summary>Where is the proof?</summary>
+              <p>
+                The live showcase’s Activity tab shows its calls and results.
+                The
+                <a
+                  href="https://github.com/mossburgh/waymode/blob/main/docs/EVALS.md"
+                  >eval contract</a
+                >
+                explains how claims must be backed by retained runs. Unit tests
+                alone do not prove model accuracy or a speed advantage.
+              </p>
+            </details>
           </div>
         </section>
 
-        <div class="site-bezel" aria-hidden="true"></div>
-        <div class="story-driver" data-story-driver aria-live="polite">
-          <div class="story-driver-signal" aria-hidden="true">
-            <svg viewBox="0 0 48 48">
-              <use href="#waymode-mark" />
-            </svg>
+        <section
+          class="install"
+          id="install-a"
+          aria-labelledby="install-title"
+          data-guide="Put your product in Waymode."
+        >
+          <div class="install-intro">
+            <h2 id="install-title">Now put your product in Waymode.</h2>
+            <p>
+              Copy this prompt into Codex, Claude Code, Cursor, or your coding
+              agent.
+            </p>
           </div>
-          <div class="story-driver-copy">
-            <span class="story-driver-label">waymode</span>
-            <div class="story-driver-request"></div>
-          </div>
-          <span class="story-driver-indicator" aria-hidden="true"></span>
-        </div>
-        <svg class="site-route-overlay" aria-hidden="true"><path></path></svg>
-        <svg class="site-ghost-cursor" viewBox="0 0 28 34" aria-hidden="true">
-          <path d="M3 2v24l6.6-6.2 4.8 11.1 5-2.3-4.7-10.8H24L3 2Z" fill="white" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-        </svg>
-      </section>
-
-      <section class="variant variant-b" data-variant="b">
-        <nav class="nav" aria-label="Main navigation">
-          <a class="brand" href="#top-b" aria-label="Waymode home">
-            <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
-              <use href="#waymode-mark" />
-            </svg>
-            <span>waymode</span>
-          </a>
-          <div class="nav-links">
-            <a href="/install">Install</a>
-            <a class="button" href="#demo-b">Watch it work</a>
-          </div>
-        </nav>
-
-        <header class="hero-split" id="top-b">
-          <div class="hero-copy">
-            <h1 class="display">Put your product in Waymode.</h1>
-            <div class="split-bottom">
-              <p class="lead">Turn every feature into something users can ask for—and have your product do for them.</p>
-              <div class="actions">
-                <a class="button" href="#demo-b">Watch it work</a>
-                <a class="button secondary" href="/install">Install</a>
-              </div>
-            </div>
-          </div>
-          <div class="stage-wrap" id="demo-b" data-demo-slot></div>
-        </header>
-
-        <section class="statement-band">
-          <div><h2>Your product already knows how.</h2></div>
-          <div><p>Waymode acts directly, brings forward the interface, or guides the user through it.</p></div>
-        </section>
-
-        <section class="footer-cta">
-          <h2>Build as usual.</h2>
-          <a class="button" href="/install">Install Waymode</a>
-        </section>
-      </section>
-
-      <section class="variant variant-c" data-variant="c">
-        <nav class="nav" aria-label="Main navigation">
-          <a class="brand" href="#top-c" aria-label="Waymode home">
-            <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
-              <use href="#waymode-mark" />
-            </svg>
-            <span>waymode</span>
-          </a>
-          <div class="nav-links">
-            <a href="/install">Install</a>
-            <a class="button" href="#demo-c">Watch it work</a>
-          </div>
-        </nav>
-
-        <header class="cinema-hero" id="top-c">
-          <div class="hero-copy">
-            <h1 class="display">Put your product in Waymode.</h1>
-            <p class="lead">Your users ask. Your product does the work.</p>
-            <div class="actions">
-              <a class="button" href="#demo-c">Watch it work</a>
-              <a class="button secondary" href="/install">Install</a>
-            </div>
-          </div>
-        </header>
-
-        <div class="stage-crop" id="demo-c" data-demo-slot></div>
-
-        <section class="dark-statement">
-          <h2>Ask for the outcome.</h2>
-          <p>Waymode uses the actions and interfaces your product already has.</p>
-        </section>
-
-        <section class="dark-proof">
-          <div>It acts.</div>
-          <div>It shows.</div>
-          <div>It guides.</div>
-        </section>
-
-        <section class="footer-cta">
-          <h2>Put your product in Waymode.</h2>
-          <a class="button" href="/install">Install Waymode</a>
-        </section>
-      </section>
-    </main>
-
-    <template id="demo-template">
-      <section class="demo-shell" aria-label="Interactive Waymode concept demo">
-        <div class="demo-toolbar">
-          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-          <span class="toolbar-title">Daylist</span>
-        </div>
-        <div class="demo-grid">
-          <div class="app-pane">
-            <div class="app-header">
-              <span class="app-title">Today</span>
-              <button class="app-settings" aria-label="Open settings">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                  <circle cx="5" cy="12" r="1.5" fill="currentColor" />
-                  <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-                  <circle cx="19" cy="12" r="1.5" fill="currentColor" />
-                </svg>
+          <div class="install-card">
+            <div class="install-head">
+              <strong>Start in your codebase.</strong
+              ><button class="button" type="button" data-copy-install>
+                Copy prompt
               </button>
             </div>
-            <div class="task-list">
-              <div class="task done">
-                <span class="check"></span><span class="task-name">Review launch copy</span><span class="task-time">9:30</span>
-              </div>
-              <div class="task">
-                <span class="check"></span><span class="task-name">Ship the release</span><span class="task-time">11:00</span>
-              </div>
-              <div class="task done">
-                <span class="check"></span><span class="task-name">Run acceptance checks</span><span class="task-time">14:00</span>
-              </div>
-              <div class="task">
-                <span class="check"></span><span class="task-name">Publish the walkthrough</span><span class="task-time">16:30</span>
-              </div>
-            </div>
-            <span class="guide-ring" aria-hidden="true"></span>
+            <details id="install-prompt">
+              <summary>Read the install prompt</summary>
+              <p class="install-prompt">
+                Install Waymode in this repository. Start by reading the source
+                and installation instructions at
+                https://github.com/mossburgh/waymode. Detect every client and
+                server boundary in this product. Connect Waymode to the
+                product’s existing actions, permissions, and interface. When a
+                safe action is not exposed, add the smallest reusable primitive
+                that makes it available without copying business logic. Run
+                Waymode’s setup checks and self-driving evals, keep working
+                until they pass, then summarize what users can now ask the
+                product to do.
+              </p>
+            </details>
+            <p class="install-status" role="status" aria-live="polite"></p>
           </div>
-          <div class="chat-pane">
-            <span class="chat-kicker">Ask Daylist</span>
-            <div class="action-stage">
-              <div class="user-bubble">Turn on dark mode.</div>
-              <div class="result"><span class="result-mark">✓</span><span>Dark mode is on.</span></div>
-              <div class="portal">
-                <strong>Set up a passkey</strong>
-                <span>Use this device to add a passkey to your account.</span>
-                <button type="button">Continue</button>
-              </div>
-            </div>
-            <div class="request-buttons" aria-label="Try a request">
-              <button class="active" type="button" data-action="dark">Turn on dark mode</button>
-              <button type="button" data-action="passkey">Help me set up a passkey</button>
-              <button type="button" data-action="guide">Where are notifications?</button>
-            </div>
-          </div>
+        </section>
+      </main>
+      <footer class="footer">
+        <span>Waymode · Open source</span>
+        <div>
+          <a href="https://github.com/mossburgh/waymode">GitHub</a
+          ><a
+            href="https://github.com/mossburgh/waymode/blob/main/docs/EVALS.md"
+            >Evidence</a
+          >
         </div>
-        <svg class="way-path" aria-hidden="true">
-          <path class="way-path-base"></path>
-          <path class="way-path-live"></path>
-          <circle class="way-path-point" r="5"></circle>
-        </svg>
-        <span class="action-pulse" aria-hidden="true"></span>
-        <svg class="ghost-cursor" viewBox="0 0 28 34" aria-hidden="true">
-          <path d="M3 2v24l6.6-6.2 4.8 11.1 5-2.3-4.7-10.8H24L3 2Z" fill="white" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-        </svg>
-      </section>
-    </template>
-
-    <div class="prototype-switcher" aria-label="Prototype variants">
-      <button type="button" id="previous" aria-label="Previous variant">←</button>
-      <span class="prototype-label" id="variant-label">A · Centered stage</span>
-      <button type="button" id="next" aria-label="Next variant">→</button>
+      </footer>
     </div>
-
     <script>
-      const variants = [
-        { key: "a", label: "A · Centered stage" },
-        { key: "b", label: "B · Split field" },
-        { key: "c", label: "C · Cinematic dark" },
-      ];
-
-      const activeKey = () => "a";
-
-      const mountDemo = (root) => {
-        const template = document.querySelector("#demo-template");
-        root.replaceChildren(template.content.cloneNode(true));
-        const shell = root.querySelector(".demo-shell");
-        const app = root.querySelector(".app-pane");
-        const bubble = root.querySelector(".user-bubble");
-        const result = root.querySelector(".result");
-        const portal = root.querySelector(".portal");
-        const guide = root.querySelector(".guide-ring");
-        const settings = root.querySelector(".app-settings");
-        const resultText = result.querySelector("span:last-child");
-        const pathLive = root.querySelector(".way-path-live");
-        const pulse = root.querySelector(".action-pulse");
-        const cursor = root.querySelector(".ghost-cursor");
-        let cursorAnimation;
-        let actionTimers = [];
-
-        const schedule = (callback, delay) => {
-          const timer = setTimeout(callback, delay);
-          actionTimers.push(timer);
-        };
-
-        const pointWithin = (element, edge = "center") => {
-          const shellBox = shell.getBoundingClientRect();
-          const box = element.getBoundingClientRect();
-          return {
-            x: (edge === "left" ? box.left : edge === "right" ? box.right : box.left + box.width / 2) - shellBox.left,
-            y: box.top + box.height / 2 - shellBox.top - 54,
-          };
-        };
-
-        const drawRoute = (from, to, withCursor = false) => {
-          const bend = Math.max(70, Math.abs(to.x - from.x) * 0.42);
-          const direction = to.x < from.x ? -1 : 1;
-          const d = `M ${from.x} ${from.y} C ${from.x + bend * direction} ${from.y}, ${to.x - bend * direction} ${to.y}, ${to.x} ${to.y}`;
-          pathLive.setAttribute("d", d);
-          const length = pathLive.getTotalLength();
-          pulse.style.left = `${to.x}px`;
-          pulse.style.top = `${to.y + 54}px`;
-          pulse.classList.remove("visible");
-          void pulse.offsetWidth;
-          pulse.classList.add("visible");
-
-          if (cursorAnimation) cursorAnimation.cancel();
-          cursor.classList.toggle("visible", withCursor && !matchMedia("(prefers-reduced-motion: reduce)").matches);
-          if (withCursor && cursor.classList.contains("visible")) {
-            cursorAnimation = cursor.animate(
-              Array.from({ length: 24 }, (_, index) => {
-                const point = pathLive.getPointAtLength((length * index) / 23);
-                return { left: `${point.x}px`, top: `${point.y + 54}px` };
-              }),
-              { duration: 760, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" },
-            );
-          }
-        };
-
-        const run = (action, button) => {
-          actionTimers.forEach(clearTimeout);
-          actionTimers = [];
-          root.querySelectorAll("[data-action]").forEach((item) => item.classList.remove("active"));
-          button.classList.add("active");
-          shell.classList.remove("is-running");
-          result.classList.remove("visible");
-          portal.classList.remove("visible");
-          guide.classList.remove("visible");
-          settings.classList.remove("guided");
-          cursor.classList.remove("visible");
-          app.classList.remove("dark");
-          void shell.offsetWidth;
-          shell.classList.add("is-running");
-
-          if (action === "dark") {
-            bubble.textContent = "Turn on dark mode.";
-            resultText.textContent = "Dark mode is on.";
-            drawRoute(pointWithin(bubble, "left"), pointWithin(app, "right"));
-            schedule(() => app.classList.add("dark"), 480);
-            schedule(() => result.classList.add("visible"), 700);
-          }
-
-          if (action === "passkey") {
-            bubble.textContent = "Help me set up a passkey.";
-            drawRoute(pointWithin(bubble, "center"), pointWithin(portal, "center"));
-            schedule(() => portal.classList.add("visible"), 600);
-          }
-
-          if (action === "guide") {
-            bubble.textContent = "Where are notifications?";
-            resultText.textContent = "Open settings here.";
-            drawRoute(pointWithin(bubble, "left"), pointWithin(settings, "center"), true);
-            schedule(() => {
-              guide.classList.add("visible");
-              settings.classList.add("guided");
-            }, 600);
-            schedule(() => result.classList.add("visible"), 700);
-          }
-        };
-
-        const punctuate = (text) => /[.!?]$/.test(text) ? text : `${text}.`;
-        root.querySelectorAll("[data-action]").forEach((button) => {
-          button.addEventListener("click", (event) => {
-            const playRequest = root.closest(".variant-a")?.playRequest;
-            if (event.isTrusted && playRequest) {
-              playRequest(punctuate(button.textContent.trim()), () => run(button.dataset.action, button));
-              return;
-            }
-            run(button.dataset.action, button);
-          });
-        });
-
-        root.querySelector(".portal button").addEventListener("click", (event) => {
-          const complete = () => {
-            portal.classList.remove("visible");
-            resultText.textContent = "Passkey setup is ready.";
-            result.classList.add("visible");
-          };
-          const playRequest = root.closest(".variant-a")?.playRequest;
-          if (event.isTrusted && playRequest) playRequest("Continue passkey setup.", complete);
-          else complete();
-        });
-
-        run("dark", root.querySelector('[data-action="dark"]'));
-      };
-
-      const render = () => {
-        const key = activeKey();
-        document.querySelectorAll(".variant").forEach((variant) => {
-          const isActive = variant.dataset.variant === key;
-          variant.classList.toggle("is-active", isActive);
-          variant.setAttribute("aria-hidden", String(!isActive));
-        });
-        const current = variants.find((variant) => variant.key === key);
-        document.querySelector("#variant-label").textContent = current.label;
-        document.querySelectorAll("[data-demo-slot]").forEach((slot) => {
-          if (slot.closest(".is-active")) mountDemo(slot);
-          else slot.replaceChildren();
-        });
-        document.documentElement.style.colorScheme = key === "c" ? "dark" : "light";
-        setupStoryDriver();
-      };
-
-      const setupStoryDriver = () => {
-        const site = document.querySelector(".variant-a");
-        const driver = site?.querySelector("[data-story-driver]");
-        if (!driver || driver.dataset.ready) return;
-        driver.dataset.ready = "true";
-        const request = driver.querySelector(".story-driver-request");
-        const label = driver.querySelector(".story-driver-label");
-        const signal = driver.querySelector(".story-driver-signal");
-        const bezel = site.querySelector(".site-bezel");
-        const installCard = site.querySelector(".story-install-card");
-        const route = site.querySelector(".site-route-overlay path");
-        const cursor = site.querySelector(".site-ghost-cursor");
-        const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const timers = new Set();
-        const defaultLabel = label.textContent;
-        const canHover = matchMedia("(hover: hover) and (pointer: fine)").matches;
-        let baseRequestText = request.textContent;
-        let chromeActive = false;
-        let currentScene = "";
-        let hoverActive = false;
-        let interactionActive = false;
-        let previewControl;
-        let cursorAnimation;
-
-        const later = (callback, delay) => {
-          const timer = setTimeout(() => {
-            timers.delete(timer);
-            callback();
-          }, delay);
-          timers.add(timer);
-        };
-
-        const clearTimers = () => {
-          timers.forEach(clearTimeout);
-          timers.clear();
-          driver.classList.remove("is-busy");
-        };
-
-        const setChrome = (active) => {
-          chromeActive = active;
-          site.classList.toggle("force-engaged", active);
-          driver.classList.toggle("is-open", active);
-          bezel.classList.toggle("is-active", active);
-        };
-
-        const center = (element) => {
-          const box = element.getBoundingClientRect();
-          return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
-        };
-
-        const draw = (target, withCursor = false) => {
-          const from = center(signal);
-          const to = center(target);
-          const bend = Math.max(90, Math.abs(to.y - from.y) * 0.28);
-          const d = `M ${from.x} ${from.y} C ${from.x} ${from.y - bend}, ${to.x} ${to.y + bend}, ${to.x} ${to.y}`;
-          route.setAttribute("d", d);
-          const length = route.getTotalLength();
-          if (reducedMotion) {
-            route.style.opacity = "0";
-          } else {
-            route.animate(
-              [{ strokeDasharray: length, strokeDashoffset: length, opacity: 1 }, { strokeDasharray: length, strokeDashoffset: 0, opacity: 1 }, { strokeDasharray: length, strokeDashoffset: 0, opacity: 0 }],
-              { duration: 1500, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" },
-            );
-          }
-          if (cursorAnimation) cursorAnimation.cancel();
-          cursor.classList.toggle("visible", withCursor && !reducedMotion);
-          if (cursor.classList.contains("visible")) {
-            cursorAnimation = cursor.animate(
-              Array.from({ length: 30 }, (_, index) => {
-                const point = route.getPointAtLength((length * index) / 29);
-                return { left: `${point.x}px`, top: `${point.y}px` };
-              }),
-              { duration: 900, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" },
-            );
-            cursorAnimation.finished.then(() => later(() => cursor.classList.remove("visible"), 550));
-          }
-        };
-
-        const paintRequest = (text) => {
-          baseRequestText = text;
-          if (!hoverActive) request.textContent = text;
-        };
-
-        const type = (text, complete) => {
-          driver.classList.add("is-busy");
-          paintRequest("");
-          if (reducedMotion) {
-            paintRequest(text);
-            driver.classList.remove("is-busy");
-            complete();
-            return;
-          }
-          let index = 0;
-          const step = () => {
-            paintRequest(text.slice(0, ++index));
-            if (index < text.length) later(step, 24 + (index % 4) * 5);
-            else later(() => {
-              driver.classList.remove("is-busy");
-              complete();
-            }, 240);
-          };
-          step();
-        };
-
-        const animateRequest = () => {
-          if (reducedMotion) return;
-          request.animate(
-            [{ opacity: 0.35, transform: "translateY(2px)" }, { opacity: 1, transform: "translateY(0)" }],
-            { duration: 150, easing: "ease-out" },
-          );
-        };
-
-        const endPreview = () => {
-          if (!hoverActive) return;
-          hoverActive = false;
-          previewControl?.classList.remove("waymode-hover-target");
-          previewControl = undefined;
-          driver.classList.remove("is-previewing");
-          bezel.classList.remove("is-previewing");
-          label.textContent = defaultLabel;
-          request.textContent = baseRequestText;
-          setChrome(scrollY > 36 || interactionActive);
-          animateRequest();
-        };
-
-        const showPreview = (text, force = false, control) => {
-          if ((!canHover && !force) || interactionActive) return;
-          previewControl?.classList.remove("waymode-hover-target");
-          previewControl = control;
-          previewControl?.classList.add("waymode-hover-target");
-          hoverActive = true;
-          setChrome(true);
-          driver.classList.add("is-previewing");
-          bezel.classList.add("is-previewing");
-          label.textContent = defaultLabel;
-          request.textContent = text;
-          animateRequest();
-        };
-
-        const playRequest = (text, action) => {
-          endPreview();
-          interactionActive = true;
-          setChrome(true);
-          currentScene = `interaction-${Date.now()}`;
-          clearTimers();
-          cursor.classList.remove("visible");
-          type(text, () => {
-            later(() => {
-              action();
-              later(() => {
-                interactionActive = false;
-                currentScene = "";
-                setChrome(scrollY > 36);
-              }, 1800);
-            }, 260);
-          });
-        };
-        site.playRequest = playRequest;
-
-        const highlight = (target, withCursor = false) => {
-          draw(target, withCursor);
-          target.classList.remove("site-target-highlight");
-          void target.offsetWidth;
-          target.classList.add("site-target-highlight");
-        };
-
-        const runScene = (section) => {
-          if (interactionActive) return;
-          const scene = section.id;
-          if (!scene || scene === currentScene) return;
-          currentScene = scene;
-          clearTimers();
-          cursor.classList.remove("visible");
-          if (scene === "top-a" && scrollY <= 36) {
-            paintRequest(section.dataset.story);
-            site.classList.remove("site-dark");
-            installCard.classList.remove("visible");
-            setChrome(false);
-            return;
-          }
-          setChrome(true);
-          type(section.dataset.story, () => {
-            if (scene === "top-a") {
-              site.classList.remove("site-dark");
-              installCard.classList.remove("visible");
-              highlight(section.querySelector(".display"));
-            }
-            if (scene === "demo-a") {
-              site.querySelector('#demo-a [data-action="passkey"]')?.click();
-              highlight(site.querySelector("#demo-a .portal") || section);
-            }
-            if (scene === "how-a") {
-              draw(section);
-              later(() => site.classList.add("site-dark"), 320);
-            }
-            if (scene === "proof-a") {
-              const proof = section.querySelector(".proof-line div:last-child");
-              highlight(proof, true);
-            }
-            if (scene === "install-a") {
-              installCard.classList.add("visible");
-              installCard.setAttribute("aria-hidden", "false");
-              highlight(installCard);
-            }
-          });
-        };
-
-        const scenes = [...site.querySelectorAll("[data-story]")];
-        let frame;
-        const pickScene = () => {
-          cancelAnimationFrame(frame);
-          frame = requestAnimationFrame(() => {
-            if (!site.classList.contains("is-active")) return;
-            if (interactionActive) return;
-            if (!hoverActive) setChrome(scrollY > 36);
-            if (scrollY <= 2) {
-              runScene(scenes[0]);
-              return;
-            }
-            if (scrollY + innerHeight >= document.documentElement.scrollHeight - 2) {
-              runScene(scenes.at(-1));
-              return;
-            }
-            const focusY = innerHeight * 0.48;
-            const nearest = scenes
-              .map((section) => {
-                const box = section.getBoundingClientRect();
-                const centerY = Math.max(box.top, Math.min(focusY, box.bottom));
-                return { section, distance: Math.abs(centerY - focusY) };
-              })
-              .sort((a, b) => a.distance - b.distance)[0];
-            if (nearest) runScene(nearest.section);
-          });
-        };
-        addEventListener("scroll", pickScene, { passive: true });
-        addEventListener("resize", pickScene, { passive: true });
-        const punctuate = (text) => /[.!?]$/.test(text) ? text : `${text}.`;
-        const anchorIntent = (anchor) => {
-          const href = anchor.getAttribute("href");
-          const text = anchor.textContent.trim();
-          return href === "#demo-a"
-            ? "Show me Waymode at work."
-            : href === "#proof-a"
-              ? "Show me the proof."
-              : href === "#top-a"
-                ? "Take me back to the top."
-                : text.includes("Install")
-                  ? "Install Waymode."
-                  : "Open Waymode on GitHub.";
-        };
-        const controlIntent = (control) => {
-          if (control.matches("a[href]")) return anchorIntent(control);
-          if (control.matches("[data-install-trigger]")) return "Install Waymode in this repository.";
-          if (control.matches("[data-copy-install]")) return "Copy the Waymode install prompt.";
-          if (control.matches(".portal button")) return "Continue passkey setup.";
-          return punctuate(control.textContent.trim());
-        };
-        const controlSelector = "a[href], [data-action], .portal button, [data-install-trigger], [data-copy-install]";
-
-        site.addEventListener("pointerover", (event) => {
-          const control = event.target.closest(controlSelector);
-          if (!control || !site.contains(control) || control.contains(event.relatedTarget)) return;
-          showPreview(controlIntent(control), false, control);
-        });
-        site.addEventListener("pointerout", (event) => {
-          const control = event.target.closest(controlSelector);
-          if (!control || !site.contains(control) || control.contains(event.relatedTarget)) return;
-          endPreview();
-        });
-        site.addEventListener("focusin", (event) => {
-          const control = event.target.closest(controlSelector);
-          if (control && site.contains(control)) showPreview(controlIntent(control), true, control);
-        });
-        site.addEventListener("focusout", (event) => {
-          const control = event.target.closest(controlSelector);
-          if (!control || control.contains(event.relatedTarget)) return;
-          endPreview();
-        });
-        site.addEventListener("click", (event) => {
-          const installTrigger = event.target.closest("[data-install-trigger]");
-          if (installTrigger) {
-            playRequest("Install Waymode in this repository.", () => {
-              installCard.classList.add("visible");
-              installCard.setAttribute("aria-hidden", "false");
-              highlight(installCard);
+      for (const link of document.querySelectorAll(".force-node")) {
+        link.addEventListener("click", () => {
+          const answer = document.querySelector(link.getAttribute("href"));
+          if (answer instanceof HTMLDetailsElement) {
+            answer.open = true;
+            requestAnimationFrame(() => {
+              answer.querySelector("summary").focus({ preventScroll: true });
             });
-            return;
           }
-          const copyButton = event.target.closest("[data-copy-install]");
-          if (copyButton) {
-            const promptElement = site.querySelector(".install-prompt");
-            const prompt = promptElement.textContent.trim();
-            playRequest("Copy the Waymode install prompt.", () => {
-              navigator.clipboard.writeText(prompt).then(() => {
-                copyButton.textContent = "Copied";
-                later(() => copyButton.textContent = "Copy prompt", 1800);
-              }).catch(() => {
-                const range = document.createRange();
-                range.selectNodeContents(promptElement);
-                getSelection().removeAllRanges();
-                getSelection().addRange(range);
-                copyButton.textContent = "Selected";
-                later(() => copyButton.textContent = "Copy prompt", 1800);
-              });
-            });
-            return;
-          }
-          const anchor = event.target.closest("a[href]");
-          if (!anchor || !site.contains(anchor)) return;
-          const href = anchor.getAttribute("href");
-          if (!href) return;
-          event.preventDefault();
-          const intent = anchorIntent(anchor);
-          playRequest(intent, () => {
-            if (href.startsWith("#")) {
-              document.querySelector(href)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
-            } else {
-              location.href = anchor.href;
-            }
-          });
         });
-        pickScene();
-      };
-
-      const requestedSection = location.hash;
-      if (location.search || location.hash) history.replaceState({}, "", location.pathname);
-      const proofObserver = new IntersectionObserver(
-        (entries) => entries.forEach((entry) => entry.target.classList.toggle("in-view", entry.isIntersecting)),
-        { threshold: 0.35 },
-      );
-      render();
-      document.querySelectorAll(".proof-line").forEach((element) => proofObserver.observe(element));
-      if (requestedSection) {
-        requestAnimationFrame(() => document.querySelector(requestedSection)?.scrollIntoView({ behavior: "instant", block: "center" }));
       }
+
+      const headerRail = document.querySelector(".header-rail");
+      const navigation = headerRail.querySelector(".nav");
+      const caption = document.querySelector("#guide-caption");
+      const demo = document.querySelector("#demo-a");
+      let sectionPrompt = "Where would you like to go?";
+
+      let previewControl;
+      let typingFrame;
+      let requestedText = "";
+      const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+      function paintPrompt(text) {
+        if (text === requestedText) {
+          return;
+        }
+        requestedText = text;
+        cancelAnimationFrame(typingFrame);
+        if (reducedMotion.matches) {
+          caption.textContent = text;
+          return;
+        }
+        const started = performance.now();
+        function type(now) {
+          const count = Math.min(text.length, Math.ceil((now - started) / 12));
+          caption.textContent = text.slice(0, count);
+          if (count < text.length) {
+            typingFrame = requestAnimationFrame(type);
+          }
+        }
+        typingFrame = requestAnimationFrame(type);
+      }
+
+      function updateHeader() {
+        const compact =
+          window.scrollY > 32 ||
+          Boolean(previewControl && !navigation.contains(previewControl));
+        headerRail.classList.toggle("is-compact", compact);
+        const headerBounds = navigation.getBoundingClientRect();
+        const demoBounds = demo.getBoundingClientRect();
+        const overlapsDemo =
+          compact &&
+          demoBounds.top < headerBounds.bottom + 8 &&
+          demoBounds.bottom > headerBounds.top;
+        headerRail.classList.toggle("is-obscured", overlapsDemo);
+        navigation.inert = overlapsDemo;
+      }
+      window.addEventListener("scroll", updateHeader, { passive: true });
+      window.addEventListener("resize", updateHeader);
+      new ResizeObserver(updateHeader).observe(demo);
+      updateHeader();
+
+      function controlRequest(control) {
+        if (control.dataset.prompt) {
+          return control.dataset.prompt;
+        }
+        const title = control.querySelector("strong")?.textContent.trim();
+        const label =
+          title?.replace(/\.$/, "") ??
+          control.getAttribute("aria-label") ??
+          control.textContent.trim().replace(/\s+/g, " ");
+        if (control.matches("summary")) {
+          return `${control.parentElement.open ? "Close" : "Open"} “${label}”`;
+        }
+        if (control.matches("[data-copy-install]")) {
+          return "Copy the Waymode install prompt.";
+        }
+        if (control.matches("a[href]")) {
+          return `Open “${label}”`;
+        }
+        return label;
+      }
+
+      function preview(control) {
+        previewControl?.classList.remove("waymode-target");
+        previewControl = control;
+        control?.classList.add("waymode-target");
+        updateHeader();
+        paintPrompt(control ? controlRequest(control) : sectionPrompt);
+      }
+
+      const controlSelector = "a[href], button, summary";
+      function eventControl(event) {
+        return event.target instanceof Element
+          ? event.target.closest(controlSelector)
+          : null;
+      }
+      for (const eventName of ["pointerover", "focusin"]) {
+        document.addEventListener(eventName, (event) => {
+          const control = eventControl(event);
+          if (!control || control.contains(event.relatedTarget)) {
+            return;
+          }
+          preview(control);
+        });
+      }
+      for (const eventName of ["pointerout", "focusout"]) {
+        document.addEventListener(eventName, (event) => {
+          const control = eventControl(event);
+          if (
+            control !== previewControl ||
+            control?.contains(event.relatedTarget)
+          ) {
+            return;
+          }
+          preview(null);
+        });
+      }
+      document.addEventListener(
+        "click",
+        (event) => {
+          const control = eventControl(event);
+          if (control) {
+            paintPrompt(controlRequest(control));
+          }
+        },
+        true,
+      );
+
+      const sectionObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              sectionPrompt = entry.target.dataset.guide;
+              if (!previewControl) {
+                paintPrompt(sectionPrompt);
+              }
+            }
+          }
+        },
+        { rootMargin: "-20% 0px -60% 0px" },
+      );
+      document
+        .querySelectorAll("[data-guide]")
+        .forEach((section) => sectionObserver.observe(section));
+
+      const copyButton = document.querySelector("[data-copy-install]");
+      copyButton.addEventListener("click", async () => {
+        const status = document.querySelector(".install-status");
+        copyButton.disabled = true;
+        try {
+          await navigator.clipboard.writeText(
+            document.querySelector(".install-prompt").textContent.trim(),
+          );
+          status.textContent = "Copied. Paste it into your coding agent.";
+          paintPrompt(status.textContent);
+        } catch {
+          document.querySelector("#install-prompt").open = true;
+          status.textContent = "Copy the prompt shown above.";
+          paintPrompt(status.textContent);
+        } finally {
+          copyButton.disabled = false;
+        }
+      });
     </script>
   </body>
 </html>

@@ -1,2 +1,4 @@
 /install /#install-a 302
 /install/ /#install-a 302
+/site / 301
+/site/ / 301

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Waymode — Put your product in Waymode.</title>
+  </head>
+  <body>
+    <main>
+      <header class="launch-heading">
+        <a href="https://waymode.ai">waymode</a
+        ><a href="https://github.com/mossburgh/waymode">Open source ↗</a>
+      </header>
+      <h1>Put your product in Waymode.</h1>
+      <p class="intro">Add a feature. Ask your product to use it.</p>
+      <section class="stage" aria-label="Waymode film and interactive app">
+        <div class="canvas">
+          <iframe
+            id="live-app"
+            title="Your Product — interactive app"
+            inert
+          ></iframe>
+          <div id="film-overlay">
+            <video
+              id="film"
+              controls
+              playsinline
+              muted
+              preload="metadata"
+              aria-label="Waymode feature proof"
+              tabindex="0"
+            ></video>
+            <div id="pending">
+              <p>Fresh launch proof is being prepared.</p>
+              <p>
+                The app below is live. Try its controls or connect a model to
+                ask it for changes.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="launch-controls">
+        <button id="try-live" disabled>Try it live</button
+        ><button id="replay" hidden disabled>Replay film</button>
+        <p id="handoff-status" role="status">Preparing the live app…</p>
+      </div>
+      <p class="scope">
+        This demo connects a web app and its typed API. Your app keeps its
+        permissions and handlers.
+      </p>
+      <details>
+        <summary>Proof and captions</summary>
+        <ol id="captions"></ol>
+        <p id="proof-status">
+          No launch result is claimed until the saved-state and
+          unchanged-runtime checks pass.
+        </p>
+        <a id="evidence-link" hidden>Read the complete launch evidence</a>
+      </details>
+    </main>
+    <script type="module" src="/launch/main.ts"></script>
+  </body>
+</html>

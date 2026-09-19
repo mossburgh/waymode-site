@@ -1,0 +1,102 @@
+{
+  "step": {
+    "goal": "Turn on compact layout",
+    "action": "click"
+  },
+  "controls": [
+    {
+      "id": "9e8298e3-8893-4e74-8e55-667e5c5819ae",
+      "name": "Today",
+      "role": "button",
+      "description": "",
+      "disabled": false,
+      "expanded": false,
+      "editable": false
+    },
+    {
+      "id": "9f1ffaea-85b8-4544-9f9d-80cf2f71334b",
+      "name": "Archive",
+      "role": "button",
+      "description": "",
+      "disabled": false,
+      "expanded": false,
+      "editable": false
+    },
+    {
+      "id": "cd436e38-0901-40a6-89f5-6f3a82dcf848",
+      "name": "Settings",
+      "role": "button",
+      "description": "",
+      "disabled": false,
+      "expanded": true,
+      "editable": false
+    },
+    {
+      "id": "65a06890-d4ad-4a91-9d62-b009afe0dc26",
+      "name": "Show Daylist settings in chat",
+      "role": "button",
+      "description": "Move the current page, including any open settings, into the chat as a live view. Click again to return it to the workspace.",
+      "disabled": false,
+      "expanded": false,
+      "editable": false
+    },
+    {
+      "id": "521f8a1d-fdda-4881-893d-7447588a3470",
+      "name": "Archive completed tasks",
+      "role": "button",
+      "description": "",
+      "disabled": false,
+      "editable": false
+    },
+    {
+      "id": "6e2a528b-149c-4526-8023-a3b86d2a84c2",
+      "name": "Dark mode",
+      "role": "checkbox",
+      "description": "",
+      "disabled": false,
+      "checked": false,
+      "editable": false
+    },
+    {
+      "id": "c1cbc4fd-a143-4d5f-90bd-b364e7db7fcc",
+      "name": "Dense layout",
+      "role": "checkbox",
+      "description": "",
+      "disabled": false,
+      "checked": true,
+      "editable": false
+    },
+    {
+      "id": "d6bb8069-75a1-46fc-85af-20460b58cb97",
+      "name": "Review launch notes Launch",
+      "role": "checkbox",
+      "description": "",
+      "disabled": false,
+      "checked": false,
+      "editable": false
+    },
+    {
+      "id": "10bdb075-f6fd-416c-b4d5-e3a37a36fb2c",
+      "name": "Send the draft Writing",
+      "role": "checkbox",
+      "description": "",
+      "disabled": false,
+      "checked": false,
+      "editable": false
+    },
+    {
+      "id": "62fdcf79-3f3c-4248-9143-3c10ec00d74a",
+      "name": "Plan next week Personal",
+      "role": "checkbox",
+      "description": "",
+      "disabled": false,
+      "checked": false,
+      "editable": false
+    }
+  ],
+  "history": ["Invoked button: Settings", "Invoked checkbox: Dense layout"],
+  "context": {
+    "view": "Daylist settings",
+    "location": "Workspace"
+  }
+}
