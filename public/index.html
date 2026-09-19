@@ -1124,16 +1124,27 @@
       }
 
       .story-install-card {
+        position: relative;
         display: grid;
         width: min(720px, 100%);
         overflow: hidden;
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: var(--white);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 10px 26px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(123, 137, 255, 0.32);
+        border-radius: 26px;
+        background: #0c0d12;
+        color: #f7f8fc;
+        box-shadow: 0 28px 80px rgba(8, 10, 24, 0.24);
         opacity: 1;
         transform: translateY(0);
         transition: opacity 360ms ease, transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .story-install-card::before {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(circle at 75% 0%, rgba(64, 84, 246, 0.25), transparent 42%);
+        content: "";
+        pointer-events: none;
       }
 
       .story-install-card.visible {
@@ -1141,59 +1152,107 @@
         transform: translateY(0) scale(1);
       }
 
-      .story-install-card strong {
-        font-size: 16px;
-        letter-spacing: -0.015em;
-      }
-
-      .install-card-title span {
-        display: block;
-        margin-top: 4px;
-        color: var(--quiet);
-        font-size: 13px;
-        line-height: 1.45;
-      }
-
       .install-card-head {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
-        padding: 18px 20px;
-        border-bottom: 1px solid var(--line);
+        gap: 24px;
+        padding: 28px;
       }
 
-      .install-copy {
-        min-height: 44px;
-        padding: 0 15px;
-        border: 1px solid var(--ink);
+      .agent-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .agent-list span {
+        display: inline-flex;
+        min-height: 34px;
+        align-items: center;
+        padding: 0 12px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: 999px;
-        background: var(--ink);
-        color: var(--white);
-        font-size: 13px;
+        color: #c9cbd4;
+        font-size: 12px;
         font-weight: 620;
       }
 
-      .install-copy:hover {
-        border-color: var(--way);
+      .install-copy {
+        position: relative;
+        display: inline-flex;
+        min-height: 44px;
+        flex: none;
+        align-items: center;
+        gap: 9px;
+        padding: 0 18px;
+        border: 1px solid #6979ff;
+        border-radius: 999px;
         background: var(--way);
         color: white;
+        font-size: 14px;
+        font-weight: 680;
+      }
+
+      .install-copy:hover {
+        border-color: #8793ff;
+        background: #5063ff;
+        color: white;
+      }
+
+      .install-copy-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: white;
+        box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.12);
+      }
+
+      .prompt-disclosure {
+        position: relative;
+        border-top: 1px solid rgba(255, 255, 255, 0.11);
+      }
+
+      .prompt-disclosure summary {
+        padding: 16px 28px;
+        color: #b7bac6;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 620;
+        list-style: none;
+      }
+
+      .prompt-disclosure summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .prompt-disclosure summary::after {
+        float: right;
+        color: #7d89ff;
+        content: "+";
+        font-size: 18px;
+        line-height: 0.8;
+      }
+
+      .prompt-disclosure[open] summary::after {
+        content: "−";
       }
 
       .install-prompt {
         margin: 0;
-        padding: 24px 20px 28px;
-        background: transparent;
-        color: var(--ink);
-        font: 500 15px/1.65 "Onest", "Helvetica Neue", Arial, sans-serif;
+        padding: 4px 28px 28px;
+        color: #d9dbe4;
+        font: 500 14px/1.65 "Onest", "Helvetica Neue", Arial, sans-serif;
         text-wrap: pretty;
       }
 
       .install-options {
-        padding: 14px 20px 16px;
-        border-top: 1px solid var(--line);
-        color: var(--quiet);
-        font-size: 13px;
+        position: relative;
+        padding: 16px 28px 19px;
+        border-top: 1px solid rgba(255, 255, 255, 0.11);
+        color: #858896;
+        font-size: 12px;
         line-height: 1.45;
       }
 
@@ -1712,6 +1771,7 @@
         .install-card-head {
           align-items: stretch;
           flex-direction: column;
+          padding: 22px;
         }
 
         .install-copy {
@@ -1719,13 +1779,17 @@
         }
 
         .install-prompt {
-          padding: 20px 18px 22px;
+          padding: 4px 22px 22px;
           font-size: 14px;
           line-height: 1.6;
         }
 
+        .prompt-disclosure summary {
+          padding: 16px 22px;
+        }
+
         .install-options {
-          padding: 13px 18px 15px;
+          padding: 14px 22px 17px;
         }
 
         .variant-b .hero-copy,
@@ -1797,7 +1861,7 @@
           </a>
           <div class="nav-links">
             <a href="#proof-a">Proof</a>
-            <a href="/install">Install</a>
+            <a href="#install-a">Install</a>
             <a class="button" href="#demo-a">Watch it work</a>
           </div>
         </nav>
@@ -1849,7 +1913,7 @@
             <p class="lead">Your users ask. Your product does the work.</p>
             <div class="actions">
               <a class="button" href="#demo-a">Watch it work</a>
-              <a class="button secondary" href="/install">Install</a>
+              <a class="button secondary" href="#install-a">Install</a>
             </div>
           </div>
         </header>
@@ -1871,19 +1935,23 @@
 
         <section class="footer-cta" id="install-a" data-story="Install Waymode.">
           <div class="install-intro">
-            <h2>Install Waymode.</h2>
-            <p>One prompt finds the product’s actions, fills what is missing, and proves the result.</p>
+            <h2>Install with your agent.</h2>
+            <p>Paste one prompt into Codex, Claude Code, Cursor, or the coding agent you already use.</p>
           </div>
           <div class="story-install-card visible" aria-hidden="false">
             <div class="install-card-head">
-              <div class="install-card-title">
-                <strong>Coding-agent prompt</strong>
-                <span>Paste into your agent from the repository root.</span>
+              <div class="agent-list" aria-label="Supported coding agents">
+                <span>Codex</span>
+                <span>Claude Code</span>
+                <span>Cursor</span>
               </div>
-              <button class="install-copy" type="button" data-copy-install>Copy prompt</button>
+              <button class="install-copy" type="button" data-copy-install><span class="install-copy-dot" aria-hidden="true"></span>Copy prompt</button>
             </div>
-            <p class="install-prompt">Install Waymode in this repository. Read https://waymode.ai/install, then detect every client and server boundary in this product. Connect Waymode to the product’s existing actions, permissions, and interface. When a safe action is not exposed, add the smallest reusable primitive that makes it available without copying business logic. Run Waymode’s setup checks and self-driving evals, keep working until they pass, then summarize what users can now ask the product to do.</p>
-            <div class="install-options">Waymode stays aligned with the product and reruns its evals.</div>
+            <details class="prompt-disclosure">
+              <summary>Read the prompt</summary>
+              <p class="install-prompt">Install Waymode in this repository. Detect every client and server boundary in this product. Connect Waymode to the product’s existing actions, permissions, and interface. When a safe action is not exposed, add the smallest reusable primitive that makes it available without copying business logic. Run Waymode’s setup checks and self-driving evals, keep working until they pass, then summarize what users can now ask the product to do.</p>
+            </details>
+            <div class="install-options">Run from the root of your product. One prompt works across supported coding agents.</div>
           </div>
         </section>
 
@@ -2534,6 +2602,7 @@
         pickScene();
       };
 
+      const requestedSection = location.hash;
       if (location.search || location.hash) history.replaceState({}, "", location.pathname);
       const proofObserver = new IntersectionObserver(
         (entries) => entries.forEach((entry) => entry.target.classList.toggle("in-view", entry.isIntersecting)),
@@ -2541,6 +2610,9 @@
       );
       render();
       document.querySelectorAll(".proof-line").forEach((element) => proofObserver.observe(element));
+      if (requestedSection) {
+        requestAnimationFrame(() => document.querySelector(requestedSection)?.scrollIntoView({ behavior: "instant", block: "center" }));
+      }
     </script>
   </body>
 </html>
