@@ -1,4 +1,5 @@
 import { readFile, stat } from "node:fs/promises";
+import assert from "node:assert/strict";
 
 const required = [
   "public/index.html",
@@ -18,6 +19,18 @@ const structuredData = home.match(
   /<script type="application\/ld\+json">([\s\S]*?)<\/script>/,
 )?.[1];
 const source = JSON.parse(structuredData ?? "null");
+const socialImage = home.match(/property="og:image"\s+content="([^"]+)"/)?.[1];
+const twitterImage = home.match(
+  /name="twitter:image"\s+content="([^"]+)"/,
+)?.[1];
+assert.ok(socialImage, "sharing image is missing");
+assert.equal(twitterImage, socialImage, "sharing image URLs must agree");
+const imageUrl = new URL(socialImage);
+assert.equal(imageUrl.origin, "https://waymode.ai");
+const image = await readFile(`public${imageUrl.pathname}`);
+assert.equal(image.subarray(1, 4).toString(), "PNG");
+assert.equal(image.readUInt32BE(16), 1200);
+assert.equal(image.readUInt32BE(20), 630);
 
 const failures = [
   [!home.includes("Put your product in Waymode."), "home headline is missing"],
