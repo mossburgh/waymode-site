@@ -1,3 +1,5 @@
+import { retryModel } from "./model-retry.js";
+import { requireVerification, type BotEnv } from "./bot-check.js";
 import {
   createDecider,
   createEvaluator,
@@ -11,11 +13,12 @@ import { z } from "zod";
 import { HttpError } from "./http.js";
 import type { LimitsEnv } from "./limits.js";
 import { logModel, logModelError } from "./telemetry.js";
-export type ModelEnv = LimitsEnv & {
-  AI_GATEWAY_API_KEY: string;
-  WAYMODE_MODEL: string;
-  DEMO_ENABLED?: string;
-};
+export type ModelEnv = LimitsEnv &
+  BotEnv & {
+    AI_GATEWAY_API_KEY: string;
+    WAYMODE_MODEL: string;
+    DEMO_ENABLED?: string;
+  };
 export class Models {
   private active = new Set<string>();
   constructor(
@@ -34,6 +37,7 @@ export class Models {
     if (this.active.has(visitor.id) || this.active.size >= 4) {
       throw new HttpError(429, "The demo is busy. Please try again.");
     }
+    requireVerification(this.store, visitor, ip);
     this.store.model(visitor, ip);
     this.active.add(visitor.id);
   }
@@ -67,23 +71,33 @@ export class Models {
     });
     return result;
   }
+  private async attempt(
+    visitor: Visitor,
+    ip: string,
+    options: Parameters<EvaluationOptions["evaluate"]>[0],
+  ) {
+    this.reserve(visitor, ip);
+    try {
+      return await this.evaluate(visitor, options);
+    } catch (error) {
+      logModelError(options.signal.aborted);
+      console.warn({
+        event: "model_failure_kind",
+        name: error instanceof Error ? error.name : "Error",
+      });
+      this.events.emit(visitor, "model.error", {
+        name: error instanceof Error ? error.name : "Error",
+        cost: "unavailable",
+      });
+      throw error;
+    } finally {
+      this.active.delete(visitor.id);
+    }
+  }
   options(visitor: Visitor, ip: string): EvaluationOptions {
     return {
-      evaluate: async (options) => {
-        this.reserve(visitor, ip);
-        try {
-          return await this.evaluate(visitor, options);
-        } catch (error) {
-          logModelError(options.signal.aborted);
-          this.events.emit(visitor, "model.error", {
-            name: error instanceof Error ? error.name : "Error",
-            cost: "unavailable",
-          });
-          throw error;
-        } finally {
-          this.active.delete(visitor.id);
-        }
-      },
+      evaluate: (options) =>
+        retryModel(() => this.attempt(visitor, ip, options), options.signal),
     };
   }
   decider(visitor: Visitor, ip: string, presentation = false) {

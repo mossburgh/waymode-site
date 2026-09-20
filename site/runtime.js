@@ -1,3 +1,4 @@
+import { ensureModelAccess } from "./bot-check.js";
 import {
   createBrowserSurface,
   createCursorGuide,
@@ -38,7 +39,7 @@ function pageSurface(onTarget) {
   const surface = createBrowserSurface({
     root: () => document.body,
     exclude:
-      ".hybrid-input,.waymode-conversation,.skip-link,#prompt-form,.request-examples,.chat-status,#external-agent,#trace-panel,details:not([open]) > :not(summary)",
+      ".hybrid-input,.waymode-conversation,.skip-link,#prompt-form,.request-examples,.chat-status,.chat-result,#external-agent,#trace-panel,details:not([open]) > :not(summary)",
     beforeAction: async (control, signal, target) => {
       target.scrollIntoView({ block: "center", behavior: "instant" });
       await onTarget(control, target, false);
@@ -88,6 +89,11 @@ function observePage(surface, signal) {
     state: {
       section: location.hash,
       title: document.title,
+      analyticsPreference:
+        document.querySelector("#analytics-consent")?.dataset.preference ??
+        "unset",
+      analyticsMenuOpen:
+        document.querySelector("#analytics-consent")?.hidden === false,
       installPromptOpen:
         document.querySelector("#install-prompt")?.open ?? false,
       copyStatus: document.querySelector(".install-status")?.textContent ?? "",
@@ -233,20 +239,11 @@ function guidePolicy(onTarget, controller) {
   };
 }
 
-async function ensureSession(signal) {
-  const session = await fetch("/api/v1/session", { signal });
-  if (!session.ok) {
-    throw new Error(
-      `Could not start the shared demo session (${session.status}).`,
-    );
-  }
-}
-
 export async function runSiteRequest(
   goal,
   { signal, onTarget, onDecision, onReceipt, onObservation },
 ) {
-  await ensureSession(signal);
+  await ensureModelAccess(signal);
   await waitForDemo(signal);
   const surfaces = [];
   const controller = new AbortController();

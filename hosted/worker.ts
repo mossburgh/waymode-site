@@ -1,6 +1,7 @@
+import { BotCheck, requireVerification } from "./bot-check.js";
 import { analyticsConfig, type AnalyticsEnv } from "./analytics-config.js";
 import type { DurableObjectState } from "@cloudflare/workers-types";
-import { decisionRequestSchema } from "@mossburgh/waymode/server";
+import { siteDecision } from "./decisions.js";
 import { ActionBlockedError, StaleActionError } from "@mossburgh/waymode/core";
 import { z } from "zod";
 import { Store, type Visitor } from "./store.js";
@@ -85,6 +86,7 @@ export class Showcase {
   private store: Store;
   private events = new Events();
   private models: Models;
+  private bot: BotCheck;
   private product: Product;
   private actions: Actions;
   constructor(
@@ -92,6 +94,7 @@ export class Showcase {
     env: ModelEnv,
   ) {
     this.store = new Store(ctx.storage.sql, env);
+    this.bot = new BotCheck(env, this.store);
     this.models = new Models(env, this.store, this.events);
     this.product = new Product(this.store, this.events);
     this.actions = new Actions(
@@ -115,7 +118,10 @@ export class Showcase {
     const channel = Array.from(new Uint8Array(digest), (byte) =>
       byte.toString(16).padStart(2, "0"),
     ).join("");
-    const response = json({ traceChannel: `product-${channel}` });
+    const response = json({
+      traceChannel: `product-${channel}`,
+      verification: this.bot.config(visitor, ip),
+    });
     if (existing) {
       return response;
     }
@@ -176,6 +182,35 @@ export class Showcase {
       throw new HttpError(401, "Reload the demo to start a new session.");
     }
     visitor = current;
+    if (route === "POST /api/v1/verify") {
+      await this.bot.verify(
+        visitor,
+        ip,
+        request.headers.get("CF-Connecting-IP"),
+        input,
+        request.signal,
+      );
+      return json({ verified: true });
+    }
+    if (
+      [
+        "POST /api/v1/decisions",
+        "POST /api/v1/presentation",
+        "POST /api/v1/actions/start",
+        "POST /api/v1/actions",
+      ].includes(route)
+    ) {
+      requireVerification(this.store, visitor, ip);
+    }
+    return this.writeRoute(request, route, visitor, ip, input);
+  }
+  private async writeRoute(
+    request: Request,
+    route: string,
+    visitor: Visitor,
+    ip: string,
+    input: unknown,
+  ): Promise<Response> {
     if (route === "POST /api/v1/playback/reset") {
       this.actions.retire(visitor.id);
       return json(this.product.restore(visitor, input));
@@ -212,12 +247,20 @@ export class Showcase {
     input: unknown,
   ) {
     if (route === "POST /api/v1/decisions") {
-      return json(
-        await this.models.decider(visitor, ip)(
-          decisionRequestSchema.parse(input),
-          request.signal,
-        ),
+      const scoped = await siteDecision(
+        input,
+        visitor,
+        this.product,
+        request.signal,
       );
+      const result = await this.models.decider(visitor, ip)(
+        scoped.request,
+        request.signal,
+      );
+      return json({
+        ...result,
+        ...(result.target && { target: scoped.handles.get(result.target) }),
+      });
     }
     if (route === "POST /api/v1/presentation") {
       const result = await this.models.decider(

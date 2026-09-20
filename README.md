@@ -25,7 +25,7 @@ is `public/index.html`; `/site` redirects to `/`.
 1. Run `npm ci` and `npm run verify`. This checks the code, builds the showcase
    into `public/showcase/`, and checks the site files.
 2. Run `npm run deploy -- --env preview` to deploy the preview.
-3. Set `AI_GATEWAY_API_KEY` and `WAYMODE_MODEL` with Wrangler secrets for production
+3. Set `AI_GATEWAY_API_KEY`, `WAYMODE_MODEL`, and `TURNSTILE_SECRET` with Wrangler secrets for production
    when provisioning a new environment. Existing secrets persist. Paid calls in
    preview are disabled; use local credentials for live pre-release checks.
 4. Check the scene, chat portal, external agent, and visitor isolation on preview,
@@ -101,20 +101,25 @@ Set `POSTHOG_PUBLIC_KEY` to the public `phc_...` project key and `POSTHOG_REGION
 to `us` or `eu` in the Worker environment. Never use a personal API key. Without
 a valid project key, the SDK stays unloaded and no PostHog events are sent.
 Visitors must opt in before the SDK loads. The notice explicitly covers prompt
-drafts, messages, and runtime activity. Analytics preferences can withdraw
+drafts, messages, console messages, and runtime activity. Analytics preferences can withdraw
 consent; GPC and Do Not Track disable capture. The demo still works without it.
 
-Only marked prompt inputs are readable in replay; other inputs stay masked.
-Network bodies, auth headers, cookies, and raw trace panels are excluded from
-replay. Runtime events redact credential fields and common secret patterns.
+Ordinary site text, inputs, and visible traces are readable in replay after consent.
+Password fields, security widgets, network bodies, auth headers, and cookies are
+excluded. Runtime events and console capture redact credential fields and common
+secret patterns.
 Pattern redaction cannot recognize every secret somebody might paste into free
 text, so the privacy notice asks visitors to keep confidential data out of the demo.
-URL queries and fragments are removed before capture.
+URL queries and fragments are removed before capture, except Google Fonts family
+and display parameters needed to render replay.
 
-Before enabling collection, configure PostHog replay retention and project access,
-then verify a consented session, an opted-out session, both demo frames, and a
-stopped run in the real project. Dashboard ingestion and replay fidelity remain
-unverified until that project is provided. Browser blockers can prevent collection.
+Analytics preferences use the same visible controls as the rest of the site.
+Waymode can open the menu, change the choice, or guide the visitor through it;
+there is no separate analytics intent parser or tool.
+
+Production uses the Waymode US PostHog project with 30-day replay retention.
+Verify a consented session, an opted-out session, both demo frames, and a stopped
+run after analytics changes. Browser blockers can prevent collection.
 
 Cloudflare structured logs record API status, duration, request ID, quota failures,
 and model usage. They contain no submitted prompt bodies, cookies, or raw IPs.
@@ -143,3 +148,20 @@ app's existing actions?”, and “How does Waymode work with computer-use agent
 Report each provider separately and keep the tested answers. A small panel
 measures that sample, not all AI-search visibility. Avoid mass-produced keyword
 pages and unsupported benchmark numbers.
+
+## Public model access
+
+The hosted gateway requires a Cloudflare Turnstile check before paid calls.
+`TURNSTILE_SITE_KEY` is public; `TURNSTILE_SECRET` stays in Worker secrets.
+The managed widget allows only `waymode.ai` and `www.waymode.ai`. Server validation
+checks the hostname, action, and session nonce. Grants last at most 15 minutes
+and are bound to the session and its network quota identity. Model reservation
+rechecks the grant, including backend input resolution.
+
+The decision endpoint rejects unknown controls and replaces client descriptions,
+input schemas, state, context, history details, and model-facing handles with
+site-owned values. `scripts/control-catalog.mjs` derives static control metadata
+from the HTML during builds; the product API contract supplies backend controls.
+Dynamic settings come from the visitor's bounded demo feature definition.
+This limits reuse; it does not prove a human's intent or eliminate distributed
+abuse. Existing request and model quotas remain in force.

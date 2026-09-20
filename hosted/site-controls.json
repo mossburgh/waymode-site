@@ -1,0 +1,302 @@
+[
+  {
+    "name": "Skip to content",
+    "role": "link",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Waymode home",
+    "role": "link",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "GitHub",
+    "role": "link",
+    "description": "Opens in a new tab",
+    "editable": false
+  },
+  {
+    "name": "Install",
+    "role": "link",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Try the demo",
+    "role": "link",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Ask. It acts. “Turn on dark mode.” Your app does it.",
+    "role": "link",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "The UI comes to you. “Open settings here.” Real controls, inside chat.",
+    "role": "link",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Follow its lead. “Show me where.” A cursor guides the way.",
+    "role": "link",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Your users bring their agents. Let users act through their own connected assistants and computer-use tools. MCP + MCP Apps Planned",
+    "role": "link",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "What stays yours?",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "What happens when I add a feature?",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "How do live views and guidance work?",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "What about external agents and MCP?",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Read the integration contract.",
+    "role": "link",
+    "description": "Opens in a new tab",
+    "editable": false
+  },
+  {
+    "name": "What can I use today?",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Check the current setup instructions.",
+    "role": "link",
+    "description": "Opens in a new tab",
+    "editable": false
+  },
+  {
+    "name": "Where is the proof?",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "eval contract",
+    "role": "link",
+    "description": "Opens in a new tab",
+    "editable": false
+  },
+  {
+    "name": "Copy prompt",
+    "role": "button",
+    "description": "Copy this prompt into Codex, Claude Code, Cursor, or your coding agent.",
+    "editable": false
+  },
+  {
+    "name": "Read the install prompt",
+    "role": "button",
+    "description": "Copy this prompt into Codex, Claude Code, Cursor, or your coding agent.",
+    "editable": false
+  },
+  {
+    "name": "Evidence",
+    "role": "link",
+    "description": "Opens in a new tab",
+    "editable": false
+  },
+  {
+    "name": "Privacy & security",
+    "role": "link",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Analytics preferences",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Privacy & security details",
+    "role": "link",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Allow analytics",
+    "role": "button",
+    "description": "Or ask Waymode to change these preferences, show you how, or bring this menu back.",
+    "editable": false
+  },
+  {
+    "name": "Turn off analytics",
+    "role": "button",
+    "description": "Or ask Waymode to change these preferences, show you how, or bring this menu back.",
+    "editable": false
+  },
+  {
+    "name": "Your Product",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "DevTools",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Sources",
+    "role": "tab",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Activity",
+    "role": "tab",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "feature.json app definition",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Edit the feature definition",
+    "role": "textbox",
+    "description": "",
+    "editable": true
+  },
+  {
+    "name": "Remove setting",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Add Compact layout",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Can an outside agent use it too?",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Ask an external agent",
+    "role": "textbox",
+    "description": "",
+    "editable": true
+  },
+  {
+    "name": "Run",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Network, decisions & permissions",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Play",
+    "role": "button",
+    "description": "Start a guided demonstration of how to use the live demo. Play shows each step of the selected interaction using real app controls.",
+    "editable": false
+  },
+  {
+    "name": "☷ Scenes",
+    "role": "button",
+    "description": "Choose another demo interaction to watch, then press Play.",
+    "editable": false
+  },
+  {
+    "name": "Close scenes",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Open inspector ↗",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "View setting",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Turn on dark mode",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Show me how to turn on dark mode",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Complete Review launch notes",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Open settings in chat",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Ask your product to do something",
+    "role": "textbox",
+    "description": "",
+    "editable": true
+  },
+  {
+    "name": "Send request",
+    "role": "button",
+    "description": "",
+    "editable": false
+  },
+  {
+    "name": "Stop",
+    "role": "button",
+    "description": "",
+    "editable": false
+  }
+]

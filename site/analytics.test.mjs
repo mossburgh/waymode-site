@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import { readFileSync } from "node:fs";
 import { beforeEach, expect, it, vi } from "vitest";
 const sdk = vi.hoisted(() => ({
   init: vi.fn(),
@@ -13,7 +14,10 @@ beforeEach(() => {
   vi.resetModules();
   vi.clearAllMocks();
   localStorage.clear();
-  document.body.innerHTML = '<footer class="footer"><div></div></footer>';
+  document.body.innerHTML = new DOMParser().parseFromString(
+    readFileSync("public/index.html", "utf8"),
+    "text/html",
+  ).body.innerHTML;
 });
 const activity = () =>
   document.dispatchEvent(
@@ -31,7 +35,7 @@ it("does not load or capture when no PostHog project is configured", async () =>
   activity();
   expect(sdk.init).not.toHaveBeenCalled();
   expect(sdk.capture).not.toHaveBeenCalled();
-  expect(document.querySelector("#analytics-consent")).toBeNull();
+  expect(document.querySelector("#analytics-consent").hidden).toBe(true);
 });
 it("requires consent, captures runtime details, stops on withdrawal, and allows re-enabling", async () => {
   vi.stubGlobal(
@@ -45,7 +49,7 @@ it("requires consent, captures runtime details, stops on withdrawal, and allows 
   );
   await import("./analytics.js");
   await vi.waitFor(() =>
-    expect(document.querySelector("#analytics-consent")).not.toBeNull(),
+    expect(document.querySelector("#analytics-preferences").hidden).toBe(false),
   );
   activity();
   expect(sdk.init).not.toHaveBeenCalled();
@@ -78,6 +82,10 @@ it("honors GPC even when an old consent choice says yes", async () => {
     value: true,
   });
   localStorage.setItem("waymode-analytics-consent", "yes");
+  localStorage.setItem(
+    "ph_phc_test_public_project_key_posthog",
+    "old identifier",
+  );
   vi.stubGlobal(
     "fetch",
     vi.fn().mockResolvedValue(
@@ -89,7 +97,7 @@ it("honors GPC even when an old consent choice says yes", async () => {
   );
   await import("./analytics.js");
   await vi.waitFor(() =>
-    expect(document.querySelector("#analytics-consent")).not.toBeNull(),
+    expect(document.querySelector("#analytics-preferences").hidden).toBe(false),
   );
   activity();
   expect(sdk.init).not.toHaveBeenCalled();

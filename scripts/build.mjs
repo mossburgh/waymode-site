@@ -1,3 +1,4 @@
+import "./control-catalog.mjs";
 import { build } from "vite";
 await build({ configFile: "vite.showcase.config.mjs" });
 await build({

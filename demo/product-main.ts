@@ -1,3 +1,4 @@
+import { ensureModelAccess } from "../site/bot-check.js";
 import { recordActivity } from "../site/activity.js";
 import { playbackCheckpoint } from "./playback-checkpoint.js";
 import { createRequestQueue } from "./request-queue.js";
@@ -167,6 +168,7 @@ const decideWithPlayback: typeof http = async (request, signal) => {
   }
 };
 const agentFor = async (goal: string, signal: AbortSignal) => {
+  await ensureModelAccess(signal);
   const mode = await requestMode(goal, signal);
   const guided = mode === "guide";
   emit("presentation", { mode });

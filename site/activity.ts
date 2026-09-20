@@ -1,14 +1,20 @@
-const secretKey =
+export const secretKey =
   /authorization|cookie|password|secret|credential|token$|api[_-]?key|^(?:session(?:id)?|traceChannel)$/i;
 export function redactText(text: string) {
   return text
+    .replace(/\b(?:authorization|cookie)\s*:\s*[^\r\n]+/gi, "[redacted]")
+    .replace(
+      /((?:api[_ -]?key|password|secret|token)["']?\s*[:=]\s*)(["'])(?:\\.|(?!\2)[^\\])*?\2/gi,
+      "$1[redacted]",
+    )
     .replace(/-----BEGIN [^-]*PRIVATE KEY-----[\s\S]*/g, "[redacted]")
     .replace(
-      /\b(?:Bearer\s+\S+|(?:sk|phx|ghp|github_pat|xox[baprs])[_-][A-Za-z0-9_-]*|(?:AKIA|ASIA)[A-Z0-9]*|eyJ[A-Za-z0-9_-]*(?:\.[A-Za-z0-9_-]*){0,2})/gi,
+      /\b(?:Bearer\s+\S+|(?:sk|phx|ghp|github_pat|xox[baprs])[_-][A-Za-z0-9_-]*|eyJ[A-Za-z0-9_-]*(?:\.[A-Za-z0-9_-]*){0,2})/gi,
       "[redacted]",
     )
+    .replace(/\b(?:AKIA|ASIA)[A-Z0-9]+/g, "[redacted]")
     .replace(
-      /((?:api[_ -]?key|password|secret|token)\s*[:=]\s*)[^\s,;]+/gi,
+      /((?:api[_ -]?key|password|secret|token|authorization|cookie)["']?\s*[:=]\s*["']?)[^\s,;"']+/gi,
       "$1[redacted]",
     );
 }

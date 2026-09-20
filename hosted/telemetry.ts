@@ -7,6 +7,7 @@ export const inRequestScope = <T>(request: Request, run: () => T) =>
   );
 const routes = new Set([
   "session",
+  "verify",
   "trace",
   "feature",
   "product",

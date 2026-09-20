@@ -1,10 +1,13 @@
 import { DatabaseSync } from "node:sqlite";
 import type { DurableObjectState } from "@cloudflare/workers-types";
-import { afterEach, expect, it } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
 import worker, { Showcase } from "./worker.js";
 
 const databases: DatabaseSync[] = [];
-afterEach(() => databases.splice(0).forEach((db) => db.close()));
+afterEach(() => {
+  databases.splice(0).forEach((db) => db.close());
+  vi.unstubAllGlobals();
+});
 function app() {
   const db = new DatabaseSync(":memory:");
   databases.push(db);
@@ -20,7 +23,11 @@ function app() {
     },
     waitUntil: () => {},
   } as unknown as DurableObjectState;
-  return new Showcase(ctx, { AI_GATEWAY_API_KEY: "", WAYMODE_MODEL: "" });
+  return new Showcase(ctx, {
+    AI_GATEWAY_API_KEY: "",
+    WAYMODE_MODEL: "",
+    TURNSTILE_SECRET: "test-secret",
+  });
 }
 const request = (path: string, cookie = "", body?: unknown) =>
   new Request(`https://waymode.ai/api/v1/${path}`, {
@@ -36,6 +43,26 @@ async function session(site: Showcase) {
     setCookie,
     body: (await response.json()) as { traceChannel: string },
   };
+}
+async function verifySession(site: Showcase, cookie: string) {
+  const response = await site.fetch(request("session", cookie));
+  const { verification } = (await response.json()) as {
+    verification: { nonce: string };
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue(
+      Response.json({
+        success: true,
+        hostname: "waymode.ai",
+        action: "waymode",
+        cdata: verification.nonce,
+      }),
+    ),
+  );
+  expect(
+    (await site.fetch(request("verify", cookie, { token: "verified" }))).status,
+  ).toBe(200);
 }
 it("keeps the bearer credential out of the stable public trace label", async () => {
   const site = app();
@@ -61,6 +88,8 @@ it("isolates visitor state, action handles, and trace streams", async () => {
   const site = app();
   const a = await session(site);
   const b = await session(site);
+  await verifySession(site, a.cookie);
+  await verifySession(site, b.cookie);
   const patch = request("product", a.cookie, { preferences: { dark: true } });
   await site.fetch(new Request(patch, { method: "PATCH" }));
   const other = await site.fetch(request("product", b.cookie));
@@ -92,6 +121,7 @@ it("rejects missing sessions and oversized JSON without exposing internals", asy
   );
   expect(response.status).toBe(413);
   expect(await response.json()).toEqual({ error: "Request is too large." });
+  await verifySession(site, visitor.cookie);
   const invalid = await site.fetch(
     request("presentation", visitor.cookie, { goal: 12 }),
   );
@@ -176,4 +206,20 @@ it("rejects edge-limited requests before accessing shared storage", async () => 
   expect(response.status).toBe(429);
   expect(response.headers.get("retry-after")).toBe("60");
   expect(reachedStore).toBe(false);
+});
+
+it("requires Cloudflare verification on every paid entry point even with a valid session", async () => {
+  const site = app();
+  const visitor = await session(site);
+  for (const endpoint of [
+    "decisions",
+    "presentation",
+    "actions/start",
+    "actions",
+  ]) {
+    const response = await site.fetch(
+      request(endpoint, visitor.cookie, { goal: "Open settings" }),
+    );
+    expect(response.status).toBe(403);
+  }
 });

@@ -34,6 +34,32 @@ async function enable() {
     sdk.startSessionRecording();
   }
 }
+function consentState() {
+  const panel = document.querySelector("#analytics-consent");
+  if (panel) {
+    panel.dataset.preference = protectedVisitor()
+      ? "blocked"
+      : (preference() ?? "unset");
+  }
+}
+function clearStoredAnalytics() {
+  if (!config) {
+    return;
+  }
+  const key = `ph_${config.key}_posthog`;
+  try {
+    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
+    document.cookie = `${key}=; Max-Age=0; Path=/; Secure; SameSite=Lax`;
+  } catch {
+    /* Storage may be disabled. */
+  }
+}
+function disable() {
+  posthog?.stopSessionRecording();
+  posthog?.opt_out_capturing();
+  clearStoredAnalytics();
+}
 function choose(value) {
   allowed = value === "yes" && !protectedVisitor();
   try {
@@ -41,35 +67,33 @@ function choose(value) {
   } catch {
     /* Consent remains in memory. */
   }
+  consentState();
   document.querySelector("#analytics-consent").hidden = true;
   if (allowed) {
     void enable().catch(() => {});
   } else {
-    posthog?.stopSessionRecording();
-    posthog?.opt_out_capturing({ clear_persistence: true });
+    disable();
   }
 }
 function consentUi() {
-  const panel = document.createElement("section");
-  panel.id = "analytics-consent";
-  panel.setAttribute("aria-label", "Analytics choice");
-  panel.setAttribute("data-waymode-ignore", "");
-  panel.innerHTML =
-    '<p>Allow PostHog to record your interactions, prompt drafts and messages, and Waymode activity to help improve this demo? <a href="/privacy">Privacy details</a></p><div><button data-choice="yes">Allow analytics</button><button data-choice="no">No thanks</button></div>';
+  const panel = document.querySelector("#analytics-consent");
+  const manage = document.querySelector("#analytics-preferences");
+  manage.hidden = false;
+  const show = (visible) => {
+    panel.hidden = !visible;
+    manage.setAttribute("aria-expanded", String(visible));
+  };
   panel.querySelectorAll("button").forEach((button) => {
-    button.onclick = () => choose(button.dataset.choice);
+    button.onclick = () => {
+      choose(button.dataset.choice);
+      show(false);
+    };
   });
-  document.body.append(panel);
-  const manage = document.createElement("button");
-  manage.textContent = "Analytics preferences";
-  manage.type = "button";
-  manage.setAttribute("data-waymode-ignore", "");
   manage.onclick = () => {
-    panel.hidden = false;
+    show(true);
     panel.querySelector("button").focus();
   };
-  (document.querySelector(".footer > div") ?? document.body).append(manage);
-  panel.hidden = preference() !== null || protectedVisitor();
+  show(preference() === null && !protectedVisitor());
 }
 async function start() {
   const response = await fetch("/api/v1/analytics-config");
@@ -86,6 +110,7 @@ async function start() {
     return;
   }
   config = value;
+  consentState();
   if (window === window.top) {
     consentUi();
     connectAnalyticsFrames();
@@ -93,6 +118,8 @@ async function start() {
   allowed = preference() === "yes" && !protectedVisitor();
   if (allowed) {
     await enable();
+  } else {
+    disable();
   }
 }
 document.addEventListener("waymode:activity", (event) => {
@@ -116,11 +143,11 @@ window.addEventListener("storage", (event) => {
     return;
   }
   allowed = preference() === "yes" && !protectedVisitor();
+  consentState();
   if (allowed) {
     void enable().catch(() => {});
   } else {
-    posthog?.stopSessionRecording();
-    posthog?.opt_out_capturing({ clear_persistence: true });
+    disable();
   }
 });
 void start().catch(() => {});

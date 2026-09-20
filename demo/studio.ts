@@ -1,3 +1,4 @@
+import { ensureModelAccess } from "../site/bot-check.js";
 import {
   playbackSnapshot,
   type PlaybackSnapshot,
@@ -150,7 +151,8 @@ const stop = (cancelRequest = true, keepScene = false) => {
   player.phase("Live");
   get("story-status").textContent = "";
 };
-const runExternal = async (signal?: AbortSignal) => {
+const runExternal = async (signal = new AbortController().signal) => {
+  await ensureModelAccess(signal);
   externalActive = true;
   get<HTMLButtonElement>("run-external").disabled = true;
   get("external-status").textContent =
