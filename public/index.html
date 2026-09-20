@@ -345,10 +345,10 @@
         gap: 10px;
         flex-wrap: wrap;
       }
-      #demo-a,
+      #demo,
       #use-cases,
       #questions,
-      #install-a {
+      #install {
         scroll-margin-top: 100px;
       }
       .live-showcase {
@@ -868,7 +868,7 @@
     <div class="shell">
       <header class="header-rail">
         <nav class="nav" aria-label="Main navigation">
-          <a class="brand" href="#top-a" aria-label="Waymode home">
+          <a class="brand" href="#" aria-label="Waymode home">
             <svg viewBox="0 0 48 48" aria-hidden="true">
               <use href="#waymode-mark" />
             </svg>
@@ -880,12 +880,15 @@
             </p>
           </div>
           <div class="nav-links">
-            <a class="nav-action" href="https://github.com/mossburgh/waymode">
+            <a class="nav-action" href="https://github.com/mossburgh/waymode"
+              target="_blank"
+              rel="noopener"
+              title="Opens in a new tab">
               GitHub
             </a>
             <a
               class="nav-action button"
-              href="#install-a"
+              href="#install"
               data-prompt="Install"
             >
               Install
@@ -894,7 +897,7 @@
         </nav>
       </header>
       <main id="main-content">
-        <header class="hero" id="top-a" data-guide="Put this page in Waymode.">
+        <header class="hero" id="home" data-guide="Put this page in Waymode.">
           <svg
             class="hero-field"
             viewBox="0 0 1440 600"
@@ -990,13 +993,13 @@
           <div>
             <p>Let people and their AI agents use your product.</p>
             <div class="actions">
-              <a class="button" href="#demo-a">Try the demo</a>
+              <a class="button" href="#demo">Try the demo</a>
             </div>
           </div>
         </header>
 
         <section
-          id="demo-a"
+          id="demo"
           aria-label="Try Waymode in a real app"
           data-guide="Try a request in Your Product."
         >
@@ -1193,6 +1196,9 @@
                 for each exposed task.
                 <a
                   href="https://github.com/mossburgh/waymode/blob/main/docs/SURFACES.md#external-agents-and-computer-use"
+                  target="_blank"
+                  rel="noopener"
+                  title="Opens in a new tab"
                   >Read the integration contract.</a
                 >
               </p>
@@ -1209,17 +1215,23 @@
                 DOM hosts. Dedicated Next.js, TanStack Start, React Native, and
                 native adapters are planned.
                 <a href="https://github.com/mossburgh/waymode"
+                  target="_blank"
+                  rel="noopener"
+                  title="Opens in a new tab"
                   >Check the current setup instructions.</a
                 >
               </p>
             </details>
-            <details id="proof-a">
+            <details id="proof">
               <summary>Where is the proof?</summary>
               <p>
                 The live showcase’s Activity tab shows its calls and results.
                 The
                 <a
                   href="https://github.com/mossburgh/waymode/blob/main/docs/EVALS.md"
+                  target="_blank"
+                  rel="noopener"
+                  title="Opens in a new tab"
                   >eval contract</a
                 >
                 explains how claims must be backed by retained runs. Unit tests
@@ -1231,7 +1243,7 @@
 
         <section
           class="install"
-          id="install-a"
+          id="install"
           aria-labelledby="install-title"
           data-guide="Put your product in Waymode."
         >
@@ -1278,9 +1290,15 @@
       <footer class="footer">
         <span>Waymode · Open source</span>
         <div>
-          <a href="https://github.com/mossburgh/waymode">GitHub</a
+          <a href="https://github.com/mossburgh/waymode"
+            target="_blank"
+            rel="noopener"
+            title="Opens in a new tab">GitHub</a
           ><a
             href="https://github.com/mossburgh/waymode/blob/main/docs/EVALS.md"
+            target="_blank"
+            rel="noopener"
+            title="Opens in a new tab"
             >Evidence</a
           >
         </div>
@@ -1302,7 +1320,7 @@
       const headerRail = document.querySelector(".header-rail");
       const navigation = headerRail.querySelector(".nav");
       const caption = document.querySelector("#guide-caption");
-      const demo = document.querySelector("#demo-a");
+      const demo = document.querySelector("#demo");
       let sectionPrompt = "Where would you like to go?";
 
       let previewControl;

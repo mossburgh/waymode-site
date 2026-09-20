@@ -1,5 +1,5 @@
-/install /#install-a 302
-/install/ /#install-a 302
+/install /#install 302
+/install/ /#install 302
 /site / 301
 /site/ / 301
 /og.png /og-20260919.png 302
