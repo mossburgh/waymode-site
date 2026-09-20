@@ -1,3 +1,4 @@
+import { responseError } from "../site/request-error.js";
 import type { Decision, DecisionRequest } from "@mossburgh/waymode";
 
 export const presentationRequest = (goal: string): DecisionRequest => ({
@@ -45,7 +46,7 @@ export const requestMode = async (goal: string, signal: AbortSignal) => {
     signal,
   });
   if (!response.ok) {
-    throw new Error("I couldn’t read your request. Please try again.");
+    throw await responseError(response);
   }
   const result = (await response.json()) as { mode?: unknown };
   if (result.mode !== "act" && result.mode !== "guide") {

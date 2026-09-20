@@ -3,10 +3,14 @@ import type { SqlStorage } from "@cloudflare/workers-types";
 import { it, expect, beforeEach, afterEach, vi } from "vitest";
 import { Store } from "./store.js";
 beforeEach(() => {
+  vi.spyOn(console, "info").mockImplementation(() => {});
   vi.useFakeTimers();
   vi.setSystemTime(new Date("2026-09-20T12:00:00Z"));
 });
-afterEach(() => vi.useRealTimers());
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
 const database = () => {
   const db = new DatabaseSync(":memory:");
   const sql = {
@@ -95,5 +99,28 @@ it("keeps the network secret across restarts and rotates it daily", () => {
   expect(new Store(db.storage).networkSecret()).toBe(first);
   vi.advanceTimersByTime(86400000);
   expect(new Store(db.storage).networkSecret()).not.toBe(first);
+  db.close();
+});
+
+it("logs the quota scope and wait time without visitor or network identifiers", () => {
+  const db = database();
+  const store = new Store(db.storage);
+  const visitor = store.create("private-network");
+  for (let n = 0; n < 12; n++) {
+    store.model(visitor, "private-network");
+  }
+  expect(() => store.model(visitor, "private-network")).toThrow("limit");
+  expect(console.info).toHaveBeenLastCalledWith({
+    event: "rate_limit",
+    resource: "model-burst",
+    scope: "network",
+    retryAfter: 60,
+  });
+  expect(JSON.stringify(vi.mocked(console.info).mock.calls)).not.toContain(
+    "private-network",
+  );
+  expect(JSON.stringify(vi.mocked(console.info).mock.calls)).not.toContain(
+    visitor.id,
+  );
   db.close();
 });

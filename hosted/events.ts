@@ -87,7 +87,7 @@ export class Events {
       0,
     );
     if (log.clients.size >= 2 || total >= 100) {
-      throw new HttpError(429, "Too many open demo streams.");
+      throw new HttpError(429, "Too many open activity streams.");
     }
     const stream = traceStream(log);
     return new Response(stream, {

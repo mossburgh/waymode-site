@@ -68,7 +68,7 @@ export class BotCheck {
     );
     // A request may have expired while Cloudflare was verifying it.
     if (!this.store.read<Visitor>(`visitor:${visitor.id}`)) {
-      throw new HttpError(401, "Reload the demo to start a new session.");
+      throw new HttpError(401, "Reload the page to start a new session.");
     }
     this.store.write(
       `verified:${visitor.id}`,

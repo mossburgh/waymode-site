@@ -7,10 +7,14 @@ type Result = {
   verified: boolean;
   failed?: boolean;
   stopped?: boolean;
+  rateLimited?: boolean;
 };
 export const resultStatus = (result: Result) => {
   if (result.stopped) {
     return "Stopped";
+  }
+  if (result.rateLimited) {
+    return "Limit reached";
   }
   if (result.failed) {
     return "Failed";

@@ -4,22 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Privacy · Waymode</title>
-  <meta name="description" content="How the Waymode demo uses session data and optional analytics.">
+  <meta name="description" content="How the Waymode site uses session data and optional analytics.">
   <style>body{max-width:44rem;margin:4rem auto;padding:0 1.5rem;font:18px/1.65 system-ui;background:#f7f8fc;color:#171922}a{color:#4054f6}h1,h2{line-height:1.2}h2{margin-top:2rem}</style>
 </head>
 <body>
   <a href="/">← Waymode</a>
-  <h1>Privacy &amp; security in the Waymode demo</h1>
+  <h1>Privacy &amp; security for the Waymode site</h1>
   <p>Updated September 20, 2026.</p>
-  <h2>Using the demo</h2>
-  <p>The demo uses a one-hour session cookie to keep your example app state separate from other visitors. Requests to Waymode send your submitted prompt and relevant demo or page state to our model service. Rate limits process your network address at the edge to protect the shared demo. The app stores a keyed network hash that rotates each UTC day, rather than your raw address. Server logs record request status, timing, usage, and request identifiers; they do not record prompt bodies, authentication cookies, or raw IP addresses.</p>
+  <h2>Using the site</h2>
+  <p>The site uses a one-hour session cookie to keep your requests and interactive demo state separate from other visitors. Requests to Waymode send your submitted prompt and relevant demo or page state to our model service. Rate limits process your network address at the edge to protect the site. The app stores a keyed network hash that rotates each UTC day, rather than your raw address. Server logs record request status, timing, usage, and request identifiers; they do not record prompt bodies, authentication cookies, or raw IP addresses.</p>
+  <p>Model requests use Vercel AI Gateway and Jev. This site does not require zero data retention from those services. They may retain submitted prompts and relevant page or demo state under their applicable policies. Do not submit confidential information.</p>
   <p>The page loads its Onest font from Google Fonts. That request sends your IP address and browser request metadata to Google before any analytics choice. See <a href="https://developers.google.com/fonts/faq/privacy" target="_blank" rel="noopener noreferrer">Google Fonts privacy information</a>.</p>
   <p>Cloudflare Turnstile checks visitors before model requests. It processes browser signals and your network address to limit bots and abuse. This security check is separate from optional analytics.</p>
   <h2>Optional analytics and replay</h2>
   <p>If analytics is configured, we ask before loading PostHog. Choosing “Allow analytics” lets PostHog collect clicks, navigation, timing, heatmaps, and session replay, including what you type into the site’s fields—even drafts you do not submit. We also record submitted and suggested prompts, runtime actions and outcomes, stop requests, and browser console messages during replay.</p>
-  <p>Ordinary site content, form inputs, and visible runtime traces are recorded without masking. Password fields, hidden credentials, and security checks remain excluded. We exclude network request bodies, authentication headers, and cookies from replay. Runtime records redact credential fields and common secret formats, but automated redaction cannot identify every confidential value. Please do not enter passwords, API keys, or confidential personal or business information into this public demo.</p>
+  <p>Ordinary site content, form inputs, and visible runtime traces are recorded without masking. Password fields, hidden credentials, and security checks remain excluded. We exclude network request bodies, authentication headers, and cookies from replay. Runtime records redact credential fields and common secret formats, but automated redaction cannot identify every confidential value. Please do not enter passwords, API keys, or confidential personal or business information into this site.</p>
   <h2>Your choice</h2>
-  <p>“No thanks” keeps PostHog off. You can change your choice through “Analytics preferences” in the homepage footer when analytics is available. Withdrawing consent stops future collection; it does not erase records already collected. We also honor Global Privacy Control and Do Not Track. The demo works without optional analytics.</p>
+  <p>“No thanks” keeps PostHog off. You can change your choice through “Analytics preferences” in the homepage footer when analytics is available, or ask Waymode to change your preferences or show you how. Withdrawing consent stops future collection; it does not erase records already collected. We also honor Global Privacy Control and Do Not Track. The site and its interactive demo work without optional analytics.</p>
   <p>PostHog uses browser storage and cookies after opt-in to connect activity across visits on this site. Analytics cookies expire after 30 days; local browser storage remains until you clear it or opt out. Our analytics settings control record retention and team access. See <a href="https://posthog.com/privacy" target="_blank" rel="noopener noreferrer">PostHog’s privacy policy</a> for information about its service.</p>
   <h2>Questions or data requests</h2>
   <p>Contact the Waymode maintainer through the contact details on <a href="https://github.com/mossburgh" target="_blank" rel="noopener noreferrer">our GitHub profile</a>. Do not post personal information in a public issue.</p>

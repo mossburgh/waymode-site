@@ -1,8 +1,8 @@
+import { createSiteEvaluator } from "../demo/site-evaluator.js";
 import { retryModel } from "./model-retry.js";
 import { requireVerification, type BotEnv } from "./bot-check.js";
 import {
   createDecider,
-  createEvaluator,
   createInputResolver,
   type EvaluationOptions,
 } from "@mossburgh/waymode/server";
@@ -35,7 +35,7 @@ export class Models {
       throw new HttpError(503, "Live requests are temporarily unavailable.");
     }
     if (this.active.has(visitor.id) || this.active.size >= 4) {
-      throw new HttpError(429, "The demo is busy. Please try again.");
+      throw new HttpError(429, "Waymode is busy. Please try again.");
     }
     requireVerification(this.store, visitor, ip);
     this.store.model(visitor, ip);
@@ -51,7 +51,7 @@ export class Models {
       state: options.state,
       questions: options.questions,
     });
-    const evaluate = createEvaluator({
+    const evaluate = createSiteEvaluator({
       apiKey: this.env.AI_GATEWAY_API_KEY,
       model: this.env.WAYMODE_MODEL,
     });
@@ -84,6 +84,12 @@ export class Models {
       console.warn({
         event: "model_failure_kind",
         name: error instanceof Error ? error.name : "Error",
+        status:
+          error instanceof Error &&
+          "statusCode" in error &&
+          typeof error.statusCode === "number"
+            ? error.statusCode
+            : null,
       });
       this.events.emit(visitor, "model.error", {
         name: error instanceof Error ? error.name : "Error",

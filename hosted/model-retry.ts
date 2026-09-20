@@ -14,6 +14,13 @@ export async function retryModel<T>(
       ) {
         throw error;
       }
+      if (
+        "statusCode" in error &&
+        typeof error.statusCode === "number" &&
+        error.statusCode < 500
+      ) {
+        break;
+      }
     }
   }
   throw new HttpError(

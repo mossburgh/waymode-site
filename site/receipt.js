@@ -1,3 +1,4 @@
+import { rateLimitDetail } from "./request-error.js";
 const element = (tag, text, className) => {
   const node = document.createElement(tag);
   node.textContent = text;
@@ -146,11 +147,9 @@ export function failureFor(error, aborted) {
   if (aborted) {
     return ["Stopped", "Stopped."];
   }
-  if (error.message?.includes("(429)")) {
-    return [
-      "Limit reached",
-      "Waymode has reached a shared request limit. Try again later; you can still use the page controls.",
-    ];
+  const limited = rateLimitDetail(error);
+  if (limited) {
+    return ["Limit reached", limited];
   }
   return [
     "Failed",

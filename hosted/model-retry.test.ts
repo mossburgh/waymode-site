@@ -31,3 +31,15 @@ it("does not retry quotas, validation, or stopped requests", async () => {
   await expect(retryModel(run, stop.signal)).rejects.toThrow();
   expect(run).not.toHaveBeenCalled();
 });
+
+it("does not retry gateway billing or authorization rejections disguised as internal errors", async () => {
+  const error = Object.assign(new Error("billing unavailable"), {
+    name: "GatewayInternalServerError",
+    statusCode: 403,
+  });
+  const run = vi.fn().mockRejectedValue(error);
+  await expect(
+    retryModel(run, new AbortController().signal),
+  ).rejects.toMatchObject({ status: 503 });
+  expect(run).toHaveBeenCalledOnce();
+});

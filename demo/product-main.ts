@@ -1,3 +1,4 @@
+import { rateLimitDetail, responseError } from "../site/request-error.js";
 import { ensureModelAccess } from "../site/bot-check.js";
 import { recordActivity } from "../site/activity.js";
 import { playbackCheckpoint } from "./playback-checkpoint.js";
@@ -129,7 +130,7 @@ const serverSurface = async (goal: string, signal: AbortSignal) => {
     signal,
   });
   if (!response.ok) {
-    throw new Error("Could not start server actions.");
+    throw await responseError(response);
   }
   const session = (await response.json()) as { session: string };
   const remote = createHttpSurface("/api/v1/actions", session.session);
@@ -379,8 +380,9 @@ const resultText = (evidence: {
 const reportError = (run: Run, error: unknown) => {
   const elapsedMs = performance.now() - run.started;
   const stopped = run.controller.signal.aborted;
+  const limited = rateLimitDetail(error);
   const message =
-    error instanceof Error ? error.message : "The request failed.";
+    limited ?? (error instanceof Error ? error.message : "The request failed.");
   const detail = stopped
     ? "Stopped this request. Any change already saved remains."
     : message;
@@ -394,6 +396,7 @@ const reportError = (run: Run, error: unknown) => {
     completed: false,
     verified: false,
     failed: !stopped,
+    rateLimited: Boolean(limited) && !stopped,
     stopped,
   });
   get("elapsed").textContent = `${(elapsedMs / 1000).toFixed(2)} s · error`;

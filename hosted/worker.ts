@@ -42,14 +42,14 @@ function checkOrigin(request: Request, url: URL) {
     (origin && origin !== url.origin) ||
     (request.method !== "GET" && origin !== url.origin)
   ) {
-    throw new HttpError(403, "Use the demo on this site.");
+    throw new HttpError(403, "Use Waymode on this site.");
   }
   if (
     url.pathname === "/api/v1/session" &&
     fetchSite !== "same-origin" &&
     origin !== url.origin
   ) {
-    throw new HttpError(403, "Start the demo on this site.");
+    throw new HttpError(403, "Start Waymode on this site.");
   }
 }
 async function handleRequest(request: Request, env: Env) {
@@ -150,7 +150,7 @@ export class Showcase {
       }
       const visitor = this.store.visitor(request.headers.get("Cookie"));
       if (!visitor) {
-        throw new HttpError(401, "Reload the demo to start a new session.");
+        throw new HttpError(401, "Reload the page to start a new session.");
       }
       if (route === "GET /api/v1/trace") {
         this.store.take(`trace:${visitor.id}`, 12, 60000);
@@ -179,7 +179,7 @@ export class Showcase {
     const input = await readJson(request);
     const current = this.store.read<Visitor>(`visitor:${visitor.id}`);
     if (!current) {
-      throw new HttpError(401, "Reload the demo to start a new session.");
+      throw new HttpError(401, "Reload the page to start a new session.");
     }
     visitor = current;
     if (route === "POST /api/v1/verify") {
@@ -270,7 +270,7 @@ export class Showcase {
       )(presentationRequest(goalSchema.parse(input).goal), request.signal);
       return json({ mode: presentationMode(result) });
     }
-    throw new HttpError(404, "Unknown demo endpoint.");
+    throw new HttpError(404, "Unknown endpoint.");
   }
   private readRoute(route: string, visitor: Visitor) {
     if (route === "GET /api/v1/trace") {
