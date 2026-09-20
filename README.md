@@ -25,8 +25,9 @@ is `public/index.html`; `/site` redirects to `/`.
 1. Run `npm ci` and `npm run verify`. This checks the code, builds the showcase
    into `public/showcase/`, and checks the site files.
 2. Run `npm run deploy -- --env preview` to deploy the preview.
-3. Set `AI_GATEWAY_API_KEY` and `WAYMODE_MODEL` with Wrangler secrets for preview
-   and production when provisioning a new environment. Existing secrets persist.
+3. Set `AI_GATEWAY_API_KEY` and `WAYMODE_MODEL` with Wrangler secrets for production
+   when provisioning a new environment. Existing secrets persist. Paid calls in
+   preview are disabled; use local credentials for live pre-release checks.
 4. Check the scene, chat portal, external agent, and visitor isolation on preview,
    then run `npm run deploy -- --env=''` for production.
 5. Check the same flow at `https://waymode.ai/` after deployment.
@@ -58,9 +59,15 @@ Each visitor receives an opaque, HttpOnly, Secure, SameSite=Strict cookie lastin
 one hour. Requests require the same origin; mutation bodies are limited to 16 KiB.
 The host accepts only the demo product's own bounded API operations.
 
-Model calls stop at 60 per session, 100 per IP per UTC day, or 600 across the site
-per UTC day. At most four model calls run together. Failed calls still consume
-a reservation. Quotas survive worker restarts. Session creation is also limited.
+Model calls stop at 60 per session, 100 per network per UTC day, or 600 across the site
+per UTC day. IPv6 addresses share a /64 network bucket. The temporary
+`DEMO_BOOST_UNTIL` setting raises only the shared daily pool to 1,200, then
+returns to 600 at the configured expiry. Additional limits cap model calls
+at 12 per network per minute, 60 site-wide per minute, and 150 site-wide per hour. At most four model calls run together. Failed calls still consume
+a reservation. Quotas survive worker restarts. Session creation is also limited. A Cloudflare edge binding rejects more than 240
+API requests per network per minute before shared storage; its counters are
+eventually consistent. Durable Object limits remain authoritative. Stored network
+identifiers use HMAC with a random secret rotated and expired each UTC day.
 These are request caps, not a dollar budget or a claim of free inference. Gateway
 reported charges and market estimates remain separate in Activity.
 
@@ -85,19 +92,36 @@ redirects to `/`; the app used inside the showcase lives at `/product.html`. The
 has its own implementation; keep product claims grounded in the SDK contract and
 retained runs rather than animated examples.
 
-Use free [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/get-started/)
-with automatic injection for `waymode.ai`. The content security policy permits
-the beacon script and its same-origin `/cdn-cgi/rum` endpoint. No manual beacon or
-placeholder token is installed. Enable the site in the Cloudflare dashboard,
-check regional collection settings, then verify a successful beacon request on
-the deployed page and incoming data in the dashboard. Do not add a second beacon
-if automatic injection is active.
+PostHog supplies autocapture, heatmaps, and session replay. A single bridge records
+Waymode runtime activity, including submitted prompts, decisions, receipts, and
+stop requests. Same-origin demo frames load the same SDK for autocapture; the
+parent records replay. No per-button event catalog is maintained.
 
-Cloudflare says its Web Analytics uses no cookies, localStorage, or visitor
-fingerprinting. This describes that service, not every feature of the site or a
-blanket exemption from regional consent rules. Keep the site's privacy notice in
-step with the services actually enabled. Its [FAQ](https://developers.cloudflare.com/web-analytics/faq/)
-lists no custom-event or UTM support; pageviews cannot prove installation.
+Set `POSTHOG_PUBLIC_KEY` to the public `phc_...` project key and `POSTHOG_REGION`
+to `us` or `eu` in the Worker environment. Never use a personal API key. Without
+a valid project key, the SDK stays unloaded and no PostHog events are sent.
+Visitors must opt in before the SDK loads. The notice explicitly covers prompt
+drafts, messages, and runtime activity. Analytics preferences can withdraw
+consent; GPC and Do Not Track disable capture. The demo still works without it.
+
+Only marked prompt inputs are readable in replay; other inputs stay masked.
+Network bodies, auth headers, cookies, and raw trace panels are excluded from
+replay. Runtime events redact credential fields and common secret patterns.
+Pattern redaction cannot recognize every secret somebody might paste into free
+text, so the privacy notice asks visitors to keep confidential data out of the demo.
+URL queries and fragments are removed before capture.
+
+Before enabling collection, configure PostHog replay retention and project access,
+then verify a consented session, an opted-out session, both demo frames, and a
+stopped run in the real project. Dashboard ingestion and replay fidelity remain
+unverified until that project is provided. Browser blockers can prevent collection.
+
+Cloudflare structured logs record API status, duration, request ID, quota failures,
+and model usage. They contain no submitted prompt bodies, cookies, or raw IPs.
+Invocation logging is disabled to avoid automatically retaining full request URLs.
+Request IDs link API calls to model usage; Cloudflare retention and export settings
+control how long those operational logs remain available. This release does not
+configure uptime alerts, a provider dollar budget, or a log export destination.
 
 ### Baseline and scorecard
 
@@ -110,7 +134,7 @@ Bing Webmaster Tools were not verified. No traffic or ranking baseline is claime
 | Search discovery       | Verified Google Search Console property                       | Non-branded impressions, clicks, queries, landing pages over matching 28-day windows                     |
 | AI citations           | Available search-provider AI reports and a fixed prompt panel | Cited URL and answer accuracy, with model, date, locale, and sample size                                 |
 | Visits and performance | Cloudflare Web Analytics                                      | Referrers, landing pages, device mix, and p75 Core Web Vitals; disclose sampling and regional exclusions |
-| Install intent         | A separate event collector, not yet installed                 | Successful prompt copies and GitHub clicks; never label these completed installs                         |
+| Install intent         | PostHog autocapture, once configured                          | Successful prompt copies and GitHub clicks; never label these completed installs                         |
 | Product results        | Retained SDK/app eval runs                                    | Task success, policy failures, latency, cost, and exact versions; separate from marketing metrics        |
 
 Use the same prompt panel before and after a content change: “How can I add AI

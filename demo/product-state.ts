@@ -25,9 +25,9 @@ export const patchSchema = z
     completed: completed.partial().optional(),
   })
   .strict();
-export type DaylistState = z.infer<typeof stateSchema>;
-export type DaylistPatch = z.infer<typeof patchSchema>;
-export const initialState = (): DaylistState => ({
+export type ProductState = z.infer<typeof stateSchema>;
+export type ProductPatch = z.infer<typeof patchSchema>;
+export const initialState = (): ProductState => ({
   archived: [],
   preferences: { dark: false },
   completed: { notes: false, draft: false, week: false },

@@ -1,3 +1,4 @@
+import { analyticsConfig, type AnalyticsEnv } from "./analytics-config.js";
 import type { DurableObjectState } from "@cloudflare/workers-types";
 import { decisionRequestSchema } from "@mossburgh/waymode/server";
 import { ActionBlockedError, StaleActionError } from "@mossburgh/waymode/core";
@@ -10,44 +11,76 @@ import { Actions } from "./actions.js";
 import { json, readJson, errorResponse, HttpError } from "./http.js";
 import { presentationRequest, presentationMode } from "../demo/request-mode.js";
 import { externalAgent } from "./external.js";
-type Env = ModelEnv & {
-  SHOWCASE: {
-    getByName(name: string): { fetch(request: Request): Promise<Response> };
+import { logRequest, inRequestScope } from "./telemetry.js";
+import { networkId, networkKey } from "./ip.js";
+type Env = ModelEnv &
+  AnalyticsEnv & {
+    API_LIMITER: {
+      limit(options: { key: string }): Promise<{ success: boolean }>;
+    };
+    SHOWCASE: {
+      getByName(name: string): { fetch(request: Request): Promise<Response> };
+    };
   };
-};
 const goalSchema = z.strictObject({ goal: z.string().trim().min(1).max(2000) });
-const requestIp = async (request: Request) => {
-  const day = Math.floor(Date.now() / 86400000);
-  const bytes = new TextEncoder().encode(
-    `${day}:${request.headers.get("CF-Connecting-IP") ?? "local"}`,
-  );
-  return Array.from(
-    new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)),
-    (b) => b.toString(16).padStart(2, "0"),
-  ).join("");
-};
 export default {
   async fetch(request: Request, env: Env) {
-    try {
-      const url = new URL(request.url);
-      const origin = request.headers.get("Origin");
-      if (
-        (origin && origin !== url.origin) ||
-        (request.method !== "GET" && origin !== url.origin)
-      ) {
-        throw new HttpError(403, "Use the demo on this site.");
-      }
-      if (url.pathname === "/api/v1/external") {
-        return await externalAgent(request, (next) =>
-          env.SHOWCASE.getByName("public-demo-v1").fetch(next),
-        );
-      }
-      return await env.SHOWCASE.getByName("public-demo-v1").fetch(request);
-    } catch (error) {
-      return errorResponse(error);
-    }
+    request = new Request(request);
+    request.headers.set("X-Waymode-Request-ID", crypto.randomUUID());
+    const started = performance.now();
+    const response = await handleRequest(request, env);
+    return logRequest(request, response, started);
   },
 };
+function checkOrigin(request: Request, url: URL) {
+  const origin = request.headers.get("Origin");
+  const fetchSite = request.headers.get("Sec-Fetch-Site");
+  if (
+    fetchSite === "cross-site" ||
+    fetchSite === "same-site" ||
+    (origin && origin !== url.origin) ||
+    (request.method !== "GET" && origin !== url.origin)
+  ) {
+    throw new HttpError(403, "Use the demo on this site.");
+  }
+  if (
+    url.pathname === "/api/v1/session" &&
+    fetchSite !== "same-origin" &&
+    origin !== url.origin
+  ) {
+    throw new HttpError(403, "Start the demo on this site.");
+  }
+}
+async function handleRequest(request: Request, env: Env) {
+  try {
+    const url = new URL(request.url);
+    checkOrigin(request, url);
+    const edgeLimit = await env.API_LIMITER.limit({
+      key: networkKey(request.headers.get("CF-Connecting-IP") ?? "local"),
+    });
+    if (!edgeLimit.success) {
+      throw new HttpError(
+        429,
+        "Too many requests. Please try again later.",
+        60,
+      );
+    }
+    if (
+      url.pathname === "/api/v1/analytics-config" &&
+      request.method === "GET"
+    ) {
+      return json(analyticsConfig(env));
+    }
+    if (url.pathname === "/api/v1/external") {
+      return await externalAgent(request, (next) =>
+        env.SHOWCASE.getByName("public-demo-v1").fetch(next),
+      );
+    }
+    return await env.SHOWCASE.getByName("public-demo-v1").fetch(request);
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
 export class Showcase {
   private store: Store;
   private events = new Events();
@@ -58,7 +91,7 @@ export class Showcase {
     private ctx: DurableObjectState,
     env: ModelEnv,
   ) {
-    this.store = new Store(ctx.storage.sql);
+    this.store = new Store(ctx.storage.sql, env);
     this.models = new Models(env, this.store, this.events);
     this.product = new Product(this.store, this.events);
     this.actions = new Actions(
@@ -82,22 +115,29 @@ export class Showcase {
     const channel = Array.from(new Uint8Array(digest), (byte) =>
       byte.toString(16).padStart(2, "0"),
     ).join("");
-    const response = json({ traceChannel: `daylist-${channel}` });
+    const response = json({ traceChannel: `product-${channel}` });
     if (existing) {
       return response;
     }
     response.headers.set(
       "Set-Cookie",
-      `waymode_session=${visitor.id}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600`,
+      `__Host-waymode_session=${visitor.id}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600`,
     );
     return response;
   }
-  async fetch(request: Request) {
+  fetch(request: Request) {
+    return inRequestScope(request, () => this.handle(request));
+  }
+  private async handle(request: Request) {
     try {
       this.store.prune();
       this.events.prune();
-      const ip = await requestIp(request);
-      this.store.take(`requests:${ip}`, 240, 60000);
+      const ip = networkId(
+        request.headers.get("CF-Connecting-IP") ?? "local",
+        this.store.networkSecret(),
+      );
+      this.store.request(ip);
+      this.ctx.waitUntil(this.ctx.storage.setAlarm(Date.now() + 3600000));
       const route = `${request.method} ${new URL(request.url).pathname}`;
       if (route === "GET /api/v1/session") {
         return this.session(request, ip);
@@ -106,7 +146,9 @@ export class Showcase {
       if (!visitor) {
         throw new HttpError(401, "Reload the demo to start a new session.");
       }
-      this.ctx.waitUntil(this.ctx.storage.setAlarm(Date.now() + 3600000));
+      if (route === "GET /api/v1/trace") {
+        this.store.take(`trace:${visitor.id}`, 12, 60000);
+      }
       return await this.route(request, route, visitor, ip);
     } catch (error) {
       if (error instanceof StaleActionError) {
@@ -129,6 +171,11 @@ export class Showcase {
       return read;
     }
     const input = await readJson(request);
+    const current = this.store.read<Visitor>(`visitor:${visitor.id}`);
+    if (!current) {
+      throw new HttpError(401, "Reload the demo to start a new session.");
+    }
+    visitor = current;
     if (route === "POST /api/v1/playback/reset") {
       this.actions.retire(visitor.id);
       return json(this.product.restore(visitor, input));
@@ -138,8 +185,8 @@ export class Showcase {
       return json(this.product.feature(visitor, input));
     }
     if (
-      route === "PATCH /api/v1/daylist" ||
-      route === "POST /api/v1/daylist/archive-completed"
+      route === "PATCH /api/v1/product" ||
+      route === "POST /api/v1/product/archive-completed"
     ) {
       return this.mutateProduct(request, visitor, input);
     }
@@ -192,8 +239,8 @@ export class Showcase {
     if (route === "GET /api/v1/openapi") {
       return json(this.product.contract(visitor).document);
     }
-    if (route === "GET /api/v1/daylist") {
-      return json(this.product.dispatch(visitor, "/api/v1/daylist", "GET"));
+    if (route === "GET /api/v1/product") {
+      return json(this.product.dispatch(visitor, "/api/v1/product", "GET"));
     }
     return undefined;
   }

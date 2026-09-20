@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import * as base from "./daylist-contract.js";
+import * as base from "./product-contract.js";
 import { compileFeature, createFeatureStore } from "./showcase-feature.js";
 
 const session = () => ({ calls: 0, active: false, expires: Date.now() + 1000 });

@@ -1,5 +1,5 @@
 import story from "./launch/story.json" with { type: "json" };
-import { preferenceSwitch, type FeatureContext } from "./daylist-app.js";
+import { preferenceSwitch, type FeatureContext } from "./product-app.js";
 
 export const mountFeature = ({
   root,

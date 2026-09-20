@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 import { afterEach, expect, it, vi } from "vitest";
-import { mountFeature } from "./daylist-feature.js";
-import { createDaylist } from "./daylist-app.js";
-import { initialState } from "./daylist-store.js";
+import { mountFeature } from "./product-feature.js";
+import { createProduct } from "./product-app.js";
+import { initialState } from "./product-store.js";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -24,7 +24,7 @@ it("recovers from a rejected save and settles the next native change", async () 
   vi.stubGlobal("fetch", fetch);
   const root = document.createElement("main");
   document.body.append(root);
-  const app = await createDaylist(root, () => {});
+  const app = await createProduct(root, () => {});
   root.querySelector<HTMLInputElement>('.task input[type="checkbox"]')!.click();
   await expect(app.settle()).rejects.toThrow("The app could not save");
   expect(app.snapshot()).toEqual(saved);
@@ -51,7 +51,7 @@ const failingSave = async (reason: unknown) => {
   );
   const root = document.createElement("main");
   document.body.append(root);
-  const app = await createDaylist(root, () => {});
+  const app = await createProduct(root, () => {});
   root.querySelector<HTMLInputElement>(".task input")!.click();
   return app;
 };
@@ -86,7 +86,7 @@ it("keeps the workspace visible when live settings save from chat", async () => 
   const root = document.createElement("main");
   const chat = document.createElement("section");
   document.body.append(root, chat);
-  const app = await createDaylist(root, () => {});
+  const app = await createProduct(root, () => {});
   app.openSettingsInChat(chat);
   expect(root.querySelectorAll(".task")).toHaveLength(3);
   expect(app.rendered().location).toBe("Chat");
@@ -116,7 +116,7 @@ it("refreshes the same live chat panel when a feature changes", async () => {
   const root = document.createElement("main");
   const chat = document.createElement("section");
   document.body.append(root, chat);
-  const app = await createDaylist(root, () => {});
+  const app = await createProduct(root, () => {});
   app.openSettingsInChat(chat);
   app.feature(({ container }) => {
     const label = document.createElement("span");
@@ -146,7 +146,7 @@ it("a collapsed chat card keeps current state without overriding feature styling
   const root = document.createElement("main");
   const chat = document.createElement("section");
   document.body.append(root, chat);
-  const app = await createDaylist(root, mountFeature);
+  const app = await createProduct(root, mountFeature);
   app.openSettingsInChat(chat);
   chat.querySelector<HTMLButtonElement>(".chat-card-toggle")!.click();
   app.show("settings");
@@ -178,7 +178,7 @@ it("reopens a retained card in place after later messages and refresh", async ()
   const reply = document.createElement("p");
   document.body.append(root, conversation);
   conversation.append(chat, request);
-  const app = await createDaylist(root, () => {});
+  const app = await createProduct(root, () => {});
   app.openSettingsInChat(chat);
   conversation.append(reply);
   const toggle = chat.querySelector<HTMLButtonElement>(".chat-card-toggle")!;
@@ -209,7 +209,7 @@ it("updates direct and guided suggestions from saved theme state", async () => {
   const guided = document.createElement("button");
   guided.dataset.themeRequest = "guide";
   document.body.append(root, direct, guided);
-  const app = await createDaylist(root, () => {});
+  const app = await createProduct(root, () => {});
   expect(direct.dataset.request).toBe("Turn on dark mode");
   expect(guided.textContent).toBe("Show me how to turn on dark mode");
   await app.refresh();
@@ -226,22 +226,22 @@ it("portals the existing Settings nodes into chat and back without adding app bu
   const root = document.createElement("main");
   const chat = document.createElement("section");
   document.body.append(root, chat);
-  const app = await createDaylist(root, () => {});
+  const app = await createProduct(root, () => {});
   app.show("settings");
-  const settings = root.querySelector<HTMLElement>("#daylist-settings")!;
+  const settings = root.querySelector<HTMLElement>("#product-settings")!;
   const checkbox = settings.querySelector("input")!;
   expect(settings.querySelectorAll("button")).toHaveLength(0);
   app.openSettingsInChat(chat);
-  expect(chat.querySelector("#daylist-settings")).toBe(settings);
+  expect(chat.querySelector("#product-settings")).toBe(settings);
   expect(chat.querySelector("input")).toBe(checkbox);
-  expect(root.querySelector("#daylist-settings")).toBeNull();
+  expect(root.querySelector("#product-settings")).toBeNull();
   app.show("settings");
-  expect(root.querySelector("#daylist-settings")).toBe(settings);
+  expect(root.querySelector("#product-settings")).toBe(settings);
   expect(settings.querySelector("input")).toBe(checkbox);
   expect(app.isSettingsInChatExpanded()).toBe(false);
   chat.querySelector<HTMLButtonElement>(".chat-card-toggle")!.click();
   expect(chat.querySelector("input")).toBe(checkbox);
-  expect(document.querySelectorAll("#daylist-settings")).toHaveLength(1);
+  expect(document.querySelectorAll("#product-settings")).toHaveLength(1);
   expect(settings.className).toBe("preferences");
 });
 
@@ -252,7 +252,7 @@ it("shows only preferences on Settings and restores the task list on Today", asy
   );
   const root = document.createElement("main");
   document.body.append(root);
-  const app = await createDaylist(root, () => {});
+  const app = await createProduct(root, () => {});
   app.show("settings");
   expect(root.querySelector<HTMLElement>(".tasks")!.hidden).toBe(true);
   expect(root.querySelector<HTMLElement>(".preferences")!.hidden).toBe(false);

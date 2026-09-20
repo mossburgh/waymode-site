@@ -14,5 +14,5 @@
     "resolveJsonModule": true,
     "types": ["node", "vite/client"]
   },
-  "include": ["demo", "hosted"]
+  "include": ["demo", "hosted", "site"]
 }

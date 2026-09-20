@@ -14,7 +14,7 @@ import { z } from "zod";
 import { resolve } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { experimental_evaluate as evaluate } from "ai";
-import { createDaylistStore } from "./daylist-store.js";
+import { createProductStore } from "./product-store.js";
 import { trace, watchTrace } from "./trace.js";
 import { createServer as createViteServer } from "vite";
 import {
@@ -38,7 +38,7 @@ const passkeys = createPasskeyStore({ origin, directory });
 const apiKey =
   process.env.AI_GATEWAY_API_KEY ?? process.env.VERCEL_AI_GATEWAY_API_KEY;
 const features = createFeatureStore();
-const daylist = createDaylistStore(resolve(directory, "daylist"));
+const product = createProductStore(resolve(directory, "product"));
 const vite = await createViteServer({
   root: resolve("demo"),
   publicDir: resolve("public"),
@@ -101,8 +101,8 @@ const watchSource = async (
   const requested = new URL(request.url!, origin).searchParams;
   const files = {
     account: "demo/feature.ts",
-    contract: "demo/daylist-contract.ts",
-    feature: "demo/daylist-feature.ts",
+    contract: "demo/product-contract.ts",
+    feature: "demo/product-feature.ts",
   };
   const key = requested.get("file") ?? requested.get("app") ?? "feature";
   const file = files[key as keyof typeof files] ?? files.feature;
@@ -115,8 +115,8 @@ const watchSource = async (
 const broadcastSourceChange = async (path: string) => {
   const file = [
     "demo/feature.ts",
-    "demo/daylist-feature.ts",
-    "demo/daylist-contract.ts",
+    "demo/product-feature.ts",
+    "demo/product-contract.ts",
   ].find((file) => resolve(file) === path);
   if (!file) {
     return;
@@ -253,10 +253,10 @@ const actionInputResolver = (state: DemoSessionState, apiKey: string) => {
   );
   return resolveInput;
 };
-const daylistContract = async (state: DemoSessionState) => {
+const productContract = async (state: DemoSessionState) => {
   const base = (await vite.ssrLoadModule(
-    "/daylist-contract.ts",
-  )) as typeof import("./daylist-contract.js");
+    "/product-contract.ts",
+  )) as typeof import("./product-contract.js");
   return features.has(state)
     ? compileFeature(base, features.read(state))
     : base;
@@ -303,8 +303,8 @@ const dispatchAction = async (
 };
 const authorizeAction = (state: DemoSessionState, call: BackendCall) => {
   const allowed =
-    (call.path === "/api/v1/daylist" ||
-      call.path.startsWith("/api/v1/daylist/")) &&
+    (call.path === "/api/v1/product" ||
+      call.path.startsWith("/api/v1/product/")) &&
     ["PATCH", "POST"].includes(call.method);
   const result = allowed ? "allow" : "deny";
   trace(state, "policy", { method: call.method, path: call.path, result });
@@ -325,8 +325,8 @@ const startActions = async (
   pruneActions(id);
   const resolveInput = actionInputResolver(state, apiKey);
   const surface = createOpenApiSurface({
-    document: async () => (await daylistContract(state)).document,
-    readState: async () => daylist.read(id),
+    document: async () => (await productContract(state)).document,
+    readState: async () => product.read(id),
     authorize: async (call) => authorizeAction(state, call),
     resolveInput: (operation, signal) =>
       resolveActionInput(resolveInput, state, operation, signal),
@@ -407,27 +407,27 @@ const evalRoute = async ({ response }: ApiContext) => {
 };
 const archiveRoute = ({ request, response, id, state }: ApiContext) => {
   const started = performance.now();
-  const saved = daylist.archiveCompleted(id);
+  const saved = product.archiveCompleted(id);
   trace(state, "network", {
     method: request.method,
-    path: "/api/v1/daylist/archive-completed",
+    path: "/api/v1/product/archive-completed",
     status: 200,
     elapsedMs: performance.now() - started,
     saved,
   });
   reply(response, 200, saved);
 };
-const daylistRoute = async ({ request, response, id, state }: ApiContext) => {
+const productRoute = async ({ request, response, id, state }: ApiContext) => {
   const started = performance.now();
   const input = request.method === "PATCH" ? await body(request) : undefined;
-  const contract = await daylistContract(state);
+  const contract = await productContract(state);
   const saved =
     request.method === "PATCH"
-      ? daylist.patch(id, input, contract.patch)
-      : daylist.read(id);
+      ? product.patch(id, input, contract.patch)
+      : product.read(id);
   trace(state, "network", {
     method: request.method,
-    path: "/api/v1/daylist",
+    path: "/api/v1/product",
     status: 200,
     elapsedMs: performance.now() - started,
     ...(input !== undefined && { input }),
@@ -438,7 +438,7 @@ const daylistRoute = async ({ request, response, id, state }: ApiContext) => {
 const featureRoute = async ({ request, response, state, id }: ApiContext) => {
   const definition = features.write(state, await body(request));
   pruneActions(id);
-  daylist.configureFeature(id, definition?.field);
+  product.configureFeature(id, definition?.field);
   trace(state, "feature", {
     definition,
     message: "App contract compiled. SDK unchanged.",
@@ -503,7 +503,7 @@ const routes: Record<string, (context: ApiContext) => void | Promise<void>> = {
     const snapshot = playbackSnapshot.parse(await body(request));
     pruneActions(id);
     features.write(state, snapshot.feature);
-    daylist.restore(id, snapshot.state);
+    product.restore(id, snapshot.state);
     trace(state, "playback.reset", { message: "Scene restored for playback." });
     reply(response, 200, { restored: true });
   },
@@ -519,15 +519,15 @@ const routes: Record<string, (context: ApiContext) => void | Promise<void>> = {
   "POST /api/v1/actions": ({ request, response, id }) =>
     useActions(request, response, id),
   "GET /api/v1/session": ({ response, id }) =>
-    reply(response, 200, { traceChannel: `daylist-${id}` }),
+    reply(response, 200, { traceChannel: `product-${id}` }),
   "GET /api/v1/trace": ({ state, response }) => watchTrace(state, response),
   "GET /api/v1/evals": evalRoute,
   "GET /api/v1/openapi": async ({ response, state }) => {
-    reply(response, 200, (await daylistContract(state)).document);
+    reply(response, 200, (await productContract(state)).document);
   },
-  "POST /api/v1/daylist/archive-completed": archiveRoute,
-  "GET /api/v1/daylist": daylistRoute,
-  "PATCH /api/v1/daylist": daylistRoute,
+  "POST /api/v1/product/archive-completed": archiveRoute,
+  "GET /api/v1/product": productRoute,
+  "PATCH /api/v1/product": productRoute,
   "GET /api/v1/source": ({ request, response }) =>
     watchSource(request, response),
   "POST /api/v1/decisions": ({ request, response, state }) =>

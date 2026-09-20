@@ -343,7 +343,7 @@ const buildFeature = async (run: Playback) => {
   await run.wait(story.interactive.pacing.featureHoldMs);
 };
 const requestForInteraction = async (signal: AbortSignal) => {
-  const response = await fetch("/api/v1/daylist", { signal });
+  const response = await fetch("/api/v1/product", { signal });
   if (!response.ok) {
     throw new Error("Could not read the app’s current state.");
   }
@@ -383,7 +383,7 @@ const waitAtChapter = async (stage?: string) => {
 };
 const restoreScene = async (run: Playback) => {
   if (!sceneSnapshot) {
-    const response = await fetch("/api/v1/daylist", { signal: run.signal });
+    const response = await fetch("/api/v1/product", { signal: run.signal });
     if (!response.ok) {
       throw new Error("Could not read the scene state.");
     }

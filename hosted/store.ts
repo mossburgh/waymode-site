@@ -1,19 +1,25 @@
 import type { SqlStorage } from "@cloudflare/workers-types";
 import { HttpError } from "./http.js";
 import type { FeatureDefinition } from "../demo/showcase-feature.js";
-import type { DaylistState } from "../demo/daylist-store.js";
+import type { ProductState } from "../demo/product-store.js";
+import { modelLimits, type LimitsEnv } from "./limits.js";
 
 export type Visitor = {
   id: string;
   expires: number;
   feature: FeatureDefinition | null;
-  app: DaylistState;
+  app: ProductState;
 };
 export class Store {
-  constructor(private sql: SqlStorage) {
+  private nextPrune = 0;
+  constructor(
+    private sql: SqlStorage,
+    private env: LimitsEnv = {},
+  ) {
     sql.exec(
       "CREATE TABLE IF NOT EXISTS records (key TEXT PRIMARY KEY, value TEXT NOT NULL, expires INTEGER NOT NULL)",
     );
+    sql.exec("CREATE INDEX IF NOT EXISTS records_expiry ON records (expires)");
   }
   read<T>(key: string): T | undefined {
     const row = this.sql
@@ -34,7 +40,21 @@ export class Store {
     );
   }
   prune() {
+    if (Date.now() < this.nextPrune) {
+      return;
+    }
+    this.nextPrune = Date.now() + 30000;
     this.sql.exec("DELETE FROM records WHERE expires <= ?", Date.now());
+  }
+  networkSecret() {
+    const day = Math.floor(Date.now() / 86400000);
+    const key = `network-secret:${day}`;
+    let secret = this.read<string>(key);
+    if (!secret) {
+      secret = crypto.randomUUID() + crypto.randomUUID();
+      this.write(key, secret, (day + 1) * 86400000);
+    }
+    return secret;
   }
   private bucket(key: string, limit: number, window: number) {
     const slot = Math.floor(Date.now() / window);
@@ -49,10 +69,12 @@ export class Store {
       ...bucket,
       count: this.read<number>(bucket.name) ?? 0,
     }));
-    if (pending.some((bucket) => bucket.count >= bucket.limit)) {
+    const full = pending.find((bucket) => bucket.count >= bucket.limit);
+    if (full) {
       throw new HttpError(
         429,
         "The shared demo limit is reached. Please try again later.",
+        Math.max(1, Math.ceil((full.expires - Date.now()) / 1000)),
       );
     }
     for (const bucket of pending) {
@@ -62,19 +84,25 @@ export class Store {
   take(key: string, limit: number, window: number) {
     this.reserve([this.bucket(key, limit, window)]);
   }
+  request(ip: string) {
+    this.reserve([
+      this.bucket("requests:all", 2400, 60000),
+      this.bucket(`requests:${ip}`, 240, 60000),
+    ]);
+  }
   save(visitor: Visitor) {
     this.write(`visitor:${visitor.id}`, visitor, visitor.expires);
   }
   visitor(cookie: string | null) {
     const id = cookie?.match(
-      /(?:^|;\s*)waymode_session=([a-f0-9-]{36})(?:;|$)/,
+      /(?:^|;\s*)__Host-waymode_session=([a-f0-9-]{36})(?:;|$)/,
     )?.[1];
     return id ? this.read<Visitor>(`visitor:${id}`) : undefined;
   }
   create(ip: string) {
     this.reserve([
       this.bucket(`sessions:${ip}`, 5, 3600000),
-      this.bucket("sessions:all", 500, 86400000),
+      this.bucket("sessions:all", 500, 3600000),
     ]);
     const visitor: Visitor = {
       id: crypto.randomUUID(),
@@ -90,12 +118,16 @@ export class Store {
     return visitor;
   }
   model(visitor: Visitor, ip: string) {
+    const limits = modelLimits(this.env);
     this.reserve([
-      this.bucket("models:all", 600, 86400000),
-      this.bucket(`models:ip:${ip}`, 100, 86400000),
+      this.bucket("model-burst:all", 60, 60000),
+      this.bucket(`model-burst:ip:${ip}`, 12, 60000),
+      this.bucket("models-hour:all", 150, 3600000),
+      this.bucket("models:all", limits.daily, 86400000),
+      this.bucket(`models:ip:${ip}`, limits.ip, 86400000),
       {
         name: `models:visitor:${visitor.id}`,
-        limit: 60,
+        limit: limits.visitor,
         expires: visitor.expires,
       },
     ]);

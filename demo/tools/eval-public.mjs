@@ -159,13 +159,13 @@ const recordPublicCase = (page, fixture, repeat) => {
 
 const seedPublicState = async (context, fixture) => {
   const baseline = await (
-    await context.request.get(`${origin}/api/v1/daylist`)
+    await context.request.get(`${origin}/api/v1/product`)
   ).json();
   const initial = {
     preferences: { dark: false, compact: false, ...fixture.initial },
     completed: { notes: false, draft: false, week: false },
   };
-  const reset = await context.request.patch(`${origin}/api/v1/daylist`, {
+  const reset = await context.request.patch(`${origin}/api/v1/product`, {
     data: initial,
     headers: { Origin: origin },
   });
@@ -209,7 +209,7 @@ const preparePublicCase = async (context, page, fixture, row) => {
     await page.evaluate(samplePublicCursor);
   }
   row.before = await (
-    await context.request.get(`${origin}/api/v1/daylist`)
+    await context.request.get(`${origin}/api/v1/product`)
   ).json();
   row.beforeHeight = (await page.locator(".task").first().boundingBox()).height;
   return initial;
@@ -217,7 +217,7 @@ const preparePublicCase = async (context, page, fixture, row) => {
 
 const capturePublicResult = async (context, page, fixture, initial, row) => {
   row.after = await (
-    await context.request.get(`${origin}/api/v1/daylist`)
+    await context.request.get(`${origin}/api/v1/product`)
   ).json();
   row.expected = structuredClone(initial);
   Object.assign(row.expected.preferences, fixture.change);
@@ -234,7 +234,7 @@ const capturePublicResult = async (context, page, fixture, initial, row) => {
   row.status = await page.locator("#status").innerText();
   row.embedded =
     (await page
-      .locator("#chat-view > #daylist[data-view=settings]")
+      .locator("#chat-view > #product[data-view=settings]")
       .count()) === 1;
   row.cursorSamples = await page.evaluate(() => window.__cursorSamples ?? 0);
   if (fixture.guided) {
@@ -248,7 +248,7 @@ const readPublicReload = async (context, page, row, index) => {
   await page.locator("[data-view=settings]").click();
   await page.getByRole("checkbox", { name: "Dark mode" }).waitFor();
   row.afterReload = await (
-    await context.request.get(`${origin}/api/v1/daylist`)
+    await context.request.get(`${origin}/api/v1/product`)
   ).json();
   row.darkChecked = await page
     .getByRole("checkbox", { name: "Dark mode" })

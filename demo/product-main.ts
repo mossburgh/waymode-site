@@ -1,3 +1,4 @@
+import { recordActivity } from "../site/activity.js";
 import { playbackCheckpoint } from "./playback-checkpoint.js";
 import { createRequestQueue } from "./request-queue.js";
 import { connectProductTrace } from "./product-trace.js";
@@ -9,7 +10,7 @@ import { connectShowcase } from "./showcase-frame.js";
 const mountedAt = Date.now();
 import { prepareLaunch, announceLaunch } from "./launch/seed.js";
 /// <reference types="vite/client" />
-import "./daylist.css";
+import "./product.css";
 import {
   createBrowserSurface,
   createHttpSurface,
@@ -18,8 +19,8 @@ import {
 } from "@mossburgh/waymode";
 import { createWaymode, combineSurfaces } from "@mossburgh/waymode/core";
 import type { Decision } from "@mossburgh/waymode";
-import { createDaylist, readState } from "./daylist-app.js";
-import { mountFeature } from "./daylist-feature.js";
+import { createProduct, readState } from "./product-app.js";
+import { mountFeature } from "./product-feature.js";
 
 const get = <T extends HTMLElement>(id: string) =>
   document.getElementById(id) as T;
@@ -35,6 +36,7 @@ const channel = new BroadcastChannel(session.traceChannel);
 const history: unknown[] = [];
 const clientId = crypto.randomUUID();
 let sequence = 0;
+let runId: string | undefined;
 const emit = (kind: string, data: unknown) => {
   const event = { id: `${clientId}-${++sequence}`, at: Date.now(), kind, data };
   history.push(event);
@@ -42,6 +44,7 @@ const emit = (kind: string, data: unknown) => {
     history.shift();
   }
   channel.postMessage(event);
+  recordActivity("product", kind, { runId, data });
 };
 channel.onmessage = (event: MessageEvent<unknown>) => {
   if (event.data === "history") {
@@ -49,7 +52,7 @@ channel.onmessage = (event: MessageEvent<unknown>) => {
   }
 };
 await prepareLaunch();
-const app = await createDaylist(get("daylist"), mountFeature);
+const app = await createProduct(get("product"), mountFeature);
 await connectShowcase(app);
 const guide = createCursorGuide(get("agent-cursor"));
 const http = createHttpDecider("/api/v1/decisions");
@@ -95,6 +98,7 @@ const disconnectCost = connectProductTrace((json) => {
     return;
   }
   costSequence = event.id;
+  recordActivity("product", event.kind, { runId, data: event.data });
   if (event.kind === "model.receipt") {
     recordCost(event.data);
   }
@@ -205,7 +209,7 @@ const message = (author: string, content: string) => {
 get("open-inspector").addEventListener("click", () =>
   window.open(
     "/inspect.html",
-    "daylist-inspector",
+    "product-inspector",
     "popup,width=1000,height=900",
   ),
 );
@@ -221,6 +225,12 @@ type Run = {
 const beginRun = (goal: string, input: HTMLInputElement): Run => {
   const controller = new AbortController();
   running = controller;
+  runId = crypto.randomUUID();
+  controller.signal.addEventListener(
+    "abort",
+    () => emit("stop_requested", {}),
+    { once: true },
+  );
   revealPanel = undefined;
   const started = performance.now();
   get("feature-announcement").hidden = true;
@@ -232,7 +242,12 @@ const beginRun = (goal: string, input: HTMLInputElement): Run => {
   get<HTMLButtonElement>("send").disabled = !scriptedRequest;
   get("stop").hidden = false;
   get("status").textContent = "Understanding your request…";
-  emit("run", { goal, before, maxSteps: 8 });
+  emit("run", {
+    goal,
+    before,
+    maxSteps: 8,
+    source: scriptedRequest ? "playback" : "visitor",
+  });
   window.parent.postMessage(
     { type: "waymode:request", goal, before },
     location.origin,
@@ -427,8 +442,8 @@ get<HTMLFormElement>("prompt-form").addEventListener("submit", (event) => {
   void queuePrompt(get<HTMLInputElement>("prompt").value.trim(), watched);
 });
 if (import.meta.hot) {
-  import.meta.hot.accept("./daylist-feature.js", (module) => {
-    const update = module as typeof import("./daylist-feature.js") | undefined;
+  import.meta.hot.accept("./product-feature.js", (module) => {
+    const update = module as typeof import("./product-feature.js") | undefined;
     if (update) {
       app.feature(update.mountFeature);
       emit("feature", { message: "Vite loaded the changed app feature." });

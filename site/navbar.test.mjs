@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { beforeAll, expect, it, vi } from "vitest";
 import { runSiteRequest } from "./runtime.js";
+vi.mock("./analytics.js", () => ({}));
 vi.mock("./runtime.js", async (original) => ({
   ...(await original()),
   runSiteRequest: vi.fn(),

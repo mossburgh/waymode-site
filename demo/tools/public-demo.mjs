@@ -4,14 +4,14 @@ import { join } from "node:path";
 
 export const origin =
   process.env.WAYMODE_DEMO_ORIGIN ?? "http://localhost:4317";
-export const featurePath = "demo/daylist-feature.ts";
+export const featurePath = "demo/product-feature.ts";
 export const baselineFeature =
-  'import type { FeatureContext } from "./daylist-app.js";\n\nexport const mountFeature = (context: FeatureContext) => { context.root.style.removeProperty("--task-row-height"); };\n';
+  'import type { FeatureContext } from "./product-app.js";\n\nexport const mountFeature = (context: FeatureContext) => { context.root.style.removeProperty("--task-row-height"); };\n';
 export const compactFeature = (
   label = "Compact layout",
   disabled = false,
 ) => `import story from "./launch/story.json" with { type: "json" };
-import { preferenceSwitch, type FeatureContext } from "./daylist-app.js";
+import { preferenceSwitch, type FeatureContext } from "./product-app.js";
 
 export const mountFeature = ({ root, container, state, save }: FeatureContext) => {
   const control = preferenceSwitch(
@@ -25,10 +25,10 @@ ${disabled ? '  control.querySelector("input")!.disabled = true;\n' : ""}  root.
 `;
 const hostFiles = [
   "demo/server.ts",
-  "demo/daylist-app.ts",
-  "demo/daylist-main.ts",
-  "demo/daylist-store.ts",
-  "demo/daylist.css",
+  "demo/product-app.ts",
+  "demo/product-main.ts",
+  "demo/product-store.ts",
+  "demo/product.css",
   "demo/session.ts",
   "demo/studio.ts",
   "demo/studio-player.ts",

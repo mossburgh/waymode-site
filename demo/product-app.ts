@@ -1,13 +1,13 @@
 import { embedView } from "@mossburgh/waymode";
 import { createChatCard } from "./chat-card.js";
 import { tasks } from "./tasks.js";
-import type { DaylistPatch, DaylistState } from "./daylist-store.js";
+import type { ProductPatch, ProductState } from "./product-store.js";
 
 export type FeatureContext = {
   root: HTMLElement;
   container: HTMLElement;
-  state: DaylistState;
-  save: (patch: DaylistPatch) => void;
+  state: ProductState;
+  save: (patch: ProductPatch) => void;
 };
 export const preferenceSwitch = (
   label: string,
@@ -26,25 +26,25 @@ export const preferenceSwitch = (
   row.append(title, input);
   return row;
 };
-export const readState = async (): Promise<DaylistState> => {
-  const response = await fetch("/api/v1/daylist");
+export const readState = async (): Promise<ProductState> => {
+  const response = await fetch("/api/v1/product");
   if (!response.ok) {
     throw new Error("Could not read saved state.");
   }
-  return response.json() as Promise<DaylistState>;
+  return response.json() as Promise<ProductState>;
 };
 
-type DaylistView = "today" | "archive" | "settings";
+type ProductView = "today" | "archive" | "settings";
 type App = {
   root: HTMLElement;
   content: HTMLElement;
   settings: HTMLElement;
   restoreSettings?: () => void;
-  state: DaylistState;
+  state: ProductState;
   pending: Promise<void>;
   failure: Error | undefined;
   feature: (context: FeatureContext) => void;
-  view: DaylistView;
+  view: ProductView;
   chatSettings?: ReturnType<typeof createChatCard>;
 };
 const renderTasks = (app: App) => {
@@ -116,7 +116,7 @@ const openChatSettings = (app: App, container: HTMLElement) => {
   renderWorkspace(app);
   app.chatSettings.reveal();
 };
-const renderThemeRequests = (state: DaylistState) => {
+const renderThemeRequests = (state: ProductState) => {
   const action = `turn ${state.preferences.dark ? "off" : "on"} dark mode`;
   for (const button of document.querySelectorAll<HTMLButtonElement>(
     "[data-theme-request]",
@@ -151,13 +151,13 @@ const render = (app: App) => {
   renderWorkspace(app);
   refreshSettings(app, app.settings);
 };
-const save = (app: App, patch: DaylistPatch) =>
-  send(app, "/api/v1/daylist", "PATCH", patch);
+const save = (app: App, patch: ProductPatch) =>
+  send(app, "/api/v1/product", "PATCH", patch);
 const send = (
   app: App,
   path: string,
   method: string,
-  input?: DaylistPatch,
+  input?: ProductPatch,
 ): void => {
   app.failure = undefined;
   app.pending = app.pending
@@ -170,7 +170,7 @@ const send = (
       if (!response.ok) {
         throw new Error("The app could not save this change.");
       }
-      app.state = (await response.json()) as DaylistState;
+      app.state = (await response.json()) as ProductState;
       render(app);
     })
     .catch((error: unknown) => {
@@ -208,7 +208,7 @@ const rendered = (app: App) => ({
   })),
   rowHeight: app.root.querySelector(".task")?.getBoundingClientRect().height,
 });
-const showView = (app: App, view: DaylistView) => {
+const showView = (app: App, view: ProductView) => {
   if (view === "settings") {
     app.restoreSettings?.();
     delete app.restoreSettings;
@@ -223,22 +223,22 @@ const bindNavigation = (app: App) => {
     "[data-view]",
   )) {
     button.onclick = () => {
-      showView(app, button.dataset.view as DaylistView);
+      showView(app, button.dataset.view as ProductView);
     };
   }
 };
-export const createDaylist = async (
+export const createProduct = async (
   root: HTMLElement,
   mountFeature: (context: FeatureContext) => void,
 ) => {
   const state = await readState();
   root.innerHTML =
-    '<nav class="app-navigation" aria-label="Your Product views"><button type="button" data-view="today">Today</button><button type="button" data-view="archive">Archive</button><button type="button" data-view="settings" aria-expanded="false" aria-controls="daylist-settings">Settings</button></nav><div class="app-content"><section id="daylist-settings" class="preferences" aria-label="Settings"></section><section class="tasks" aria-label="Today’s tasks"><header><h2>Today</h2><span></span></header><div class="task-list"></div></section></div>';
+    '<nav class="app-navigation" aria-label="Your Product views"><button type="button" data-view="today">Today</button><button type="button" data-view="archive">Archive</button><button type="button" data-view="settings" aria-expanded="false" aria-controls="product-settings">Settings</button></nav><div class="app-content"><section id="product-settings" class="preferences" aria-label="Settings"></section><section class="tasks" aria-label="Today’s tasks"><header><h2>Today</h2><span></span></header><div class="task-list"></div></section></div>';
   const app: App = {
     root,
     state,
     content: root.querySelector<HTMLElement>(".app-content")!,
-    settings: root.querySelector<HTMLElement>("#daylist-settings")!,
+    settings: root.querySelector<HTMLElement>("#product-settings")!,
     pending: Promise.resolve(),
     failure: undefined,
     feature: mountFeature,
@@ -251,7 +251,7 @@ export const createDaylist = async (
 const appController = (app: App) => {
   const { root } = app;
   return {
-    show: (view: DaylistView) => showView(app, view),
+    show: (view: ProductView) => showView(app, view),
     refresh: async () => {
       app.state = await readState();
       render(app);

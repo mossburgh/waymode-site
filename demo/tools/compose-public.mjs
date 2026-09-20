@@ -35,12 +35,12 @@ try {
   });
   await page.setContent(`<!doctype html><style>
   *{box-sizing:border-box}body{margin:0;background:#dfe5ef;color:#1b2b3e;font-family:system-ui,sans-serif}.heading{position:absolute;left:28px;top:20px;font-size:25px;letter-spacing:-.7px;font-weight:600}.caption{position:absolute;right:36px;top:27px;font:12px ui-monospace,monospace;color:#485970}.window{position:absolute;top:78px;height:968px;border-radius:10px;background:#f3f5f8;box-shadow:0 8px 28px #192f451a;overflow:hidden}.left{left:24px;width:840px}.right{left:884px;width:1000px}.bar{height:28px;background:#ecf0f5;display:flex;align-items:center;padding:0 12px;gap:5px;border-bottom:1px solid #cfd7e3;font:10px ui-monospace,monospace;color:#57667a}.dot{width:7px;height:7px;border-radius:50%;background:#bec8d7}.bar span:last-child{margin-left:10px}.foot{position:absolute;left:28px;right:36px;bottom:10px;display:flex;justify-content:space-between;font:10px ui-monospace,monospace;color:#485970}
-  </style><div class="heading">${heading}</div><div class="caption">waymode × Jev · live browser captures · 1× speed</div><div class="window left"><div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>Daylist / local app</span></div></div><div class="window right"><div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>waymode / live inspector</span></div></div><div class="foot"><span>Ordinary app code added. SDK, prompt and integration unchanged.</span><span>Source, network, saved-state checks and eval failures retained.</span></div>`);
+  </style><div class="heading">${heading}</div><div class="caption">waymode × Jev · live browser captures · 1× speed</div><div class="window left"><div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>Product / local app</span></div></div><div class="window right"><div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>waymode / live inspector</span></div></div><div class="foot"><span>Ordinary app code added. SDK, prompt and integration unchanged.</span><span>Source, network, saved-state checks and eval failures retained.</span></div>`);
   await page.screenshot({ path: `${directory}/frame.png` });
 } finally {
   await browser.close();
 }
-const output = `${directory}/waymode-daylist.mp4`;
+const output = `${directory}/waymode-product.mp4`;
 const filters = `[1:v]trim=start=${appStart},setpts=PTS-STARTPTS,crop=840:940:0:0[app];[2:v]trim=start=${inspectorStart},setpts=PTS-STARTPTS[trace];[0:v][app]overlay=24:106:shortest=1[base];[base][trace]overlay=884:106:shortest=1[out]`;
 execFileSync(
   "ffmpeg",

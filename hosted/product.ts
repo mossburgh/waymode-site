@@ -1,6 +1,6 @@
 import { playbackSnapshot } from "../demo/playback-snapshot.js";
 import { z } from "zod";
-import * as base from "../demo/daylist-contract.js";
+import * as base from "../demo/product-contract.js";
 import { compileFeature, featureDefinition } from "../demo/showcase-feature.js";
 import type { Store, Visitor } from "./store.js";
 import type { Events } from "./events.js";
@@ -44,7 +44,7 @@ export class Product {
     }
     const started = performance.now();
     const app = saved.app;
-    if (method === "PATCH" && path === "/api/v1/daylist") {
+    if (method === "PATCH" && path === "/api/v1/product") {
       const patch = this.contract(saved).patch.parse(input);
       Object.assign(app.preferences, patch.preferences);
       Object.assign(app.completed, patch.completed);
@@ -53,12 +53,12 @@ export class Product {
       }
     } else if (
       method === "POST" &&
-      path === "/api/v1/daylist/archive-completed"
+      path === "/api/v1/product/archive-completed"
     ) {
       app.archived = z
         .enum(["notes", "draft", "week"])
         .options.filter((id) => app.completed[id]);
-    } else if (method !== "GET" || path !== "/api/v1/daylist") {
+    } else if (method !== "GET" || path !== "/api/v1/product") {
       throw new HttpError(404, "Unknown product operation.");
     }
     this.store.save(saved);

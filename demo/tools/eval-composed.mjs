@@ -111,7 +111,7 @@ const prepareComposedCase = async (context, page, fixture, row) => {
   await page.goto(`${origin}/product.html`);
   await page.locator("[data-view=settings]").waitFor();
   if (fixture.seed) {
-    const seed = await context.request.patch(origin + "/api/v1/daylist", {
+    const seed = await context.request.patch(origin + "/api/v1/product", {
       headers: { Origin: origin },
       data: fixture.seed,
     });
@@ -122,7 +122,7 @@ const prepareComposedCase = async (context, page, fixture, row) => {
     await page.locator("[data-view=settings]").waitFor();
   }
   row.before = await (
-    await context.request.get(origin + "/api/v1/daylist")
+    await context.request.get(origin + "/api/v1/product")
   ).json();
   await page.evaluate(captureComposedTrace);
 };
@@ -133,12 +133,12 @@ const readComposedResult = async (context, page, row) => {
   row.cursorSamples = await page.evaluate(() => window.cursorSamples);
   row.status = await page.locator("#status").innerText();
   row.saved = await (
-    await context.request.get(origin + "/api/v1/daylist")
+    await context.request.get(origin + "/api/v1/product")
   ).json();
-  row.view = await page.locator("#daylist").getAttribute("data-view");
+  row.view = await page.locator("#product").getAttribute("data-view");
   row.portal =
     (await page
-      .locator("#chat-view > #daylist[data-view=settings]")
+      .locator("#chat-view > #product[data-view=settings]")
       .count()) === 1;
   row.result = row.events.find((e) => e.kind === "verified")?.data?.result;
 };
@@ -172,7 +172,7 @@ const verifyComposedResult = async (context, page, fixture, row, index) => {
   await page.screenshot({ path: `${directory}/case-${index}.png` });
   await page.reload();
   row.reload = await (
-    await context.request.get(origin + "/api/v1/daylist")
+    await context.request.get(origin + "/api/v1/product")
   ).json();
   row.pass &&= isDeepStrictEqual(row.reload, expected);
 };

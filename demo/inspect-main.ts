@@ -1,4 +1,4 @@
-import "./daylist.css";
+import "./product.css";
 
 const sessionResponse = await fetch("/api/v1/session");
 if (!sessionResponse.ok) {

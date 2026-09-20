@@ -149,7 +149,7 @@ async function waitForDemo(signal) {
     readySignal.throwIfAborted();
     const studio = document.querySelector(".live-showcase")?.contentDocument;
     const product = studio?.querySelector("#product")?.contentDocument;
-    if (product?.querySelector("#daylist button")) {
+    if (product?.querySelector("#product button")) {
       return;
     }
     await pause(100, readySignal);

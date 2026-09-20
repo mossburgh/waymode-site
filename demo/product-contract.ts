@@ -22,7 +22,7 @@ export const document = {
   openapi: "3.1.0",
   info: { title: "Your Product API", version: "1.0.0" },
   paths: {
-    "/api/v1/daylist/archive-completed": {
+    "/api/v1/product/archive-completed": {
       post: {
         operationId: "archiveCompletedTasks",
         summary:
@@ -35,9 +35,9 @@ export const document = {
         },
       },
     },
-    "/api/v1/daylist": {
+    "/api/v1/product": {
       patch: {
-        operationId: "updateDaylist",
+        operationId: "updateProduct",
         summary: "Update saved product preferences and task completion",
         requestBody: {
           required: true,

@@ -24,6 +24,8 @@ const postFor =
           "Content-Type": "application/json",
           Origin: origin,
           Cookie: request.headers.get("Cookie") ?? "",
+          "X-Waymode-Request-ID":
+            request.headers.get("X-Waymode-Request-ID") ?? crypto.randomUUID(),
           "CF-Connecting-IP":
             request.headers.get("CF-Connecting-IP") ?? "local",
         },

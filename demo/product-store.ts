@@ -1,23 +1,23 @@
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
-import { patch as appPatch } from "./daylist-contract.js";
+import { patch as appPatch } from "./product-contract.js";
 
 import {
   stateSchema,
   patchSchema,
   completed,
   initialState,
-  type DaylistState,
-  type DaylistPatch,
-} from "./daylist-state.js";
+  type ProductState,
+  type ProductPatch,
+} from "./product-state.js";
 export {
   initialState,
-  type DaylistState,
-  type DaylistPatch,
-} from "./daylist-state.js";
+  type ProductState,
+  type ProductPatch,
+} from "./product-state.js";
 
-const mergePatch = (previous: DaylistState, update: DaylistPatch) => {
+const mergePatch = (previous: ProductState, update: ProductPatch) => {
   return stateSchema.parse({
     archived: previous.archived,
     preferences: { ...previous.preferences, ...update.preferences },
@@ -25,7 +25,7 @@ const mergePatch = (previous: DaylistState, update: DaylistPatch) => {
   });
 };
 
-const configuredState = (state: DaylistState, next?: string) => {
+const configuredState = (state: ProductState, next?: string) => {
   state.preferences = { dark: state.preferences.dark === true };
   if (next) {
     state.preferences[next] = false;
@@ -33,7 +33,7 @@ const configuredState = (state: DaylistState, next?: string) => {
   return state;
 };
 
-const readSavedState = (path: string): DaylistState => {
+const readSavedState = (path: string): ProductState => {
   try {
     return stateSchema.parse(JSON.parse(readFileSync(path, "utf8")));
   } catch (error) {
@@ -45,7 +45,7 @@ const readSavedState = (path: string): DaylistState => {
 };
 
 /** Local demo storage. Synchronous, atomic writes keep each small patch indivisible. */
-export const createDaylistStore = (directory: string) => {
+export const createProductStore = (directory: string) => {
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   const path = (id: string) => join(directory, `${z.uuid().parse(id)}.json`);
   const read = (id: string) => readSavedState(path(id));
@@ -58,7 +58,7 @@ export const createDaylistStore = (directory: string) => {
     const next = mergePatch(read(id), update);
     return write(id, next);
   };
-  const write = (id: string, next: DaylistState) => {
+  const write = (id: string, next: ProductState) => {
     writeFileSync(`${path(id)}.tmp`, JSON.stringify(next), { mode: 0o600 });
     renameSync(`${path(id)}.tmp`, path(id));
     return next;

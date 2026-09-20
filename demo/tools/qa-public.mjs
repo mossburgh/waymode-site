@@ -16,7 +16,7 @@ try {
   await app.goto(`${origin}/product.html`);
   const savedResponse = app.waitForResponse(
     (response) =>
-      response.url().endsWith("/api/v1/daylist") &&
+      response.url().endsWith("/api/v1/product") &&
       response.request().method() === "PATCH",
     { timeout: 10_000 },
   );
@@ -26,7 +26,7 @@ try {
   await expect
     .poll(
       async () =>
-        (await (await context.request.get(`${origin}/api/v1/daylist`)).json())
+        (await (await context.request.get(`${origin}/api/v1/product`)).json())
           .preferences.dark,
     )
     .toBe(true);
@@ -43,7 +43,7 @@ try {
   ).json();
   expect(currentSession.traceChannel).not.toBe(oldSession.traceChannel);
   expect(
-    (await (await context.request.get(`${origin}/api/v1/daylist`)).json())
+    (await (await context.request.get(`${origin}/api/v1/product`)).json())
       .preferences.dark,
   ).toBe(false);
   await app.evaluate((channelName) => {
@@ -76,7 +76,7 @@ try {
   ).toBe(true);
   await app.screenshot({ path: `${directory}/mobile.png`, fullPage: true });
   evidence.mobile = "390px viewport; no horizontal overflow";
-  const foreign = await context.request.patch(`${origin}/api/v1/daylist`, {
+  const foreign = await context.request.patch(`${origin}/api/v1/product`, {
     headers: { Origin: "https://example.invalid" },
     data: { preferences: { dark: true } },
   });

@@ -4,7 +4,7 @@ export const prepareLaunch = async () => {
   if (!new URLSearchParams(location.search).has("launch")) {
     return;
   }
-  const response = await fetch("/api/v1/daylist", {
+  const response = await fetch("/api/v1/product", {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ preferences: story.handoff.preferences }),

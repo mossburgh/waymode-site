@@ -145,7 +145,7 @@ const checkPrivate = async (path, privateText) => {
 const checkPaths = async () => {
   await checkAllowed("/", "Your Product");
   await checkAllowed(
-    "/@fs/scratch/app/demo/daylist-main.ts",
+    "/@fs/scratch/app/demo/product-main.ts",
     "BroadcastChannel",
   );
   await checkAllowed("/allowed-fixture.txt", "DUMMY_PUBLIC_ASSET");

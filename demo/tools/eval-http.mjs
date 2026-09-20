@@ -15,7 +15,7 @@ const check = async (name, run) => {
   }
 };
 const read = async (client = context) => {
-  const response = await client.request.get(origin + "/api/v1/daylist");
+  const response = await client.request.get(origin + "/api/v1/product");
   expect(response.status()).toBe(200);
   return response.json();
 };
@@ -33,14 +33,14 @@ try {
   await check(
     "Bodyless POST archives only this session's completed tasks",
     async () => {
-      const seed = await context.request.patch(origin + "/api/v1/daylist", {
+      const seed = await context.request.patch(origin + "/api/v1/product", {
         headers,
         data: { completed: { notes: true, week: true } },
       });
       expect(seed.status()).toBe(200);
       const before = await read();
       const archived = await context.request.post(
-        origin + "/api/v1/daylist/archive-completed",
+        origin + "/api/v1/product/archive-completed",
         { headers },
       );
       expect(archived.status()).toBe(200);
@@ -61,14 +61,14 @@ try {
     async () => {
       const before = await read();
       const crossOrigin = await context.request.post(
-        origin + "/api/v1/daylist/archive-completed",
+        origin + "/api/v1/product/archive-completed",
         {
           headers: { Origin: "https://example.invalid" },
         },
       );
       expect(crossOrigin.status()).toBe(403);
       const uncomplete = await context.request.patch(
-        origin + "/api/v1/daylist",
+        origin + "/api/v1/product",
         {
           headers,
           data: { completed: { notes: false } },

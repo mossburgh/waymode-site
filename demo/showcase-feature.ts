@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { DemoSessionState } from "./session.js";
-import type * as AppContract from "./daylist-contract.js";
+import type * as AppContract from "./product-contract.js";
 
 export const featureDefinition = z.strictObject({
   field: z
@@ -40,7 +40,7 @@ export const compileFeature = (
     preferences: z.strictObject(fields).partial().optional(),
   });
   const document = structuredClone(base.document);
-  document.paths["/api/v1/daylist"].patch.requestBody.content[
+  document.paths["/api/v1/product"].patch.requestBody.content[
     "application/json"
   ].schema = z.toJSONSchema(patch, { target: "draft-2020-12" });
   return { patch, document };

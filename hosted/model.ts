@@ -9,7 +9,9 @@ import type { Events } from "./events.js";
 import { modelUsage } from "../demo/model-usage.js";
 import { z } from "zod";
 import { HttpError } from "./http.js";
-export type ModelEnv = {
+import type { LimitsEnv } from "./limits.js";
+import { logModel, logModelError } from "./telemetry.js";
+export type ModelEnv = LimitsEnv & {
   AI_GATEWAY_API_KEY: string;
   WAYMODE_MODEL: string;
   DEMO_ENABLED?: string;
@@ -53,11 +55,13 @@ export class Models {
       ...options,
       signal: AbortSignal.any([options.signal, AbortSignal.timeout(20000)]),
     });
-    this.events.emit(
-      visitor,
-      "model.usage",
-      modelUsage(result, options.state, performance.now() - started),
+    const usage = modelUsage(
+      result,
+      options.state,
+      performance.now() - started,
     );
+    logModel(usage);
+    this.events.emit(visitor, "model.usage", usage);
     this.events.emit(visitor, "model.answers", {
       answers: z.object({ answers: z.unknown() }).parse(result).answers,
     });
@@ -70,6 +74,7 @@ export class Models {
         try {
           return await this.evaluate(visitor, options);
         } catch (error) {
+          logModelError(options.signal.aborted);
           this.events.emit(visitor, "model.error", {
             name: error instanceof Error ? error.name : "Error",
             cost: "unavailable",

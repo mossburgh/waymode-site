@@ -1,3 +1,6 @@
+import "./analytics.js";
+import { recordActivity } from "./activity.js";
+const track = (kind, data) => recordActivity("site", kind, data);
 import { runSiteRequest } from "./runtime.js";
 import { createReceipt, outcomeFor, failureFor } from "./receipt.js";
 
@@ -7,7 +10,7 @@ chat.className = "waymode-conversation";
 chat.setAttribute("aria-label", "Ask Waymode");
 chat.hidden = true;
 chat.innerHTML =
-  '<header><button class="chat-close" aria-label="Close chat">×</button></header><div class="chat-suggestions"><button data-goal="Show me how to install Waymode">Show me how to install</button><button data-goal="Show me how to use the demo">Show me how to use the demo</button><button data-goal="Show me what stays in my app">What stays in my app?</button></div><form><input aria-label="Message Waymode" placeholder="Ask Waymode…" autocomplete="off"><button aria-label="Send message">↑</button></form><p class="chat-result" role="status"></p><div class="tool-history" aria-label="Navigation activity"></div>';
+  '<header><button class="chat-close" aria-label="Close chat">×</button></header><div class="chat-suggestions"><button data-goal="Show me how to install Waymode">Show me how to install</button><button data-goal="Show me how to use the demo">Show me how to use the demo</button><button data-goal="Show me what stays in my app">What stays in my app?</button></div><form><input aria-label="Message Waymode" placeholder="Ask Waymode…" autocomplete="off" data-analytics-prompt maxlength="2000"><button aria-label="Send message">↑</button></form><p class="chat-result" role="status"></p><div class="tool-history" aria-label="Navigation activity"></div>';
 
 const chatForm = chat.querySelector("form");
 const chatInput = chat.querySelector("input");
@@ -198,6 +201,7 @@ function setRunning(controller) {
 send.addEventListener("click", (event) => {
   if (running) {
     event.preventDefault();
+    track("stop_requested", { runId: running.runId });
     running.abort();
   }
 });
@@ -208,30 +212,62 @@ function blocked(value) {
     query,
   );
 }
-async function submitRequest(value) {
-  if (!value.trim() || running) {
-    return;
-  }
+function beginReceipt(value) {
   const receipt = createReceipt(
     chat.querySelector(".tool-history"),
     chat.querySelector(".chat-result"),
     value,
   );
   if (blocked(value)) {
+    track("request_finish", { outcome: "blocked", goal: value });
     receipt.finish("Blocked", "Nice try. That action isn’t available.");
     return;
   }
+  return receipt;
+}
+const trackedCallbacks = (callbacks, runId) =>
+  Object.fromEntries(
+    Object.entries(callbacks).map(([kind, callback]) => [
+      kind,
+      (data) => {
+        track(kind, { runId, data });
+        callback(data);
+      },
+    ]),
+  );
+async function submitRequest(value) {
+  if (!value.trim() || running) {
+    return;
+  }
+  const receipt = beginReceipt(value);
+  if (!receipt) {
+    return;
+  }
   const controller = new AbortController();
+  controller.runId = crypto.randomUUID();
+  const started = performance.now();
+  track("request_start", { goal: value, runId: controller.runId });
   setRunning(controller);
   try {
     const result = await runSiteRequest(value, {
       signal: controller.signal,
-      ...receipt.callbacks,
+      ...trackedCallbacks(receipt.callbacks, controller.runId),
     });
     receipt.finish(...outcomeFor(result));
+    track("request_finish", {
+      runId: controller.runId,
+      outcome: result.reason,
+      actions: result.actions,
+      durationMs: performance.now() - started,
+    });
   } catch (error) {
     receipt.error(error);
     receipt.finish(...failureFor(error, controller.signal.aborted));
+    track("request_finish", {
+      runId: controller.runId,
+      outcome: controller.signal.aborted ? "stopped" : "failed",
+      durationMs: performance.now() - started,
+    });
   } finally {
     receipt.seal();
     setRunning(undefined);

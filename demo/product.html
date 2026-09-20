@@ -16,7 +16,7 @@
           <span id="feature-location" role="status"></span>
           <button id="view-feature" type="button">View setting</button>
         </aside>
-        <section id="daylist" aria-label="Your Product application"></section>
+        <section id="product" aria-label="Your Product application"></section>
       </div>
       <section class="chat" aria-label="Ask your product">
         <div id="conversation" role="log" aria-label="Chat">
@@ -55,6 +55,7 @@
             >Ask your product to do something</label
           ><input
             id="prompt"
+            data-analytics-prompt
             maxlength="2000"
             placeholder="Message Your Product…"
             required
@@ -79,6 +80,6 @@
         <path d="M4 3v17l5-5 4 7 3-2-4-6h8Z" /></svg
       ><span>waymode</span>
     </div>
-    <script type="module" src="/daylist-main.ts"></script>
+    <script type="module" src="/product-main.ts"></script>
   </body>
 </html>

@@ -43,14 +43,17 @@ it("keeps the bearer credential out of the stable public trace label", async () 
   const token = first.cookie.split("=")[1]!;
   expect(first.setCookie).toContain("HttpOnly; Secure; SameSite=Strict");
   expect(JSON.stringify(first.body)).not.toContain(token);
-  expect(first.body.traceChannel).toMatch(/^daylist-[a-f0-9]{64}$/);
+  expect(first.body.traceChannel).toMatch(/^product-[a-f0-9]{64}$/);
   const repeat = await site.fetch(request("session", first.cookie));
   expect(await repeat.json()).toEqual(first.body);
   expect((await session(site)).body.traceChannel).not.toBe(
     first.body.traceChannel,
   );
   const forged = await site.fetch(
-    request("daylist", `waymode_session=${first.body.traceChannel.slice(8)}`),
+    request(
+      "product",
+      `__Host-waymode_session=${first.body.traceChannel.slice(8)}`,
+    ),
   );
   expect(forged.status).toBe(401);
 });
@@ -58,9 +61,9 @@ it("isolates visitor state, action handles, and trace streams", async () => {
   const site = app();
   const a = await session(site);
   const b = await session(site);
-  const patch = request("daylist", a.cookie, { preferences: { dark: true } });
+  const patch = request("product", a.cookie, { preferences: { dark: true } });
   await site.fetch(new Request(patch, { method: "PATCH" }));
-  const other = await site.fetch(request("daylist", b.cookie));
+  const other = await site.fetch(request("product", b.cookie));
   expect(await other.json()).toMatchObject({ preferences: { dark: false } });
   const started = await site.fetch(
     request("actions/start", a.cookie, { goal: "Turn on dark mode" }),
@@ -82,7 +85,7 @@ it("isolates visitor state, action handles, and trace streams", async () => {
 });
 it("rejects missing sessions and oversized JSON without exposing internals", async () => {
   const site = app();
-  expect((await site.fetch(request("daylist"))).status).toBe(401);
+  expect((await site.fetch(request("product"))).status).toBe(401);
   const visitor = await session(site);
   const response = await site.fetch(
     request("decisions", visitor.cookie, { goal: "x".repeat(17000) }),
@@ -98,6 +101,7 @@ it("rejects missing sessions and oversized JSON without exposing internals", asy
 });
 it("rejects foreign origins and mutations without Origin before reaching the app", async () => {
   const env = {
+    API_LIMITER: { limit: async () => ({ success: true }) },
     AI_GATEWAY_API_KEY: "",
     WAYMODE_MODEL: "",
     SHOWCASE: {
@@ -117,4 +121,59 @@ it("rejects foreign origins and mutations without Origin before reaching the app
     );
     expect(response.status).toBe(403);
   }
+});
+it("rejects cross-site session creation before allocating storage", async () => {
+  const env = {
+    API_LIMITER: { limit: async () => ({ success: true }) },
+    AI_GATEWAY_API_KEY: "",
+    WAYMODE_MODEL: "",
+    SHOWCASE: {
+      getByName() {
+        throw new Error("Must not allocate");
+      },
+    },
+  };
+  for (const headers of [
+    {},
+    { "Sec-Fetch-Site": "cross-site" },
+    { "Sec-Fetch-Site": "same-site" },
+  ]) {
+    const response = await worker.fetch(
+      new Request("https://waymode.ai/api/v1/session", { headers }),
+      env,
+    );
+    expect(response.status).toBe(403);
+  }
+});
+it("does not accept an old unprefixed session cookie", async () => {
+  const site = app();
+  const visitor = await session(site);
+  expect(
+    (
+      await site.fetch(
+        request("product", visitor.cookie.replace("__Host-", "")),
+      )
+    ).status,
+  ).toBe(401);
+});
+
+it("rejects edge-limited requests before accessing shared storage", async () => {
+  let reachedStore = false;
+  const response = await worker.fetch(
+    new Request("https://waymode.ai/api/v1/product"),
+    {
+      AI_GATEWAY_API_KEY: "",
+      WAYMODE_MODEL: "",
+      API_LIMITER: { limit: async () => ({ success: false }) },
+      SHOWCASE: {
+        getByName() {
+          reachedStore = true;
+          throw new Error("must not access storage");
+        },
+      },
+    },
+  );
+  expect(response.status).toBe(429);
+  expect(response.headers.get("retry-after")).toBe("60");
+  expect(reachedStore).toBe(false);
 });

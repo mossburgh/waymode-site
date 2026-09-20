@@ -7,7 +7,12 @@ await build({
     outDir: "public/waymode",
     emptyOutDir: true,
     lib: {
-      entry: { navbar: "site/navbar.js", runtime: "site/runtime.js" },
+      entry: {
+        navbar: "site/navbar.js",
+        runtime: "site/runtime.js",
+        page: "site/page.js",
+        analytics: "site/analytics.js",
+      },
       formats: ["es"],
       fileName: (_format, name) => `${name}.js`,
     },

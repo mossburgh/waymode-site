@@ -33,7 +33,7 @@
     },
     {
       "id": "65a06890-d4ad-4a91-9d62-b009afe0dc26",
-      "name": "Show Daylist settings in chat",
+      "name": "Show Product settings in chat",
       "role": "button",
       "description": "Move the current page, including any open settings, into the chat as a live view. Click again to return it to the workspace.",
       "disabled": false,
@@ -96,7 +96,7 @@
   ],
   "history": ["Invoked button: Settings", "Invoked checkbox: Dense layout"],
   "context": {
-    "view": "Daylist settings",
+    "view": "Product settings",
     "location": "Workspace"
   }
 }

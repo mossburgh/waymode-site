@@ -15,7 +15,7 @@ import {
 const checkOnly = process.argv.includes("--check");
 const directory = `artifacts/launch-${Date.now()}`;
 await mkdir(directory, { recursive: true });
-const contractPath = "demo/daylist-contract.ts";
+const contractPath = "demo/product-contract.ts";
 const originals = {
   feature: await readFile(featurePath, "utf8"),
   contract: await readFile(contractPath, "utf8"),
@@ -74,7 +74,7 @@ const captureWindow = async (target, name) => {
   };
 };
 const savedState = async () =>
-  (await context.request.get(`${origin}/api/v1/daylist`)).json();
+  (await context.request.get(`${origin}/api/v1/product`)).json();
 const height = async () =>
   (await page.locator(".task").first().boundingBox()).height;
 const mark = (id) => {

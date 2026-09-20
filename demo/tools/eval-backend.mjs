@@ -9,7 +9,7 @@ import { experimental_evaluate as evaluate } from "ai";
 import { createInputResolver, createDecider } from "@mossburgh/waymode/server";
 import { origin, frozenHashes } from "./public-demo.mjs";
 
-const path = "demo/daylist-contract.ts";
+const path = "demo/product-contract.ts";
 const original = await readFile(path, "utf8");
 const minimumProbability = Number(process.env.WAYMODE_THRESHOLD ?? 0.7);
 const policy = { minimumProbability };
@@ -150,7 +150,7 @@ const openBackendPage = async ({ context, page, row }) => {
     await page.getByRole("checkbox", { name: "Dark mode" }).isVisible(),
     false,
   );
-  row.before = await readBackend(context, "/api/v1/daylist");
+  row.before = await readBackend(context, "/api/v1/product");
 };
 
 const recordDispatch =
@@ -186,11 +186,11 @@ const createScopedSurface = (test, run) => {
       return result;
     },
     document: () => readBackend(context, "/api/v1/openapi"),
-    readState: () => readBackend(context, "/api/v1/daylist"),
+    readState: () => readBackend(context, "/api/v1/product"),
     // This demo session owns this one preferences endpoint. Production uses the host policy.
     authorize: async (call) =>
       test.policy ??
-      (call.path === "/api/v1/daylist" && call.method === "PATCH"
+      (call.path === "/api/v1/product" && call.method === "PATCH"
         ? "allow"
         : "deny"),
     dispatch: recordDispatch(run),
@@ -217,16 +217,16 @@ const backendCasePassed = (test, row) =>
   (test.key !== "dark" || row.renderedTheme === "dark");
 
 const verifyBackendResult = async (test, { context, page, row }, source) => {
-  row.saved = await readBackend(context, "/api/v1/daylist");
+  row.saved = await readBackend(context, "/api/v1/product");
   row.gaps = source.gaps();
   const expected = expectedSavedState(row.before, test);
   row.exactSavedState = isDeepStrictEqual(row.saved, expected);
   row.noNavigation =
-    (await page.locator("#daylist").getAttribute("data-view")) === "today";
+    (await page.locator("#product").getAttribute("data-view")) === "today";
   await page.reload();
   await page.locator("[data-view=settings]").waitFor();
   row.survivedReload = isDeepStrictEqual(
-    await readBackend(context, "/api/v1/daylist"),
+    await readBackend(context, "/api/v1/product"),
     expected,
   );
   row.renderedTheme = await page.locator("html").getAttribute("data-theme");

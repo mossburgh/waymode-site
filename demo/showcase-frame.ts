@@ -1,9 +1,9 @@
 import story from "./launch/story.json" with { type: "json" };
 import {
   preferenceSwitch,
-  type createDaylist,
+  type createProduct,
   type FeatureContext,
-} from "./daylist-app.js";
+} from "./product-app.js";
 import {
   featureDefinition,
   type FeatureDefinition,
@@ -28,7 +28,7 @@ const renderFeature =
     container.append(control);
   };
 
-const featureNotice = (app: Awaited<ReturnType<typeof createDaylist>>) => {
+const featureNotice = (app: Awaited<ReturnType<typeof createProduct>>) => {
   let previous = "null";
   return (definition: FeatureDefinition | null) => {
     const current = JSON.stringify(definition);
@@ -46,7 +46,7 @@ const featureNotice = (app: Awaited<ReturnType<typeof createDaylist>>) => {
 };
 
 export const connectShowcase = async (
-  app: Awaited<ReturnType<typeof createDaylist>>,
+  app: Awaited<ReturnType<typeof createProduct>>,
 ) => {
   if (!new URLSearchParams(location.search).has("showcase")) {
     return;

@@ -1,6 +1,6 @@
 import { it, expect } from "vitest";
 import { playbackSnapshot } from "./playback-snapshot.js";
-import { initialState } from "./daylist-state.js";
+import { initialState } from "./product-state.js";
 it("restores a completed scene to its actual initial state", () => {
   const snapshot = {
     state: initialState(),

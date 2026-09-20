@@ -3,16 +3,16 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { expect, it } from "vitest";
-import { createDaylistStore } from "./daylist-store.js";
+import { createProductStore } from "./product-store.js";
 
 it("persists new preferences through the ordinary app API and isolates sessions", () => {
-  const directory = mkdtempSync(join(tmpdir(), "daylist-"));
+  const directory = mkdtempSync(join(tmpdir(), "product-"));
   try {
-    const store = createDaylistStore(directory);
+    const store = createProductStore(directory);
     const owner = randomUUID();
     store.patch(owner, { preferences: { compact: true } });
     store.patch(owner, { completed: { notes: true } });
-    expect(createDaylistStore(directory).read(owner)).toEqual({
+    expect(createProductStore(directory).read(owner)).toEqual({
       archived: [],
       preferences: { dark: false, compact: true },
       completed: { notes: true, draft: false, week: false },
@@ -37,9 +37,9 @@ it("persists new preferences through the ordinary app API and isolates sessions"
 });
 
 it("archives only completed tasks and keeps their saved content and other state", () => {
-  const directory = mkdtempSync(join(tmpdir(), "daylist-archive-"));
+  const directory = mkdtempSync(join(tmpdir(), "product-archive-"));
   try {
-    const store = createDaylistStore(directory);
+    const store = createProductStore(directory);
     const owner = randomUUID();
     const before = store.patch(owner, {
       preferences: { dark: true, compact: true },
@@ -47,7 +47,7 @@ it("archives only completed tasks and keeps their saved content and other state"
     });
     const saved = store.archiveCompleted(owner);
     expect(saved).toEqual({ ...before, archived: ["notes", "week"] });
-    expect(createDaylistStore(directory).read(owner)).toEqual(saved);
+    expect(createProductStore(directory).read(owner)).toEqual(saved);
     expect(store.archiveCompleted(owner)).toEqual(saved);
     expect(store.read(randomUUID()).archived).toEqual([]);
     expect(() => store.patch(owner, { completed: { notes: false } })).toThrow();
@@ -58,7 +58,7 @@ it("archives only completed tasks and keeps their saved content and other state"
 });
 
 it("upgrades old saved state and archives later completed tasks", () => {
-  const directory = mkdtempSync(join(tmpdir(), "daylist-upgrade-"));
+  const directory = mkdtempSync(join(tmpdir(), "product-upgrade-"));
   try {
     const owner = randomUUID();
     const before = {
@@ -66,7 +66,7 @@ it("upgrades old saved state and archives later completed tasks", () => {
       completed: { notes: false, draft: false, week: false },
     };
     writeFileSync(join(directory, `${owner}.json`), JSON.stringify(before));
-    const store = createDaylistStore(directory);
+    const store = createProductStore(directory);
     expect(store.read(owner)).toEqual({ ...before, archived: [] });
     store.patch(owner, { completed: { draft: true } });
     expect(store.archiveCompleted(owner)).toEqual({

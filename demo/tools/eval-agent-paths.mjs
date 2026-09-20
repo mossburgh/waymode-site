@@ -69,7 +69,7 @@ const setup = async (definition, mode) => {
 };
 const readOutcome = async (context, page, row) => {
   row.saved = await (
-    await context.request.get(origin + "/api/v1/daylist")
+    await context.request.get(origin + "/api/v1/product")
   ).json();
   row.events = await page.evaluate(() => window.__receipts);
   row.calls = row.events.filter(

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { stateSchema } from "./daylist-state.js";
+import { stateSchema } from "./product-state.js";
 import { featureDefinition, compileFeature } from "./showcase-feature.js";
-import * as contract from "./daylist-contract.js";
+import * as contract from "./product-contract.js";
 export const playbackSnapshot = z
   .strictObject({ state: stateSchema, feature: featureDefinition.nullable() })
   .superRefine((snapshot, context) => {

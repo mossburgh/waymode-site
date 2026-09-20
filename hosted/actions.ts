@@ -46,8 +46,8 @@ export class Actions {
       readState: async () => fresh().app,
       authorize: async (call) => {
         const allowed =
-          (call.path === "/api/v1/daylist" && call.method === "PATCH") ||
-          (call.path === "/api/v1/daylist/archive-completed" &&
+          (call.path === "/api/v1/product" && call.method === "PATCH") ||
+          (call.path === "/api/v1/product/archive-completed" &&
             call.method === "POST");
         const result = allowed ? "allow" : "deny";
         this.events.emit(visitor, "policy", {

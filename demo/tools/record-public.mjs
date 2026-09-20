@@ -58,7 +58,7 @@ try {
     throw new Error("Settings must start hidden.");
   }
   evidence.initial = await (
-    await context.request.get(`${origin}/api/v1/daylist`)
+    await context.request.get(`${origin}/api/v1/product`)
   ).json();
   if (await page.getByRole("checkbox", { name: "Compact layout" }).count()) {
     throw new Error("Start with the compact feature absent.");
@@ -83,7 +83,7 @@ try {
   await ask(page, "Show me how to open settings here in chat", true);
   if (
     (await page
-      .locator("#chat-view > #daylist[data-view=settings]")
+      .locator("#chat-view > #product[data-view=settings]")
       .count()) !== 1
   ) {
     throw new Error("Settings did not open in chat.");
@@ -110,7 +110,7 @@ try {
   await inspector.getByRole("button", { name: "Follow live" }).click();
   await ask(page, "Show me how to turn on compact layout", true);
   evidence.saved = await (
-    await context.request.get(`${origin}/api/v1/daylist`)
+    await context.request.get(`${origin}/api/v1/product`)
   ).json();
   evidence.afterHeight = (
     await page.locator(".task").first().boundingBox()
