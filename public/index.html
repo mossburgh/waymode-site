@@ -441,13 +441,11 @@
         text-decoration: none;
         background: transparent;
         transition:
-          transform 180ms,
           border-color 180ms,
           background 180ms;
       }
       .force-node:hover,
       .force-node:focus-visible {
-        transform: translateY(-3px);
         border-color: #b2baff;
         background: #fff;
       }
@@ -641,10 +639,51 @@
       .install-head {
         justify-content: space-between;
         gap: 16px;
+        flex-wrap: wrap;
       }
       .install-head strong {
         font-size: 17px;
         font-weight: 550;
+      }
+      [data-copy-install] {
+        width: 160px;
+        flex-shrink: 0;
+        gap: 8px;
+        transition: background 180ms, box-shadow 180ms;
+      }
+      [data-copy-install] svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .copy-check {
+        display: none;
+        stroke-dasharray: 24;
+        stroke-dashoffset: 24;
+      }
+      [data-copy-install].is-copied {
+        background: #17634e;
+        animation: copy-confirm 500ms ease-out;
+      }
+      .is-copied .copy-outline {
+        display: none;
+      }
+      .is-copied .copy-check {
+        display: block;
+        stroke-dashoffset: 0;
+        animation: copy-check 280ms ease-out;
+      }
+      @keyframes copy-check {
+        from { stroke-dashoffset: 24; }
+        to { stroke-dashoffset: 0; }
+      }
+      @keyframes copy-confirm {
+        from { box-shadow: 0 0 0 0 #17634e40; }
+        to { box-shadow: 0 0 0 9px #17634e00; }
       }
       .install-card details {
         margin-top: 16px;
@@ -793,6 +832,8 @@
           scroll-behavior: auto;
         }
         .hero-field *,
+        [data-copy-install],
+        [data-copy-install] *,
         .header-rail *,
         .force-map *,
         .force-map:has(.force-node:hover, .force-node:focus-visible) * {
@@ -1205,7 +1246,14 @@
             <div class="install-head">
               <strong>Start in your codebase.</strong
               ><button class="button" type="button" data-copy-install>
-                Copy prompt
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <g class="copy-outline">
+                    <rect x="8" y="8" width="12" height="12" rx="2" />
+                    <path d="M16 8V4H4v12h4" />
+                  </g>
+                  <path class="copy-check" d="m4 12 5 5L20 6" />
+                </svg>
+                <span data-copy-label>Copy prompt</span>
               </button>
             </div>
             <details id="install-prompt">
@@ -1387,15 +1435,27 @@
         .forEach((section) => sectionObserver.observe(section));
 
       const copyButton = document.querySelector("[data-copy-install]");
+      const copyLabel = copyButton.querySelector("[data-copy-label]");
+      let copyReset;
       copyButton.addEventListener("click", async () => {
         const status = document.querySelector(".install-status");
+        clearTimeout(copyReset);
+        copyButton.classList.remove("is-copied");
+        copyLabel.textContent = "Copy prompt";
+        status.textContent = "";
         copyButton.disabled = true;
         try {
           await navigator.clipboard.writeText(
             document.querySelector(".install-prompt").textContent.trim(),
           );
+          copyLabel.textContent = "Copied";
+          copyButton.classList.add("is-copied");
           status.textContent = "Copied. Paste it into your coding agent.";
           paintPrompt(status.textContent);
+          copyReset = setTimeout(() => {
+            copyButton.classList.remove("is-copied");
+            copyLabel.textContent = "Copy prompt";
+          }, 2500);
         } catch {
           document.querySelector("#install-prompt").open = true;
           status.textContent = "Copy the prompt shown above.";
