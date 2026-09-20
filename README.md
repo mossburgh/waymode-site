@@ -37,7 +37,8 @@ Wrangler locally for checks against the Cloudflare backend. Use an ignored
 
 ## Source layout
 
-- `public/` — marketing page and static files; `public/showcase/` is generated.
+- `public/` — marketing page and static files; `showcase/` and `waymode/` are generated.
+- `site/` — the navbar, compact receipts, and browser runtime for page guidance.
 - `demo/` — demo apps, playback, local server, browser checks, and launch story.
 - `hosted/` — Cloudflare API, visitor state, quotas, and model calls.
 - `vendor/` — the pinned SDK package used by the demo; imports use public exports.
@@ -76,9 +77,10 @@ The SDK and broader live reliability gates have their own release status.
 The homepage serves its use cases, integration limits, FAQ, links, and structured
 data in HTML. The primary layout is visible before JavaScript runs. The page
 leads with the live showcase and four short capability captions; integration
-details remain in native disclosures. Navigation and prompt copying run directly,
-with a short intent caption in the compact header. Styles are inline so
-the local demo server serves the same homepage at `/`. The old `/site` path
+details remain in native disclosures. The navbar runs requests through the Waymode SDK and the same capped Worker API as
+the demo. It observes live controls, guides actions, and leaves clipboard and
+external-link clicks to the visitor. Hover context follows each control’s state.
+`npm run build` builds both the demo and navbar runtime. The old `/site` path
 redirects to `/`; the app used inside the showcase lives at `/product.html`. The showcase
 has its own implementation; keep product claims grounded in the SDK contract and
 retained runs rather than animated examples.

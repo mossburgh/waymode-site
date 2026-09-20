@@ -122,7 +122,20 @@
         role="group"
         aria-label="Walkthrough playback"
       >
-        <button id="play-story" aria-label="Play" data-state="paused" disabled>
+        <span id="playback-help" class="sr-only"
+          >Start a guided demonstration of how to use the live demo. Play shows
+          each step of the selected interaction using real app controls.</span
+        >
+        <span id="scenes-help" class="sr-only"
+          >Choose another demo interaction to watch, then press Play.</span
+        >
+        <button
+          id="play-story"
+          aria-label="Play"
+          aria-describedby="playback-help"
+          data-state="paused"
+          disabled
+        >
           <svg class="play-icon" viewBox="0 0 20 20" aria-hidden="true">
             <path d="M6 3.5 16 10 6 16.5Z" />
           </svg>
@@ -135,6 +148,7 @@
         <nav id="chapters" aria-label="Scene chapters"></nav>
         <button
           id="open-scenes"
+          aria-describedby="scenes-help"
           class="secondary"
           aria-haspopup="dialog"
           aria-controls="scene-picker"

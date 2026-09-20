@@ -1,0 +1,524 @@
+html .header-rail {
+  top: 8px;
+}
+.waymode-conversation {
+  border: 1px solid #d9ddeb;
+  z-index: 40;
+}
+.waymode-conversation button {
+  font:
+    13px Onest,
+    sans-serif;
+  cursor: pointer;
+}
+.waymode-conversation .chat-close {
+  border: 0;
+  background: transparent;
+  font-size: 22px;
+  padding: 2px 6px;
+}
+.waymode-conversation p {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+.waymode-conversation .chat-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.chat-suggestions button {
+  border: 1px solid #d9ddeb;
+  border-radius: 22px;
+  padding: 8px 12px;
+}
+
+.header-rail .nav,
+.header-rail.is-compact .nav {
+  display: block;
+  max-width: 1440px;
+  min-height: 64px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  border-radius: 0;
+}
+.nav-links {
+  flex-shrink: 0;
+  gap: 8px;
+  margin: 0;
+  padding: 0 0 0 16px;
+  border-left: 1px solid #d9ddeb;
+  font-size: 14px;
+}
+.nav-action {
+  padding: 12px 16px;
+  color: #101115;
+  border-color: transparent;
+  background: #f7f8fc;
+}
+.nav-action.button {
+  color: #fff;
+  background: #101115;
+  border-color: #101115;
+}
+.nav-action:hover {
+  background: #e9ecf7;
+  color: #101115;
+}
+.is-compact .nav-links {
+  border-color: #414659;
+}
+.is-compact .nav-action {
+  color: #d8dcef;
+  background: transparent;
+  border-color: #414659;
+}
+.is-compact .nav-action.button {
+  color: #101115;
+  background: #fff;
+  border-color: #fff;
+}
+.is-compact .nav-action:hover {
+  color: #101115;
+  background: #dfe4ff;
+}
+.waymode-hub {
+  position: relative;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+  border: 1px solid #e3e5ed;
+  border-radius: 32px;
+  background: #f7f8fcf5;
+  min-width: 0;
+  transition:
+    background 380ms,
+    border-color 380ms,
+    box-shadow 380ms;
+}
+.is-compact .waymode-hub {
+  color: white;
+  background: #101115;
+  border-color: #35363e;
+  box-shadow: 0 4px 18px #0c0d1217;
+}
+.brand {
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  width: 150px;
+  height: 40px;
+  gap: 8px;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 0;
+  background: transparent;
+  transition:
+    width 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    gap 420ms;
+}
+.brand svg {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 50%;
+  transition:
+    background 380ms,
+    color 380ms;
+}
+.brand-name {
+  display: block;
+  flex: 0 0 auto;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 220ms,
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.is-compact .brand {
+  width: 40px;
+  gap: 0;
+}
+.is-compact .brand svg {
+  background: #191d3c;
+}
+.is-compact .brand-name {
+  opacity: 0;
+  transform: translateX(-32px);
+}
+.nav-action {
+  transition:
+    background 380ms,
+    color 380ms,
+    border-color 380ms;
+}
+.hybrid-input {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 5px;
+  border: 1px solid #d9ddeb;
+  border-radius: 24px;
+  background: #fff;
+  transition:
+    background 380ms,
+    border-color 380ms;
+}
+.is-compact .hybrid-input {
+  background: #1c1e27;
+  border-color: #414659;
+}
+.hybrid-input input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  padding: 6px 10px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #101115;
+  font:
+    14px Onest,
+    sans-serif;
+}
+.is-compact .hybrid-input input {
+  color: #fff;
+}
+.hybrid-input:focus-within {
+  border-color: #8e98ff;
+  box-shadow: 0 0 0 2px #8e98ff33;
+}
+.hybrid-input input::placeholder {
+  color: #858fa7;
+}
+.hybrid-input button {
+  border: 0;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  color: #fff;
+  background: #4054f6;
+  cursor: pointer;
+}
+.header-rail.chat-open .waymode-hub {
+  border-radius: 28px 28px 0 0;
+}
+.waymode-conversation {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: -1px;
+  right: -1px;
+  bottom: auto;
+  width: auto;
+  max-height: calc(100dvh - 240px);
+  overflow-y: auto;
+  padding: 12px 18px 16px;
+  background: #101115;
+  color: #eef0fa;
+  border-color: #35363e;
+  border-top: 0;
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 14px 20px #10111516;
+}
+.waymode-conversation header {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  margin: 0;
+}
+.chat-close {
+  color: #a3acbd;
+}
+.chat-suggestions {
+  margin: 0 30px 12px 0;
+}
+.chat-suggestions button {
+  background: transparent;
+  color: #c6cbdf;
+  border-color: #414659;
+}
+.chat-result {
+  color: #b9c2d6;
+  margin: 12px 0;
+}
+.chat-result:empty {
+  display: none;
+}
+.tool-history {
+  display: grid;
+  gap: 7px;
+}
+.waymode-conversation .tool-call {
+  border: 1px solid #d9ddeb;
+  border-radius: 9px;
+  overflow: hidden;
+}
+.tool-call {
+  border-color: #33394a;
+  background: #191c25;
+}
+.waymode-conversation .tool-call summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.tool-call code {
+  font:
+    11px ui-monospace,
+    monospace;
+}
+.tool-icon {
+  color: #81c3a8;
+}
+.tool-target {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #838fa7;
+}
+.tool-outcome {
+  margin-left: auto;
+  color: #81c3a8;
+  white-space: nowrap;
+}
+.tool-call[data-outcome="blocked"] .tool-outcome,
+.tool-call[data-outcome="blocked"] .tool-icon {
+  color: #e2b87c;
+}
+.waymode-conversation .tool-call p {
+  padding: 0 12px 12px;
+  font-size: 12px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.tool-call p {
+  color: #aab5cb;
+}
+@media (max-width: 800px) {
+  .header-rail {
+    height: 88px;
+  }
+  .nav-links {
+    gap: 5px;
+    padding-left: 8px;
+    font-size: 11px;
+  }
+  .nav-action {
+    padding: 9px 8px;
+  }
+  .waymode-hub {
+    gap: 8px;
+    padding: 8px;
+  }
+  .brand,
+  .is-compact .brand {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+  }
+  .brand-name {
+    display: none;
+  }
+  .brand svg {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
+  .hybrid-input {
+    gap: 2px;
+    padding: 3px;
+  }
+  .hybrid-input input {
+    font-size: 13px;
+    padding: 6px 3px;
+  }
+  .hybrid-input button {
+    width: 28px;
+    height: 28px;
+  }
+  .waymode-conversation {
+    max-height: calc(100dvh - 220px);
+  }
+}
+
+.tool-model {
+  display: block;
+  color: #8f9ab0;
+  font:
+    11px ui-monospace,
+    monospace;
+  padding: 0 12px 10px;
+}
+.tool-call[data-outcome="pending"] .tool-icon {
+  display: inline-block;
+  animation: tool-spin 1s linear infinite;
+}
+@keyframes tool-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool-call[data-outcome="pending"] .tool-icon {
+    animation: none;
+  }
+}
+
+.tool-call[data-outcome="stopped"] .tool-icon,
+.tool-call[data-outcome="stopped"] .tool-outcome {
+  color: #9da8bb;
+}
+.tool-call > summary::after {
+  content: "⌄";
+  color: #8f9ab0;
+}
+.tool-call[open] > summary::after {
+  content: "⌃";
+}
+.tool-model {
+  overflow-wrap: anywhere;
+}
+
+.tool-call a {
+  color: #c1caff;
+}
+
+/* The outline links the hovered control to its action in the bar. */
+.bar-linked {
+  outline: 2px solid #8e98ff;
+  outline-offset: 5px;
+}
+.bar-context {
+  position: absolute;
+  inset: 0 48px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  pointer-events: none;
+  color: #30384c;
+  font:
+    14px Onest,
+    sans-serif;
+}
+.bar-context i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6676ff;
+  flex-shrink: 0;
+}
+.bar-context small {
+  color: #69738b;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.bar-context > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.is-compact .bar-context {
+  color: #e0e4fa;
+}
+.is-compact .bar-context small {
+  color: #a4adc2;
+}
+.show-context input::placeholder {
+  color: transparent;
+}
+@media (max-width: 800px) {
+  .bar-context {
+    inset-inline: 10px 38px;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .bar-context small {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .waymode-hub,
+  .brand,
+  .brand svg,
+  .brand-name,
+  .hybrid-input,
+  .nav-action {
+    transition: none;
+  }
+}
+
+.waymode-hub .hybrid-input button[data-running],
+.waymode-conversation form button[data-running] {
+  font-size: 13px;
+}
+
+.tool-call pre {
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 11px/1.5 monospace;
+  padding: 12px;
+}
+
+.waymode-conversation[data-running] .chat-suggestions,
+.waymode-conversation[data-running] .tool-call:not(:first-child) {
+  display: none;
+}
+
+.tool-call > summary {
+  min-width: 0;
+}
+.tool-call > summary code {
+  flex-shrink: 0;
+}
+.tool-steps {
+  margin: 0;
+  padding: 0 12px 8px 30px;
+  font-size: 12px;
+}
+.tool-steps li {
+  padding: 5px 0;
+}
+.tool-steps .tool-model {
+  padding: 4px 0 0;
+}
+.tool-evidence {
+  border-top: 1px solid #33394a;
+}
+.tool-evidence pre {
+  margin: 0;
+}
+.waymode-conversation .tool-evidence summary {
+  padding: 8px 12px;
+  color: #8f9ab0;
+}
+.waymode-conversation .tool-call > summary {
+  padding: 9px 10px;
+}
+.tool-history {
+  max-width: 100%;
+}
+
+.header-rail .nav {
+  pointer-events: auto;
+  width: 100%;
+  margin: auto;
+}

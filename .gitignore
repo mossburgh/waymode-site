@@ -14,3 +14,4 @@ public/showcase/
 # Local authoring tools and their downloaded assets.
 .agents/
 skills-lock.json
+public/waymode/

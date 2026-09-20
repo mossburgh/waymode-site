@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "npm run build",
     "dev": "node --env-file-if-exists=.env.local --import tsx demo/server.ts",
     "eval:public": "node demo/tools/eval-public.mjs",
     "record:public": "node demo/tools/record-public.mjs",
@@ -18,7 +19,7 @@
     "format:check": "prettier --check .",
     "verify": "npm run lint && npm run typecheck && npm test && npm run format:check && npm run build && npm run check",
     "dev:hosted": "npm run build && wrangler dev",
-    "build": "vite build --config vite.showcase.config.mjs",
+    "build": "node scripts/build.mjs",
     "check": "node scripts/check.mjs",
     "predeploy": "npm run build && npm run check",
     "deploy": "wrangler deploy"

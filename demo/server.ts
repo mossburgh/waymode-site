@@ -41,6 +41,7 @@ const features = createFeatureStore();
 const daylist = createDaylistStore(resolve(directory, "daylist"));
 const vite = await createViteServer({
   root: resolve("demo"),
+  publicDir: resolve("public"),
   server: {
     middlewareMode: true,
     hmr: { host: "localhost", port: port + 10_000 },

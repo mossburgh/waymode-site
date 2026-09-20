@@ -8,6 +8,9 @@ const required = [
   "public/sitemap.xml",
   "public/_headers",
   "public/_redirects",
+  "public/waymode/navbar.js",
+  "public/waymode/runtime.js",
+  "public/waymode.css",
 ];
 
 await Promise.all(required.map((path) => stat(path)));
@@ -81,6 +84,10 @@ const failures = [
   [
     !home.includes('id="questions"'),
     "integration answers are missing from the HTML",
+  ],
+  [
+    /hover-feedback|data-prototype|prototype-runtime|variant=/.test(home),
+    "experimental navbar code must not ship",
   ],
 ].filter(([failed]) => failed);
 
