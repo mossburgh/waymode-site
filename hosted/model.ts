@@ -84,6 +84,12 @@ export class Models {
       console.warn({
         event: "model_failure_kind",
         name: error instanceof Error ? error.name : "Error",
+        status:
+          error instanceof Error &&
+          "statusCode" in error &&
+          typeof error.statusCode === "number"
+            ? error.statusCode
+            : null,
       });
       this.events.emit(visitor, "model.error", {
         name: error instanceof Error ? error.name : "Error",

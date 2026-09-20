@@ -58,22 +58,39 @@ export class Store {
   }
   private bucket(key: string, limit: number, window: number) {
     const slot = Math.floor(Date.now() / window);
+    const scope = key.endsWith(":all") ? "shared" : "network";
     return {
       name: `quota:${slot}:${key}`,
+      resource: key.split(":")[0]!,
+      scope: key.startsWith("trace:") ? "session" : scope,
       limit,
       expires: (slot + 1) * window,
     };
   }
-  private reserve(buckets: { name: string; limit: number; expires: number }[]) {
+  private reserve(
+    buckets: {
+      name: string;
+      limit: number;
+      expires: number;
+      resource: string;
+      scope: string;
+    }[],
+  ) {
     const pending = buckets.map((bucket) => ({
       ...bucket,
       count: this.read<number>(bucket.name) ?? 0,
     }));
     const full = pending.find((bucket) => bucket.count >= bucket.limit);
     if (full) {
+      console.info({
+        event: "rate_limit",
+        resource: full.resource,
+        scope: full.scope,
+        retryAfter: Math.max(1, Math.ceil((full.expires - Date.now()) / 1000)),
+      });
       throw new HttpError(
         429,
-        "Waymode’s shared usage limit is reached. Please try again later.",
+        "Waymode’s usage limit is reached. Please try again later.",
         Math.max(1, Math.ceil((full.expires - Date.now()) / 1000)),
       );
     }
@@ -127,6 +144,8 @@ export class Store {
       this.bucket(`models:ip:${ip}`, limits.ip, 86400000),
       {
         name: `models:visitor:${visitor.id}`,
+        resource: "models",
+        scope: "session",
         limit: limits.visitor,
         expires: visitor.expires,
       },

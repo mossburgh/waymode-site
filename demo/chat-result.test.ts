@@ -53,3 +53,18 @@ it("shows an intentional interruption without claiming a verified result", () =>
     }),
   ).toBe("Stopped");
 });
+
+it("labels rate limiting separately from a failed action", () => {
+  expect(
+    resultStatus({
+      ...result,
+      completed: false,
+      verified: false,
+      failed: true,
+      rateLimited: true,
+    }),
+  ).toBe("Limit reached");
+  expect(resultStatus({ ...result, rateLimited: true, stopped: true })).toBe(
+    "Stopped",
+  );
+});
