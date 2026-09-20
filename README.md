@@ -73,10 +73,10 @@ reported charges and market estimates remain separate in Activity.
 
 Set `DEMO_ENABLED` to `"false"` and deploy to stop new model calls. Keep Durable
 Object bindings and migrations when rolling back code so stored quotas survive.
-A rejected or expired session can restart by reloading the demo. Existing API
+A rejected or expired session can restart by reloading the page. Existing API
 sessions expire after two minutes and fail closed after a worker restart.
 
-This is a bounded public demo, not a multi-tenant production application backend.
+This site’s model API serves its navbar and interactive demo. It is not a multi-tenant application backend.
 The SDK and broader live reliability gates have their own release status.
 
 ## Search and analytics
@@ -102,14 +102,14 @@ to `us` or `eu` in the Worker environment. Never use a personal API key. Without
 a valid project key, the SDK stays unloaded and no PostHog events are sent.
 Visitors must opt in before the SDK loads. The notice explicitly covers prompt
 drafts, messages, console messages, and runtime activity. Analytics preferences can withdraw
-consent; GPC and Do Not Track disable capture. The demo still works without it.
+consent; GPC and Do Not Track disable capture. The site and interactive demo still work without it.
 
 Ordinary site text, inputs, and visible traces are readable in replay after consent.
 Password fields, security widgets, network bodies, auth headers, and cookies are
 excluded. Runtime events and console capture redact credential fields and common
 secret patterns.
 Pattern redaction cannot recognize every secret somebody might paste into free
-text, so the privacy notice asks visitors to keep confidential data out of the demo.
+text, so the privacy notice asks visitors to keep confidential data out of the site.
 URL queries and fragments are removed before capture, except Google Fonts family
 and display parameters needed to render replay.
 

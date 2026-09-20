@@ -40,7 +40,7 @@ export class Product {
     // Refresh saved state before every operation; an action can outlive a UI edit.
     const saved = this.store.read<Visitor>(`visitor:${visitor.id}`);
     if (!saved) {
-      throw new HttpError(401, "Reload the demo to start a new session.");
+      throw new HttpError(401, "Reload the page to start a new session.");
     }
     const started = performance.now();
     const app = saved.app;

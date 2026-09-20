@@ -25,7 +25,7 @@ function challengePanel(host) {
   panel.style.cssText =
     "border:1px solid #d8daea;border-radius:20px;padding:24px;max-width:calc(100vw - 32px);background:#fff;color:#14151a;box-shadow:0 20px 80px #0003;";
   panel.innerHTML =
-    '<h2 style="margin:0 0 12px;font:600 20px system-ui">Quick security check</h2><p style="font:14px system-ui">This keeps the shared demo available for everyone.</p><div></div><button type="button" style="margin-top:16px;padding:8px 16px">Cancel</button>';
+    '<h2 style="margin:0 0 12px;font:600 20px system-ui">Quick security check</h2><p style="font:14px system-ui">This helps protect Waymode from bots and abuse.</p><div></div><button type="button" style="margin-top:16px;padding:8px 16px">Cancel</button>';
   host.document.body.append(panel);
   panel.showModal();
   return panel;
@@ -90,7 +90,7 @@ function renderChallenge(api, panel, config, signal, widget, finish) {
 async function check(signal) {
   const response = await fetch("/api/v1/session", { signal });
   if (!response.ok) {
-    throw new Error("Could not start the shared demo session. Please retry.");
+    throw new Error("Could not start your Waymode session. Please retry.");
   }
   const { verification } = await response.json();
   // The local development server has no paid public gateway or challenge.

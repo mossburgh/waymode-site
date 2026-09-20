@@ -73,7 +73,7 @@ export class Store {
     if (full) {
       throw new HttpError(
         429,
-        "The shared demo limit is reached. Please try again later.",
+        "Waymode’s shared usage limit is reached. Please try again later.",
         Math.max(1, Math.ceil((full.expires - Date.now()) / 1000)),
       );
     }

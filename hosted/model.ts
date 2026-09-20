@@ -35,7 +35,7 @@ export class Models {
       throw new HttpError(503, "Live requests are temporarily unavailable.");
     }
     if (this.active.has(visitor.id) || this.active.size >= 4) {
-      throw new HttpError(429, "The demo is busy. Please try again.");
+      throw new HttpError(429, "Waymode is busy. Please try again.");
     }
     requireVerification(this.store, visitor, ip);
     this.store.model(visitor, ip);

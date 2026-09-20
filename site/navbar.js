@@ -90,19 +90,25 @@ function control(event) {
   }
   return event.target.closest("a[href],button,summary");
 }
+function copyPreview(el) {
+  if (el.disabled) {
+    return "Copying install prompt…";
+  }
+  return el.querySelector("[data-copy-label]")?.textContent === "Copied"
+    ? "Copied install prompt"
+    : "Copy install prompt";
+}
 function previewText(el) {
   if (el.matches("[data-copy-install]")) {
-    if (el.disabled) {
-      return "Copying install prompt…";
-    }
-    if (el.querySelector("[data-copy-label]")?.textContent === "Copied") {
-      return "Copied install prompt";
-    }
-    return "Copy install prompt";
+    return copyPreview(el);
   }
-  const verb =
-    el.matches("summary") && el.parentElement.open ? "Close" : "Open";
-  return `${verb} “${label(el)}”`;
+  if (el.matches("summary")) {
+    return `${el.parentElement.open ? "Close" : "Open"} “${label(el)}”`;
+  }
+  if (el.matches("button,a.button")) {
+    return el.hasAttribute("aria-controls") ? `Show “${label(el)}”` : label(el);
+  }
+  return `Open “${label(el)}”`;
 }
 function refreshPreview() {
   if (!active) {

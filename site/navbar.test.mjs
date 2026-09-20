@@ -39,6 +39,28 @@ it("tracks both disclosure states without moving the pointer", async () => {
   summary.parentElement.open = false;
   await vi.waitFor(() => expect(bar()).toBe("Open “Where is the proof?”"));
 });
+it("previews consent buttons as actions and the preferences menu as a destination", () => {
+  const panel = document.querySelector("#analytics-consent");
+  panel.hidden = false;
+  hover(panel.querySelector('[data-choice="no"]'));
+  expect(bar()).toBe("Turn off analytics");
+  hover(panel.querySelector('[data-choice="yes"]'));
+  expect(bar()).toBe("Allow analytics");
+  const manage = document.querySelector("#analytics-preferences");
+  manage.hidden = false;
+  hover(manage);
+  expect(bar()).toBe("Show “Analytics preferences”");
+  panel.hidden = true;
+});
+it("quotes link destinations without turning button actions into links", () => {
+  const summary = proof();
+  summary.parentElement.open = true;
+  hover(summary.parentElement.querySelector("a"));
+  expect(bar()).toBe("Open “eval contract”");
+  summary.parentElement.open = false;
+  hover(document.querySelector('a.button[href="#demo"]'));
+  expect(bar()).toBe("Try the demo");
+});
 it("refreshes when keyboard focus stays on a changed control", async () => {
   const summary = proof();
   summary.focus();
