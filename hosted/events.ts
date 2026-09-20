@@ -12,7 +12,7 @@ type Log = {
   sequence: number;
   stream: string;
   expires: number;
-  clients: Set<ReadableStreamDefaultController<Uint8Array>>;
+  clients: Map<ReadableStreamDefaultController<Uint8Array>, () => void>;
 };
 const encode = (value: string) => new TextEncoder().encode(value);
 export class Events {
@@ -25,7 +25,7 @@ export class Events {
         sequence: 0,
         stream: crypto.randomUUID(),
         expires: visitor.expires,
-        clients: new Set(),
+        clients: new Map(),
       };
       this.logs.set(visitor.id, log);
     }
@@ -34,8 +34,8 @@ export class Events {
   prune() {
     for (const [id, log] of this.logs) {
       if (log.expires <= Date.now()) {
-        for (const client of log.clients) {
-          client.close();
+        for (const close of log.clients.values()) {
+          close();
         }
         this.logs.delete(id);
       }
@@ -58,7 +58,7 @@ export class Events {
     if (log.events.length > 100) {
       log.events.shift();
     }
-    for (const client of log.clients) {
+    for (const client of log.clients.keys()) {
       client.enqueue(encode(`data: ${wire}\n\n`));
     }
   }
@@ -78,11 +78,12 @@ export class Events {
         for (const event of log.events) {
           controller.enqueue(encode(`data: ${JSON.stringify(event)}\n\n`));
         }
-        log.clients.add(controller);
-        const timer = setTimeout(() => {
-          log.clients.delete(controller);
+        const finish = () => {
+          close?.();
           controller.close();
-        }, 60000);
+        };
+        const timer = setTimeout(finish, 60000);
+        log.clients.set(controller, finish);
         close = () => {
           clearTimeout(timer);
           log.clients.delete(controller);
@@ -95,6 +96,8 @@ export class Events {
     return new Response(stream, {
       headers: {
         "Content-Type": "text/event-stream",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=31536000",
         "Cache-Control": "no-store",
       },
     });

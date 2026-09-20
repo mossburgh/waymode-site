@@ -12,6 +12,7 @@ export const json = (value: unknown, status = 200) =>
     headers: {
       "Cache-Control": "no-store",
       "X-Content-Type-Options": "nosniff",
+      "Strict-Transport-Security": "max-age=31536000",
     },
   });
 export const readJson = async (request: Request): Promise<unknown> => {

@@ -72,13 +72,20 @@ export class Showcase {
     this.store.prune();
     this.events.prune();
   }
-  private session(request: Request, ip: string) {
+  private async session(request: Request, ip: string) {
     const existing = this.store.visitor(request.headers.get("Cookie"));
+    const visitor = existing ?? this.store.create(ip);
+    const digest = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(`trace:${visitor.id}`),
+    );
+    const channel = Array.from(new Uint8Array(digest), (byte) =>
+      byte.toString(16).padStart(2, "0"),
+    ).join("");
+    const response = json({ traceChannel: `daylist-${channel}` });
     if (existing) {
-      return json({ traceChannel: `daylist-${existing.id}` });
+      return response;
     }
-    const visitor = this.store.create(ip);
-    const response = json({ traceChannel: `daylist-${visitor.id}` });
     response.headers.set(
       "Set-Cookie",
       `waymode_session=${visitor.id}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600`,
