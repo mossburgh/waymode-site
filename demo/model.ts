@@ -1,5 +1,5 @@
+import { createSiteEvaluator } from "./site-evaluator.js";
 import {
-  createEvaluator,
   type EvaluatorOptions,
   type EvaluationOptions,
 } from "@mossburgh/waymode/server";
@@ -11,7 +11,7 @@ export const demoEvaluationOptions = (
   options: Partial<EvaluatorOptions> & Omit<EvaluationOptions, "evaluate"> = {},
 ): EvaluationOptions => ({
   ...options,
-  evaluate: createEvaluator({
+  evaluate: createSiteEvaluator({
     model: demoModel,
     ...options,
   }),

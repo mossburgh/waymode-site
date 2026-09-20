@@ -151,6 +151,10 @@ pages and unsupported benchmark numbers.
 
 ## Public model access
 
+Site model calls explicitly disable the SDK’s default zero-data-retention requirement
+through its evaluator transport hook. The site privacy page discloses provider
+retention; this does not change the published SDK’s default.
+
 The hosted gateway requires a Cloudflare Turnstile check before paid calls.
 `TURNSTILE_SITE_KEY` is public; `TURNSTILE_SECRET` stays in Worker secrets.
 The managed widget allows only `waymode.ai` and `www.waymode.ai`. Server validation

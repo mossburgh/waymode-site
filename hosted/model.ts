@@ -1,8 +1,8 @@
+import { createSiteEvaluator } from "../demo/site-evaluator.js";
 import { retryModel } from "./model-retry.js";
 import { requireVerification, type BotEnv } from "./bot-check.js";
 import {
   createDecider,
-  createEvaluator,
   createInputResolver,
   type EvaluationOptions,
 } from "@mossburgh/waymode/server";
@@ -51,7 +51,7 @@ export class Models {
       state: options.state,
       questions: options.questions,
     });
-    const evaluate = createEvaluator({
+    const evaluate = createSiteEvaluator({
       apiKey: this.env.AI_GATEWAY_API_KEY,
       model: this.env.WAYMODE_MODEL,
     });
