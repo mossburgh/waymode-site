@@ -33,7 +33,10 @@ assert.equal(image.readUInt32BE(16), 1200);
 assert.equal(image.readUInt32BE(20), 630);
 
 const failures = [
-  [!home.includes("Put your product in Waymode."), "home headline is missing"],
+  [
+    !home.includes("<h1>The AI connector for your product.</h1>"),
+    "home headline is missing",
+  ],
   [!home.includes('href="#install"'), "install link is missing"],
   [
     home.includes("Waymode design prototype"),
